@@ -1,0 +1,46 @@
+Run started: Wed Jun 21 13:50:32 2017
+TDS waveform capture data for: TDS
+Spacecraft: a
+Quality or honesty: q
+Instrument: SWAVES
+Mission: STEREO
+Version: wave_quality.pro v2.0.0, 20110809 - antenna half-lengths used for calibrations
+Freq = Frequency in Hz
+Qual = arbitrary measure of quality
+Amp = Wave amplitude in mV/m (zero-peak)
+Bw = bandwidth of peak power in Hz
+df/f = normalized bandwidth
+drate = data rate
+npts = number of samples in burst
+blen = burst length in sec
+maxf = data removed above this frequency 
+ID = official event ID number
+ts = channel TDS triggered off of
+TDSQ = quality of event as defined onboard the sc
+format: (a24,5x,a3,2x,i5,2x,i5,2x,i3,2x,i5,2x,f7.2,2x,i3,2x,i5,2x,f4.2,2x,i3,2x,i9,2x,a3,2x,i5)
+
+        Time                  Src   Freq  Qual  Amp    BW     df/f  drate npts   blen  maxf    ID       ts   TDSQ
+ 2017-02-01/00:00:56.695       x     76     50    5     61     0.80  250  16384  0.07  108  100525384  x-y    363
+                               y     61     23    3     91     1.50  250  16384  0.07  108  100525384  x-y    363
+                               z     61     29    2     91     1.50  250  16384  0.07  108  100525384  x-y    363
+                             x-y     76     14    3    152     2.00  250  16384  0.07  108  100525384  x-y    363
+ 2017-02-01/00:01:51.972       x     91     26    2    152     1.67  250  16384  0.07  108  100525504  x-y    258
+                               y    122     35    2     91     0.75  250  16384  0.07  108  100525504  x-y    258
+                               z     91     24    2    152     1.67  250  16384  0.07  108  100525504  x-y    258
+                             x-y     76     37    2     91     1.20  250  16384  0.07  108  100525504  x-y    258
+ 2017-02-01/00:31:56.754       x     76     13    2    244     3.20  250  16384  0.07  108  100529248  x-y    271
+                               y     76     13    1    244     3.20  250  16384  0.07  108  100529248  x-y    271
+                               z     91     20    1    213     2.33  250  16384  0.07  108  100529248  x-y    271
+                             x-y     76     53    2     61     0.80  250  16384  0.07  108  100529248  x-y    271
+ 2017-02-01/00:37:26.207       x     91     17    3    122     1.33  250  16384  0.07  108  100529928  x-y    262
+                               y     76      6    1    244     3.20  250  16384  0.07  108  100529928  x-y    262
+                               z    106     16    1    183     1.71  250  16384  0.07  108  100529928  x-y    262
+                             x-y     91     13    2    152     1.67  250  16384  0.07  108  100529928  x-y    262
+ 2017-02-01/00:53:01.172       x    198    191    1     30     0.15  250  16384  0.07  108  100531872  x-y    714
+                               y  31753   6997   11    610     0.02  250  16384  0.07  108  100531872  x-y    714
+                               z  31753   6461    4    610     0.02  250  16384  0.07  108  100531872  x-y    714
+                             x-y  31753  10877   11    396     0.01  250  16384  0.07  108  100531872  x-y    714
+ 2017-02-01/00:53:01.746       x     91      3    2    518     5.67  250  16384  0.07  108  100531872  x-y   1169
+                               y  31433   1024   24   3936     0.13  250  16384  0.07  108  100531872  x-y   1169
+                               z  31433    998    7   3936     0.13  250  16384  0.07  108  100531872  x-y   1169
+                             x-y  31433   1015   24   3936     0.13  250  16384  0.07  108  100531872  x-y   1169

@@ -1,0 +1,26 @@
+Run started: Wed Jun 21 13:49:52 2017
+TDS waveform capture data for: TDS
+Spacecraft: b
+Quality or honesty: q
+Instrument: SWAVES
+Mission: STEREO
+Version: wave_quality.pro v2.0.0, 20110809 - antenna half-lengths used for calibrations
+Freq = Frequency in Hz
+Qual = arbitrary measure of quality
+Amp = Wave amplitude in mV/m (zero-peak)
+Bw = bandwidth of peak power in Hz
+df/f = normalized bandwidth
+drate = data rate
+npts = number of samples in burst
+blen = burst length in sec
+maxf = data removed above this frequency 
+ID = official event ID number
+ts = channel TDS triggered off of
+TDSQ = quality of event as defined onboard the sc
+format: (a24,5x,a3,2x,i5,2x,i5,2x,i3,2x,i5,2x,f7.2,2x,i3,2x,i5,2x,f4.2,2x,i3,2x,i9,2x,a3,2x,i5)
+
+        Time                  Src   Freq  Qual  Amp    BW     df/f  drate npts   blen  maxf    ID       ts   TDSQ
+ 2014-02-01/00:10:06.043       x    198    685    1     15     0.08  250  16384  0.07  108   30179704  x-y    199
+                               y    198    536    1     15     0.08  250  16384  0.07  108   30179704  x-y    199
+                               z     76     -1    7    274     3.60  250  16384  0.07  108   30179704  x-y    199
+                             x-y    122     60    1     61     0.50  250  16384  0.07  108   30179704  x-y    199
