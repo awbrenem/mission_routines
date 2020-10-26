@@ -1,15 +1,16 @@
 ;------------------------------
-;Rotate the dbm_scm UVW data into SC coordinates. 
+;Rotate the dbm_scm (u,v,w) data into SC (x,y,z) coordinates. 
 ;Returns tplot variable with '_SC' appended to name
 
-;Rotation array from Bowen20, eqn 8, which rotates UVW into MAG coordinates. 
-;They note that this is equivalent to SC coordinates. 
+;See 6.2 in Coordinate transforms between FIELDS instruments by T. Dudok de Wit and D. Malaspina
+
 
 ;This has been tested by direct comparison to the merged product
 ;psp_fld_l3_merged_scam_wf_2018110300_v01.cdf
 ;which comes in SC coord. 
 ;After proper filtering, the results are very close 
 ;---see below for the test. 
+
 
 
 pro psp_rotate_scm_uvw2sc,var
