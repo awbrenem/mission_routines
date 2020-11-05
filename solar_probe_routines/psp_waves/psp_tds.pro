@@ -151,12 +151,12 @@ pro psp_tds, t0, lvl=lvl, chn=chn
                                                                 ;THIS IS A CRITICAL LINE THAT NEEDS TO BE CHANGED PER USER, AUTHOR PREFERED DATA BE WRITTEN TO AND READ FROM
     ;setenv, 'ROOT_DATA_DIR=/Volumes/500GB/Users/benshort/data/' ;EXTERNAL HARD DRIVE, IF YOU WANT DATA WRITTEN ELSEWHERE YOU MUST CHANGE THIS DIRECTORY.
                                                                 ;IF YOU WANT DATA SENT TO AND FROM YOUR DEFAULT DIRECTORY, COMMENT OUT THIS LINE.
-    setenv, 'PSP_STAGING_DIR=/Users/cattell/Desktop/data/PSP/
+    setenv, 'PSP_STAGING_DIR=/Users/aaronbreneman/Desktop/data/PSP/
     
     if chn eq 'e' then begin
       
       get_timespan, tget                            
-      spp_fld_load, trange=tget, type='dfb_dbm_dvac'        
+      spp_fld_load, trange=tget, type='dfb_dbm_dvac',/no_staging
       
       get_data, 'psp_fld_l2_dfb_dbm_dvac12', data = dbm_dat_1
       get_data, 'psp_fld_l2_dfb_dbm_dvac34', data = dbm_dat_2
@@ -171,7 +171,7 @@ pro psp_tds, t0, lvl=lvl, chn=chn
     endif else if chn eq 'b' then begin
       
       get_timespan, tget                            
-      spp_fld_load, trange=tget, type='dfb_dbm_scm'  
+      spp_fld_load, trange=tget, type='dfb_dbm_scm',/no_staging
 
       get_data, 'psp_fld_l2_dfb_dbm_scmlgu', data = scm_xlg
       get_data, 'psp_fld_l2_dfb_dbm_scmlgv', data = scm_ylg
@@ -231,7 +231,7 @@ pro psp_tds, t0, lvl=lvl, chn=chn
       ;length
     endif  
     
-    spp_fld_load,trange=tget,type= 'mag_SC'
+    spp_fld_load,trange=tget,type= 'mag_SC',/no_staging
     
     get_data, 'psp_fld_l2_mag_SC', data=mago
     
@@ -320,7 +320,6 @@ pro psp_tds, t0, lvl=lvl, chn=chn
     times = dindgen(524288)/sr + t1
     wavetime[n,*] = times[*]
   endfor
-  
   
   
   
@@ -459,19 +458,30 @@ pro psp_tds, t0, lvl=lvl, chn=chn
       wavedatay = wavedatay - mean(wavedatay)
       wavedataz = wavedataz - mean(wavedataz)
       
+      ;PSP L2 Ew files need the -1 sign correction. 
+      ;This should be fixed in L3.
       if lvl eq 2 then begin
-        wavedatax = wavedatax*1000.
-        wavedatay = wavedatay*1000. ; convert from V/m to mV/m?
-        wavedataz = wavedataz*1000.
+        wavedatax = -1*wavedatax*1000.
+        wavedatay = -1*wavedatay*1000. ; convert from V/m to mV/m?
+        wavedataz = -1*wavedataz*1000.
       endif
-      
+
       
       ;rotate to spacecraft coordinates;
       if kpop mod 2 eq 0 then begin
-        wavedatax = wavedatax*cos((!pi/180.)*55.)-wavedatay*cos((!pi/180.)*40.)
-        wavedatay = wavedatax*sin((!pi/180.)*55.)+wavedatay*sin((!pi/180.)*40.)
-        wavedataz = wavedataz
-        
+
+        ;Rotating V12, V34 into SC coord (x,y)
+        rot_mat = [[0.64524,-0.82228,0.],$
+                  [0.76897,0.57577,0.],$
+                  [0,0,1]]
+
+        wavedataSENSOR = [[wavedatax],[wavedatay],[wavedataz]]
+        wavedataSC = reform(rot_mat ## wavedataSENSOR)
+
+        wavedatax = wavedataSC[*,0]
+        wavedatay = wavedataSC[*,1]
+        wavedataz = wavedataSC[*,2]
+
         coordsys = 'SC'
       endif else coordsys = 'IC'
 
@@ -550,25 +560,17 @@ pro psp_tds, t0, lvl=lvl, chn=chn
       wavedataz = wavedataz - mean(wavedataz)
       
       if kpop mod 2 eq 0 then begin
-        xtmp = wavedatax
-        ytmp = wavedatay
-        ztmp = wavedataz
 
-        scmx = [-1./sqrt(2.),0.,-1./sqrt(2.)]
-        scmy = [(1./sqrt(2.))*(1./2.),(1./sqrt(2.))*(sqrt(3.)/2.),(-1./sqrt(2.))]
-        scmz = [(1./sqrt(2.))*(1./2.),-(1./sqrt(2.))*(sqrt(3.)/2.),(-1./sqrt(2.))]
+        rot_mat_scm = [[0.81654,-0.40827,-0.40827],$
+                        [0.,-0.70715,0.70715],$
+                        [-0.57729,-0.57729,-0.57729]]
 
-        tmp = fltarr(n_elements(xtmp), 3)
+        wavedataSENSOR = [[wavedatax],[wavedatay],[wavedataz]]
+        wavedataSC = reform(rot_mat_scm ## wavedataSENSOR)
 
-        for loop=0,n_elements(xtmp)-1 do begin
-          tmp[loop,0] = xtmp[loop]*scmx[0]+ytmp[loop]*scmy[0]+ztmp[loop]*scmz[0]
-          tmp[loop,1] = xtmp[loop]*scmx[1]+ytmp[loop]*scmy[1]+ztmp[loop]*scmz[1]
-          tmp[loop,2] = xtmp[loop]*scmx[2]+ytmp[loop]*scmy[2]+ztmp[loop]*scmz[2]
-        endfor
-
-        wavedatax = tmp[*,0]
-        wavedatay = tmp[*,1]
-        wavedataz = tmp[*,2]
+        wavedatax = wavedataSC[*,0]
+        wavedatay = wavedataSC[*,1]
+        wavedataz = wavedataSC[*,2]
         
         coordsys = 'SC'
         
@@ -635,7 +637,7 @@ pro psp_tds, t0, lvl=lvl, chn=chn
     starttime = dbm_data.starttimes[i]
     
     srt = 150000.
-    lf = 15.    ;Hz
+    lf = 20.    ;Hz
     hf = 1000.  ;Hz
     
     if l mod 2 ne 0 then begin
@@ -763,9 +765,12 @@ pro psp_tds, t0, lvl=lvl, chn=chn
 
         clrbarwhere = where(abs(clrbar1) gt 0)
 
+
+;.compile /Users/aaronbreneman/Desktop/code/Aaron/github.umn.edu/mission_routines/solar_probe_routines/psp_waves/colorbar.pro
+
         if d mod 2 eq 0 then begin
-          c = colorbar(TARGET=clrbar2[clrbarwhere[0]], ORIENTATION=1, POSITION=[.945,.1,.96,.9], TITLE='Decibels (dB)',TEXTPOS=1, BORDER=1, TICKDIR=1)
-        endif else c = colorbar(TARGET=clrbar2[clrbarwhere[0]], ORIENTATION=1, POSITION=[.945,.1,.96,.9], TITLE='Linear Units',TEXTPOS=1, BORDER=1, TICKDIR=1)
+          c = colorbar_psp_waves(TARGET=clrbar2[clrbarwhere[0]], ORIENTATION=1, POSITION=[.945,.1,.96,.9], TITLE='Decibels (dB)',TEXTPOS=1, BORDER=1, TICKDIR=1)
+        endif else c = colorbar_psp_waves(TARGET=clrbar2[clrbarwhere[0]], ORIENTATION=1, POSITION=[.945,.1,.96,.9], TITLE='Linear Units',TEXTPOS=1, BORDER=1, TICKDIR=1)
 
         yaxisx = AXIS('Y', LOCATION='left', TITLE='Freq (Hz)', COORD_TRANSFORM=[0, fce/400.], TARGET=gx)
         xaxisx = AXIS('X',LOCATION='bottom', TITLE='Time (Seconds)', COORD_TRANSFORM=[waveduration[0],zoomlength/1750.], TARGET=gx)
