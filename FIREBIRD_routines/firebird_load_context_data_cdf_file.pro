@@ -1,12 +1,12 @@
-;Load FIREBIRD CDF files that Aaron created at
+;Load FIREBIRD context (survey) CDF files that Aaron created at
 ;http://rbsp.space.umn.edu/firebird/FU?/YYYY/
 
 
 ;e.g. FU3_context_20150204_v01.cdf
 
 ;These have the tplot variables:
-;1 D0
-;2 D1
+;1 D0  (counts, not flux)
+;2 D1  (counts, not flux)
 ;3 Alt
 ;4 Count_Time_Correction
 ;5 Flag
@@ -48,9 +48,14 @@ pro firebird_load_context_data_cdf_file,sc
   fn = sc + '_context_'+year+mn+dy+'_v01.cdf'
 
 
+  ;Grab path to save data 
+  spawn,'pwd',tmp
+  strvals = strsplit(tmp,'/',/extract)
 
-  ;local folder
-  folder = '/Users/aaronbreneman/data/firebird/'+sc+'/'+year+'/'
+;local folder
+;  folder = '/Users/aaronbreneman/data/firebird/'+sc+'/'+year+'/'
+  folder = '/'+strvals[0]+'/'+strvals[1]+'/data/firebird/'+sc+'/' + year + '/'
+
 
 
 ;  url = 'http://rbsp.space.umn.edu/kersten/data/firebird/'     ;FU?/YYYY/
