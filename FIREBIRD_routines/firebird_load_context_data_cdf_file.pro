@@ -48,13 +48,11 @@ pro firebird_load_context_data_cdf_file,sc
   fn = sc + '_context_'+year+mn+dy+'_v01.cdf'
 
 
-  ;Grab path to save data 
-  spawn,'pwd',tmp
-  strvals = strsplit(tmp,'/',/extract)
+  ;Grab local path to save data
+  homedir = (file_search('~',/expand_tilde))[0]+'/'
 
-;local folder
-;  folder = '/Users/aaronbreneman/data/firebird/'+sc+'/'+year+'/'
-  folder = '/'+strvals[0]+'/'+strvals[1]+'/data/firebird/'+sc+'/' + year + '/'
+
+  folder = homedir+'data/firebird/'+sc+'/' + year + '/'
 
 
 
