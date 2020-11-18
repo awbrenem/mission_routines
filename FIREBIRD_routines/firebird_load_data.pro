@@ -54,7 +54,14 @@ pro firebird_load_data,cubesat,plot=plot,fileexists=fileexists
 
   dprint,dlevel=3,verbose=verbose,relpathnames,/phelp
 
-  local_path = '/Users/aaronbreneman/Desktop/Research/RBSP_Firebird_microburst_conjunctions_all/firebird/'
+
+
+  ;Grab local path to save data
+  spawn,'pwd',tmp
+  strvals = strsplit(tmp,'/',/extract)
+
+;  local_path = '/Users/aaronbreneman/Desktop/Research/RBSP_Firebird_microburst_conjunctions_all/firebird/'
+  local_path = '/'+strvals[0]+'/'+strvals[1]+'/data/firebird/'+cubesat2+'/' + yyyy + '/'
 
   files = spd_download(remote_path=url,remote_file=fn,$
   local_path=local_path,$
