@@ -105,14 +105,19 @@ pro firebird_load_data,cubesat,plot=plot,fileexists=fileexists
 
   data = read_ascii(local_path+fn,template=template)
 
+  ;Get time stamps
+  ;"Time correction for count data expressed as (Ground Time - Spacecraft Time). 
+  ;Should be added to reported time stamp. 
+  ;Applies only to count and flux data, ephemeris does not need to be corrected."
   time = time_double(data.time)
+  time2 = time_double(data.time) + data.count_time_correction
 
   csstr = strlowcase(cubesat2)
 
-  store_data,csstr+'_fb_col_hires_flux',time,double([[data.col_flux1],[data.col_flux2],[data.col_flux3],[data.col_flux4],[data.col_flux5],[data.col_flux6]])
-  store_data,csstr+'_fb_col_hires_counts',time,double([[data.col_counts1],[data.col_counts2],[data.col_counts3],[data.col_counts4],[data.col_counts5],[data.col_counts6]])
-  store_data,csstr+'_fb_sur_hires_flux',time,double([[data.sur_flux1],[data.sur_flux2],[data.sur_flux3],[data.sur_flux4],[data.sur_flux5],[data.sur_flux6]])
-  store_data,csstr+'_fb_sur_hires_counts',time,double([[data.sur_counts1],[data.sur_counts2],[data.sur_counts3],[data.sur_counts4],[data.sur_counts5],[data.sur_counts6]])
+  store_data,csstr+'_fb_col_hires_flux',time2,double([[data.col_flux1],[data.col_flux2],[data.col_flux3],[data.col_flux4],[data.col_flux5],[data.col_flux6]])
+  store_data,csstr+'_fb_col_hires_counts',time2,double([[data.col_counts1],[data.col_counts2],[data.col_counts3],[data.col_counts4],[data.col_counts5],[data.col_counts6]])
+  store_data,csstr+'_fb_sur_hires_flux',time2,double([[data.sur_flux1],[data.sur_flux2],[data.sur_flux3],[data.sur_flux4],[data.sur_flux5],[data.sur_flux6]])
+  store_data,csstr+'_fb_sur_hires_counts',time2,double([[data.sur_counts1],[data.sur_counts2],[data.sur_counts3],[data.sur_counts4],[data.sur_counts5],[data.sur_counts6]])
 
   store_data,csstr+'_fb_geolat_from_hiresfile',time,double(data.lat) ;Geographic lat
   store_data,csstr+'_fb_geolon_from_hiresfile',time,double(data.lon) ;Geographic long
