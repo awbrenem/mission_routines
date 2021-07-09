@@ -96,6 +96,7 @@ pro firebird_load_context_data_cdf_file,sc
   dE = channel_energies[1] - channel_energies[0]  ;keV
 
 
+
   get_data,'D1',data=d1  ;counts/6sec
 
   ;Divide out the integration time for the counts channel
@@ -106,14 +107,56 @@ pro firebird_load_context_data_cdf_file,sc
 
 
 
-  store_data,'flux_context_FU'+sc,d1.x,flux
+  ;Apply time correction and rename channels
+  get_data,'Count_Time_Correction',data=tc 
+
+  store_data,'flux_context_FU'+sc,d1.x+tc.y,flux
   options,'flux_context_FU'+sc,'ytitle','Context flux:!CFrom '+ cal.channel_type_for_survey_data +' channel' + strtrim(cal.channel_used_for_survey_calibration,2)
   options,'flux_context_FU'+sc,'ysubtitle','[#/keV-sr-cm2-s]'
 
-
-  copy_data,'D1','counts_context_FU'+sc
+  store_data,'counts_context_FU'+sc,d1.x+tc.y,d1.y
   options,'counts_context_FU'+sc,'ytitle','Context counts!CFrom '+ cal.channel_type_for_survey_data +' channel' + strtrim(cal.channel_used_for_survey_calibration,2)
   options,'counts_context_FU'+sc,'ysubtitle','[counts/6sec]'
 
+  get_data,'D0',data=d0  ;counts/6sec
+  store_data,'counts_context_integral_channel_FU'+sc,d0.x+tc.y,d0.y
+  options,'counts_context_integral_channel_FU'+sc,'ytitle','Context counts!Cintegral channel'
+  options,'counts_context_integral_channel_FU'+sc,'ysubtitle','[counts/6sec]'
 
+
+  store_data,['D0','D1'],/del
+
+
+  ylim,'flux_context_FU'+sc,0.1,1000,1
+  ylim,'Flag',0,2 
+  ylim,'McIlwainL',0,12
+  ylim,'Loss_cone_type',0,3
+
+  options,['MLT','McIlwainL','kp','Alt','Flag','Loss_cone_type'],'panel_size',0.5
+  options,'flux_context_FU3','psym',-4
+
+  tplot,['flux_context_FU3',$
+        'MLT',$
+        'McIlwainL',$
+        'Alt',$
+        'Flag',$
+        'Loss_cone_type']              
+
+
+
+  ;**************************************
+  ;**************************************
+  ;**************************************
+  ;TESTING: compare to hires data 
+  firebird_load_data,'3'
+  split_vec,'fu3_fb_col_hires_flux'
+  print,cal.CHANNEL_USED_FOR_SURVEY_CALIBRATION
+  ylim,['flux_context_FU3','fu3_fb_col_hires_flux_0','fu3_fb_col_hires_flux_1'],0.1,300,1
+  tplot,['flux_context_FU3','fu3_fb_col_hires_flux_0','fu3_fb_col_hires_flux_1']
+  ;**************************************
+  ;**************************************
+  ;**************************************
+
+
+stop
 end
