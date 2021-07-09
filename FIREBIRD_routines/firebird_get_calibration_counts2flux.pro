@@ -12,7 +12,7 @@
 ;   flux = counts/cadence/energy_width/geometric_factor
 
 
-;Example usage:
+;Example usage (see firebird_load_context_data_cdf_file.pro):
 ;   x = firebird_get_calibration_counts2flux,'2017-12-05','3'
 
 
@@ -199,10 +199,53 @@ function firebird_get_calibration_counts2flux,date,fb
 
 
 
+    ;Determine the energy channel used to create the context data 
+    ;Johnson20 Table 3
+    if fb eq '3' then begin 
+        if ((campaign ge 1) and (campaign le 7)) then begin
+            channel_type = 'surface'
+            channel_for_context = 5
+        endif 
+        if ((campaign ge 8) and (campaign le 9)) then begin
+            channel_type = 'collimated'
+            channel_for_context = 1
+        endif 
+        if ((campaign ge 10) and (campaign le 20)) then begin
+            channel_type = 'collimated'
+            channel_for_context = 2
+        endif 
+        if ((campaign ge 21) and (campaign le 24)) then begin
+            channel_type = 'collimated'
+            channel_for_context = 3
+        endif 
+    endif else begin 
+        if campaign eq 1 then begin
+            channel_type = 'surface'
+            channel_for_context = !values.n_nan  ;NOTE: SURFACE CHANNEL ON FU4 NEVER WORKED
+        endif 
+        if ((campaign ge 2) and (campaign le 7)) then begin
+            channel_type = 'collimated'
+            channel_for_context = 2
+        endif 
+        if ((campaign ge 8) and (campaign le 9)) then begin
+            channel_type = 'collimated'
+            channel_for_context = 1
+        endif 
+        if ((campaign ge 10) and (campaign le 20)) then begin
+            channel_type = 'collimated'
+            channel_for_context = 2
+        endif 
+        if ((campaign ge 21) and (campaign le 24)) then begin
+            channel_type = 'collimated'
+            channel_for_context = 3
+        endif 
+    endelse 
 
 
     return, {campaign:campaign,$
              cadence:cadence[campaign_index],$
+             channel_type_for_survey_data:channel_type,$
+             channel_used_for_survey_calibration:channel_for_context,$
              g_factor_collimated:g_factor_collimated,$
              g_factor_surface:g_factor_surface,$
              energy_range_collimated:energy_range_collimated,$
