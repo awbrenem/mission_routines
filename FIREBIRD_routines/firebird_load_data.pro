@@ -33,11 +33,13 @@
 
 pro firebird_load_data,cubesat,plot=plot,fileexists=fileexists
 
+  sc = cubesat
+
   ;default. Can change later if file not found
   fileexists = 1
 
-  if cubesat eq '3' then cubesat = 'FU_3' else cubesat = 'FU_4'
-  cubesat2 = strmid(cubesat,0,2) + strmid(cubesat,3,1)
+  if sc eq '3' then sc = 'FU_3' else sc = 'FU_4'
+  sc2 = strmid(sc,0,2) + strmid(sc,3,1)
 
   tr = timerange()
   date = time_string(tr[0],/date_only,tformat='YYYYMMDD')
@@ -48,9 +50,9 @@ pro firebird_load_data,cubesat,plot=plot,fileexists=fileexists
   type = 'hires'
   type2 = 'Hires'
 
-  url = 'http://solar.physics.montana.edu/FIREBIRD_II/Data/' + cubesat + '/' + type + '/'
+  url = 'http://solar.physics.montana.edu/FIREBIRD_II/Data/' + sc + '/' + type + '/'
 
-  fn = cubesat2 + '_' + type2 + '_' + yyyy+'-'+mm+'-'+dd+'_L2.txt'
+  fn = sc2 + '_' + type2 + '_' + yyyy+'-'+mm+'-'+dd+'_L2.txt'
 
   dprint,dlevel=3,verbose=verbose,relpathnames,/phelp
 
@@ -59,7 +61,7 @@ pro firebird_load_data,cubesat,plot=plot,fileexists=fileexists
   ;Grab local path to save data
   homedir = (file_search('~',/expand_tilde))[0]+'/'
 
-  local_path = homedir +'data/firebird/'+cubesat2+'/' + yyyy + '/'
+  local_path = homedir +'data/firebird/'+sc2+'/' + yyyy + '/'
 
   files = spd_download(remote_path=url,remote_file=fn,$
   local_path=local_path,$
@@ -112,7 +114,7 @@ pro firebird_load_data,cubesat,plot=plot,fileexists=fileexists
   time = time_double(data.time)
   time2 = time_double(data.time) + data.count_time_correction
 
-  csstr = strlowcase(cubesat2)
+  csstr = strlowcase(sc2)
 
   store_data,csstr+'_fb_col_hires_flux',time2,double([[data.col_flux1],[data.col_flux2],[data.col_flux3],[data.col_flux4],[data.col_flux5],[data.col_flux6]])
   store_data,csstr+'_fb_col_hires_counts',time2,double([[data.col_counts1],[data.col_counts2],[data.col_counts3],[data.col_counts4],[data.col_counts5],[data.col_counts6]])
@@ -124,7 +126,7 @@ pro firebird_load_data,cubesat,plot=plot,fileexists=fileexists
   store_data,csstr+'_fb_alt_from_hiresfile',time,double(data.alt)
   store_data,csstr+'_fb_mlt_from_hiresfile',time,double(data.mlt)
   store_data,csstr+'_fb_mcilwainL_from_hiresfile',time,double(data.mcilwainl)
-
+  store_data,csstr+'_fb_count_time_correction',time,float(data.count_time_correction)
 
 
   ylim,csstr+'_fb_col_hires_flux',0.1,1000,1
