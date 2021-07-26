@@ -36,7 +36,10 @@
 
 
 
-pro firebird_load_context_data_cdf_file,sc
+pro firebird_load_context_data_cdf_file,cubesat,$
+  file_fail=file_fail   ;indicates if no file was returned
+
+
 
 
   tr = timerange()
@@ -47,21 +50,21 @@ pro firebird_load_context_data_cdf_file,sc
   mn = strmid(datetime,5,2)
   dy = strmid(datetime,8,2)
 
-  fn = 'FU' + sc + '_context_'+year+mn+dy+'_v01.cdf'
+  fn = 'FU' + cubesat + '_context_'+year+mn+dy+'_v01.cdf'
 
 
   ;Grab local path to save data
   homedir = (file_search('~',/expand_tilde))[0]+'/'
 
 
-  folder = homedir+'data/firebird/FU'+sc+'/' + year + '/'
+  folder = homedir+'data/firebird/FU'+cubesat+'/' + year + '/'
 
 
 
   url = 'http://rbsp.space.umn.edu/firebird/'     ;FU?/YYYY/
 
 
-  path = 'FU' + sc+'/'+year+'/'+fn
+  path = 'FU' + cubesat+'/'+year+'/'+fn
 
 
   file_loaded = spd_download(remote_file=url+path,$
@@ -70,9 +73,17 @@ pro firebird_load_context_data_cdf_file,sc
 
 
 
-  cdf2tplot,file_loaded
+  cdf2tplot,file_loaded,tplotnames=tn 
 
-
+  if tn[0] eq '' then begin 
+    print,'-----------------------------------------------------------'
+    print,'***********************************************************'
+    print,'NO CONTEXT CDF FILE EXISTS FOR THIS DAY....RETURNING'
+    print,'***********************************************************'
+    print,'-----------------------------------------------------------'
+    file_fail = 1
+    return
+  endif
 
 
 
@@ -86,20 +97,22 @@ pro firebird_load_context_data_cdf_file,sc
   ;cadence is irrelevant. 
 
 
-  cal = firebird_get_calibration_counts2flux(datetime,sc)
+  cal = firebird_get_calibration_counts2flux(datetime,cubesat)
 
   cadence = cal.cadence/1000.  ;sec 
 
   ;array reference for energy channels and geometric factor
   index = cal.channel_used_for_survey_calibration-1
 
+  ;Only campaign 1 doesn't have a good calibration for survey channel (b/c mostly non-functioning surface detectors used)
   if cal.channel_type_for_survey_data eq 'collimated' then gfactor = cal.g_factor_collimated[index]
-  if cal.channel_type_for_survey_data eq 'surface'    then gfactor = cal.g_factor_surface[index]
+  if cal.channel_type_for_survey_data eq 'surface'    then gfactor = !values.f_nan
 
   if cal.channel_type_for_survey_data eq 'collimated' then channel_energies = cal.energy_range_collimated[index,*]
-  if cal.channel_type_for_survey_data eq 'surface'    then channel_energies = cal.energy_range_surface[index,*]
+  if cal.channel_type_for_survey_data eq 'surface'    then channel_energies = !values.f_nan
 
-  dE = channel_energies[1] - channel_energies[0]  ;keV
+
+  if finite(channel_energies[0]) then dE = channel_energies[1] - channel_energies[0] else dE = !values.f_nan   ;keV
 
 
 
@@ -116,36 +129,36 @@ pro firebird_load_context_data_cdf_file,sc
   ;Apply time correction and rename channels
   get_data,'Count_Time_Correction',data=tc 
 
-  store_data,'flux_context_FU'+sc,d1.x+tc.y,flux
-  options,'flux_context_FU'+sc,'ytitle','Context flux:!CFrom '+ cal.channel_type_for_survey_data +' channel' + strtrim(cal.channel_used_for_survey_calibration,2)
-  options,'flux_context_FU'+sc,'ysubtitle','[#/keV-sr-cm2-s]'
+  store_data,'flux_context_FU'+cubesat,d1.x+tc.y,flux
+  options,'flux_context_FU'+cubesat,'ytitle','Context flux:!CFrom '+ cal.channel_type_for_survey_data +' channel' + strtrim(cal.channel_used_for_survey_calibration,2)
+  options,'flux_context_FU'+cubesat,'ysubtitle','[#/keV-sr-cm2-s]'
 
-  store_data,'counts_context_FU'+sc,d1.x+tc.y,d1.y
-  options,'counts_context_FU'+sc,'ytitle','Context counts!CFrom '+ cal.channel_type_for_survey_data +' channel' + strtrim(cal.channel_used_for_survey_calibration,2)
-  options,'counts_context_FU'+sc,'ysubtitle','[counts/6sec]'
+  store_data,'counts_context_FU'+cubesat,d1.x+tc.y,d1.y
+  options,'counts_context_FU'+cubesat,'ytitle','Context counts!CFrom '+ cal.channel_type_for_survey_data +' channel' + strtrim(cal.channel_used_for_survey_calibration,2)
+  options,'counts_context_FU'+cubesat,'ysubtitle','[counts/6sec]'
 
   get_data,'D0',data=d0  ;counts/6sec
-  store_data,'counts_context_integral_channel_FU'+sc,d0.x+tc.y,d0.y
-  options,'counts_context_integral_channel_FU'+sc,'ytitle','Context counts!Cintegral channel'
-  options,'counts_context_integral_channel_FU'+sc,'ysubtitle','[counts/6sec]'
+  store_data,'counts_context_integral_channel_FU'+cubesat,d0.x+tc.y,d0.y
+  options,'counts_context_integral_channel_FU'+cubesat,'ytitle','Context counts!Cintegral channel'
+  options,'counts_context_integral_channel_FU'+cubesat,'ysubtitle','[counts/6sec]'
 
 
 
 
-  ylim,'flux_context_FU'+sc,0.1,1000,1
+  ylim,'flux_context_FU'+cubesat,0.1,1000,1
   ylim,'Flag',0,2 
   ylim,'McIlwainL',0,12
   ylim,'Loss_cone_type',0,3
 
   options,['MLT','McIlwainL','kp','Alt','Flag','Loss_cone_type'],'panel_size',0.5
-  options,'flux_context_FU'+sc,'psym',-4
+  options,'flux_context_FU'+cubesat,'psym',-4
 
-  tplot,['flux_context_FU'+sc,$
-        'MLT',$
-        'McIlwainL',$
-        'Alt',$
-        'Flag',$
-        'Loss_cone_type']              
+;  tplot,['flux_context_FU'+cubesat,$
+;        'MLT',$
+;        'McIlwainL',$
+;        'Alt',$
+;        'Flag',$
+;        'Loss_cone_type']              
 
 
 
@@ -154,12 +167,12 @@ pro firebird_load_context_data_cdf_file,sc
   ;**************************************
   ;TESTING: compare to hires data 
 ;stop
-;  sctmp = sc
+;  sctmp = cubesat
 ;  firebird_load_data,sctmp
-;  split_vec,'fu'+sc+'_fb_col_hires_flux'
+;  split_vec,'fu'+cubesat+'_fb_col_hires_flux'
 ;  print,cal.CHANNEL_USED_FOR_SURVEY_CALIBRATION
 ;  chn = strtrim(cal.CHANNEL_USED_FOR_SURVEY_CALIBRATION - 1,2)
-;  store_data,'comb',data=['flux_context_FU'+sc,'fu'+sc+'_fb_col_hires_flux_'+chn]
+;  store_data,'comb',data=['flux_context_FU'+cubesat,'fu'+cubesat+'_fb_col_hires_flux_'+chn]
 ;  options,'comb','colors',[250,0]
 ;  ylim,'comb',0.1,1000,1
 ;  rbsp_efw_init
