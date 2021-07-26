@@ -7,7 +7,7 @@
 ;-----------------------------------------------------------------------------------
 
 
-path = '/Users/aaronbreneman/Desktop/code/Aaron/github.umn.edu/research_projects/RBSP_Firebird_microburst_conjunctions_all/context_files/'
+path = '/Users/aaronbreneman/Desktop/code/Aaron/github.umn.edu/research_projects/RBSP_Firebird_microburst_conjunctions_all/FIREBIRD_context_files/'
 ;fn = ['FU3_Context_camp01_2015-02-01_2015-02-22_L2.txt',$
 ;'FU3_Context_camp02_2015-03-20_2015-04-20_L2.txt',$
 ;'FU3_Context_camp03_2015-05-15_2015-06-15_L2.txt',$
