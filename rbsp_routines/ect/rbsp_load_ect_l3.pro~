@@ -1,0 +1,181 @@
+;+
+; NAME: rbsp_load_mageis_l3
+;
+; SYNTAX: 
+;
+; PURPOSE: Fetches/loads RBSP ECT MagEIS L3 data
+;
+; INPUT: N/A
+;
+; OUTPUT: N/A
+;
+; KEYWORDS:
+;	probe ->  'a' or 'b'
+;       type  ->  'hope','mageis','rept'
+;
+; HISTORY:
+;	Created Jan 2015, Aaron Breneman
+;
+; NOTES:
+;
+; VERSION:
+;   $LastChangedBy:  $
+;   $LastChangedDate: $
+;   $LastChangedRevision:  $
+;   $URL: $
+;
+;-
+
+
+;; http://www.rbsp-ect.lanl.gov/data_pub/rbspa/hope/
+;; rbspa_rel02_ect-hope-PA-L3_20121228_v5.0.0.cdf
+;; rbspa_rel02_ect-hope-MOM-L3_20121101_v5.0.0.cdf
+
+pro rbsp_load_ect_l3,probe,type
+
+  rbsp_ect_init
+  p_var = probe
+
+;  if keyword_set(probe) then p_var=probe else p_var='*'
+  vprobes = ['a','b']
+  p_var = strfilter(vprobes, p_var ,delimiter=' ',/string)
+  
+  level=3
+  slevel=string(level,format='(I0)')
+  
+  for p=0,size(p_var,/n_elements)-1 do begin
+
+     rbspx = 'rbsp'+ p_var[p]
+
+     if type eq 'mageis' then begin
+
+        format=rbspx+'/mageis/level3/'+rbspx+'_rel02_ect-mageis-L3_YYYYMMDD_v*.cdf'
+        prefix=rbspx+'_ect_mageis_L'+slevel+'_'
+        relpathnames=file_dailynames(file_format=format,trange=trange,addmaster=addmaster)
+        dprint,dlevel=3,verbose=verbose,relpathnames,/phelp
+        files=file_retrieve(relpathnames, /last_version, _extra=!rbsp_ect)
+        
+        cdf2tplot,file=files,varformat=varformat,all=0,prefix=prefix,suffix=suf,verbose=vb, $
+                  tplotnames=tns,/convert_int1_to_int2,get_support_data=1 ; load data into tplot variables
+
+     endif
+
+     if type eq 'hope' then begin
+        format=rbspx+'/hope/level3/'+rbspx+'_rel02_ect-hope-PA-L3_YYYYMMDD_v*.cdf'
+        prefix=rbspx+'_ect_hope_L'+slevel+'_'
+        relpathnames=file_dailynames(file_format=format,trange=trange,addmaster=addmaster)
+        dprint,dlevel=3,verbose=verbose,relpathnames,/phelp
+        files=file_retrieve(relpathnames, /last_version, _extra=!rbsp_ect)
+        
+        cdf2tplot,file=files,varformat=varformat,all=0,prefix=prefix,suffix=suf,verbose=vb, $
+                  tplotnames=tns,/convert_int1_to_int2,get_support_data=1 ; load data into tplot variables
+
+        format=rbspx+'/hope/level3/'+rbspx+'_rel02_ect-hope-MOM-L3_YYYYMMDD_v*.cdf'
+        prefix=rbspx+'_ect_hope_L'+slevel+'_'
+        relpathnames=file_dailynames(file_format=format,trange=trange,addmaster=addmaster)
+        dprint,dlevel=3,verbose=verbose,relpathnames,/phelp
+        files=file_retrieve(relpathnames, /last_version, _extra=!rbsp_ect)
+        
+        cdf2tplot,file=files,varformat=varformat,all=0,prefix=prefix,suffix=suf,verbose=vb, $
+                  tplotnames=tns,/convert_int1_to_int2,get_support_data=1 ; load data into tplot variables
+
+     endif
+
+     if type eq 'rept' then begin
+
+        format=rbspx+'/rept/level3/'+rbspx+'_rel02_ect-rept-sci-L3_YYYYMMDD_v*.cdf'
+        prefix=rbspx+'_ect_rept_L'+slevel+'_'
+        relpathnames=file_dailynames(file_format=format,trange=trange,addmaster=addmaster)
+        dprint,dlevel=3,verbose=verbose,relpathnames,/phelp
+        files=file_retrieve(relpathnames, /last_version, _extra=!rbsp_ect)
+        
+        cdf2tplot,file=files,varformat=varformat,all=0,prefix=prefix,suffix=suf,verbose=vb, $
+                  tplotnames=tns,/convert_int1_to_int2,get_support_data=1 ; load data into tplot variables
+
+     endif
+
+
+;rbspa_ect_mageis_L3_FEDU  (actual electron data for each energy bin)
+;     get_data,'rbspa_ect_mageis_L3_FEDU',data=dy
+
+;25 Energies
+;; RBSP_EFW> print,dy.v2[10,*]
+;;        20.400000
+;;        31.500000
+;;        53.799999
+;;        79.800003
+;;        108.30000
+;;        140.50000
+;;        143.50000
+;;        183.39999
+;;        226.10001
+;;        231.80000
+;;        342.10001
+;;        464.39999
+;;        593.00000
+;;        741.59998
+;;        841.00000
+;;        901.79999
+;;        1077.7000
+;;        1235.0000
+;;        1565.0000
+;;        1982.0000
+;;        2579.0000
+;;        3442.0000
+;;        4123.0000
+;;              NaN
+;;              NaN
+
+;11 pitch angles
+;; RBSP_EFW> print,dy.v1           
+;;        8.1818182       24.545455       40.909091       57.272727       73.636364       90.000000       106.36364       122.72727
+;;        139.09091       155.45455       171.81818
+
+
+
+;; RBSP_EFW> help,dy,/st 
+;; ** Structure <1580158>, 4 tags, length=19025696, data length=19025696, refs=1:
+;;    X               DOUBLE    Array[7901]
+;;    Y               DOUBLE    Array[7901, 25, 11]
+;;    V1              DOUBLE    Array[11]
+;;    V2              DOUBLE    Array[7901, 25]
+
+
+     ;; rbspa_ect_mageis_L3_FEDU_Energy             (energy bins)
+     ;; 114 rbspa_ect_mageis_L3_FEDU_Energy_DELTA_minus 
+     ;; 115 rbspa_ect_mageis_L3_FEDU_Energy_DELTA_plus  
+     ;; 116 rbspa_ect_mageis_L3_FEDU_PA_LABL            
+     ;; 117 rbspa_ect_mageis_L3_FEDU_ENERGY_LABL        
+     ;; 118 rbspa_ect_mageis_L3_FEDU                    
+     ;; 119 rbspa_ect_mageis_L3_SQRT_COUNTS             
+     ;; 120 rbspa_ect_mageis_L3_FPDU_Energy             
+     ;; 121 rbspa_ect_mageis_L3_FPDU_ENERGY_LABL        
+     ;; 122 rbspa_ect_mageis_L3_FPDU_Energy_DELTA_minus 
+     ;; 123 rbspa_ect_mageis_L3_FPDU_Energy_DELTA_plus  
+     ;; 124 rbspa_ect_mageis_L3_FPDU_PA_LABL            
+     ;; 125 rbspa_ect_mageis_L3_FPDU                    
+     ;; 126 rbspa_ect_mageis_L3_L_star                  
+     ;; 127 rbspa_ect_mageis_L3_L                       
+     ;; 128 rbspa_ect_mageis_L3_I                       
+     ;; 129 rbspa_ect_mageis_L3_B_Calc                  
+     ;; 130 rbspa_ect_mageis_L3_B_Eq                    
+     ;; 131 rbspa_ect_mageis_L3_MLT                     
+     ;; 132 rbspa_ect_mageis_L3_MLAT                    
+     ;; 133 rbspa_ect_mageis_L3_Position                
+     ;; 134 rbspa_ect_mageis_L3_LstarVsAlpha            
+     ;; 135 rbspa_ect_mageis_L3_LstarVsAlpha_Alpha      
+
+
+
+     tags = ['FEDU','FPDU']
+     
+     for i=0,n_elements(tags)-1 do begin
+        tn=prefix+tags[i]
+        get_data,tn,data=d,limits=l,dlimits=dl
+
+
+     endfor
+
+  endfor
+
+end
