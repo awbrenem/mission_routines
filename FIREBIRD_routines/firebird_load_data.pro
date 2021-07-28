@@ -60,7 +60,6 @@ pro firebird_load_data,cubesat,plot=plot,fileexists=fileexists
 
   ;Grab local path to save data
   homedir = (file_search('~',/expand_tilde))[0]+'/'
-
   local_path = homedir +'data/firebird/'+sc2+'/' + yyyy + '/'
 
   files = spd_download(remote_path=url,remote_file=fn,$
