@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+ <head>
+  <title>Index of /rbsp_efw/codes/stdas/aaron_spedas_efw_code/efw/l1_to_l2</title>
+ </head>
+ <body>
+<h1>Index of /rbsp_efw/codes/stdas/aaron_spedas_efw_code/efw/l1_to_l2</h1>
+  <table>
+   <tr><th valign="top"><img src="/icons/blank.gif" alt="[ICO]"></th><th><a href="?C=N;O=A">Name</a></th><th><a href="?C=M;O=A">Last modified</a></th><th><a href="?C=S;O=D">Size</a></th><th><a href="?C=D;O=A">Description</a></th></tr>
+   <tr><th colspan="5"><hr></th></tr>
+<tr><td valign="top"><img src="/icons/text.gif" alt="[TXT]"></td><td><a href="output.txt">output.txt</a></td><td align="right">2021-03-02 08:33  </td><td align="right"> 89 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="epoch_flag_times.pro">epoch_flag_times.pro</a></td><td align="right">2021-03-02 08:33  </td><td align="right">1.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="tplot_time_to_epoch.pro">tplot_time_to_epoch.pro</a></td><td align="right">2021-03-02 08:33  </td><td align="right">1.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_efw_make_l2_vsvy.pro">rbsp_efw_make_l2_vsvy.pro</a></td><td align="right">2021-03-02 08:33  </td><td align="right">8.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_efw_make_l2_esvy_uvw.pro">rbsp_efw_make_l2_esvy_uvw.pro</a></td><td align="right">2021-07-13 22:55  </td><td align="right"> 14K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_efw_make_l2_hsk.pro">rbsp_efw_make_l2_hsk.pro</a></td><td align="right">2021-03-02 08:33  </td><td align="right"> 16K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_efw_make_l3.pro.OLD.pro">rbsp_efw_make_l3.pro.OLD.pro</a></td><td align="right">2021-03-02 08:33  </td><td align="right"> 18K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_efw_make_pflux.pro">rbsp_efw_make_pflux.pro</a></td><td align="right">2021-03-02 08:33  </td><td align="right"> 29K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbspa_efw-l2_e-hires-uvw_00000000_v01.cdf">rbspa_efw-l2_e-hires-uvw_00000000_v01.cdf</a></td><td align="right">2021-03-02 08:33  </td><td align="right"> 55K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbspb_efw-l2_e-hires-uvw_00000000_v01.cdf">rbspb_efw-l2_e-hires-uvw_00000000_v01.cdf</a></td><td align="right">2021-03-02 08:33  </td><td align="right"> 55K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_efw_make_diagnostic_cdf.pro">rbsp_efw_make_diagnostic_cdf.pro</a></td><td align="right">2021-03-02 08:33  </td><td align="right"> 61K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_efw_make_l2_testing.pro">rbsp_efw_make_l2_testing.pro</a></td><td align="right">2021-03-02 08:33  </td><td align="right"> 65K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_efw_make_l2.pro">rbsp_efw_make_l2.pro</a></td><td align="right">2021-03-02 08:33  </td><td align="right"> 65K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbspb_efw-l2_fbk_00000000_v02.cdf">rbspb_efw-l2_fbk_00000000_v02.cdf</a></td><td align="right">2021-03-02 08:33  </td><td align="right"> 89K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbspb_efw-l3_00000000_v03.cdf">rbspb_efw-l3_00000000_v03.cdf</a></td><td align="right">2021-03-02 08:33  </td><td align="right"> 90K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbspa_efw-l3_00000000_v03.cdf">rbspa_efw-l3_00000000_v03.cdf</a></td><td align="right">2021-03-02 08:33  </td><td align="right"> 90K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbspa_efw-l2_fbk_00000000_v02.cdf">rbspa_efw-l2_fbk_00000000_v02.cdf</a></td><td align="right">2021-03-02 08:33  </td><td align="right"> 91K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbspa_hsk_00000000.cdf">rbspa_hsk_00000000.cdf</a></td><td align="right">2021-03-02 08:33  </td><td align="right"> 98K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbspb_hsk_00000000.cdf">rbspb_hsk_00000000.cdf</a></td><td align="right">2021-03-02 08:33  </td><td align="right"> 98K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbspa_efw-l2_fbk_00000000_v01.cdf">rbspa_efw-l2_fbk_00000000_v01.cdf</a></td><td align="right">2021-03-02 08:33  </td><td align="right">100K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbspb_efw-l2_fbk_00000000_v01.cdf">rbspb_efw-l2_fbk_00000000_v01.cdf</a></td><td align="right">2021-03-02 08:33  </td><td align="right">100K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="kersten">kersten</a></td><td align="right">2021-03-02 08:33  </td><td align="right">117K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbspb_efw-l2_spec_00000000_v02.cdf">rbspb_efw-l2_spec_00000000_v02.cdf</a></td><td align="right">2021-03-02 08:33  </td><td align="right">133K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbspa_efw-l2_spec_00000000_v02.cdf">rbspa_efw-l2_spec_00000000_v02.cdf</a></td><td align="right">2021-03-02 08:33  </td><td align="right">135K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbspa_efw-l2_00000000_vXX.cdf.BACKUP.cdf">rbspa_efw-l2_00000000_vXX.cdf.BACKUP.cdf</a></td><td align="right">2021-03-02 08:33  </td><td align="right">186K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbspa_efw-l2_00000000_v02.cdf">rbspa_efw-l2_00000000_v02.cdf</a></td><td align="right">2021-03-02 08:33  </td><td align="right">193K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbspb_efw-l2_00000000_v02.cdf">rbspb_efw-l2_00000000_v02.cdf</a></td><td align="right">2021-03-02 08:33  </td><td align="right">193K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbspa_efw-pflux_00000000_v01.cdf.OLD">rbspa_efw-pflux_00000000_v01.cdf.OLD</a></td><td align="right">2021-03-02 08:33  </td><td align="right">202K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbspb_efw-pflux_00000000_v01.cdf.OLD">rbspb_efw-pflux_00000000_v01.cdf.OLD</a></td><td align="right">2021-03-02 08:33  </td><td align="right">202K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbspa_efw-l2_00000000_vXX.cdf">rbspa_efw-l2_00000000_vXX.cdf</a></td><td align="right">2021-03-02 08:33  </td><td align="right">211K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbspb_efw-l2_00000000_vXX.cdf">rbspb_efw-l2_00000000_vXX.cdf</a></td><td align="right">2021-03-02 08:33  </td><td align="right">211K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbspa_efw-diagnostic_00000000_v01.cdf">rbspa_efw-diagnostic_00000000_v01.cdf</a></td><td align="right">2021-03-02 08:33  </td><td align="right">283K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbspa_efw-pflux_00000000_v02.cdf">rbspa_efw-pflux_00000000_v02.cdf</a></td><td align="right">2021-03-02 08:33  </td><td align="right">327K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbspa_efw-l2_spec_00000000_v01.cdf">rbspa_efw-l2_spec_00000000_v01.cdf</a></td><td align="right">2021-03-02 08:33  </td><td align="right">370K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbspb_efw-l2_spec_00000000_v01.cdf">rbspb_efw-l2_spec_00000000_v01.cdf</a></td><td align="right">2021-03-02 08:33  </td><td align="right">370K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbspa_efw-l2_e-spinfit-mgse_20140101_v02.cdf">rbspa_efw-l2_e-spinfit-mgse_20140101_v02.cdf</a></td><td align="right">2021-03-02 08:33  </td><td align="right">2.1M</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/compressed.gif" alt="[   ]"></td><td><a href="Archive.zip">Archive.zip</a></td><td align="right">2021-03-02 08:33  </td><td align="right">4.9M</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbspa_efw-pflux_20140101_300-1800sec_v01.cdf">rbspa_efw-pflux_20140101_300-1800sec_v01.cdf</a></td><td align="right">2021-03-02 08:33  </td><td align="right">5.1M</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbspa_efw-l3_long_duration_20121013-20121015.cdf">rbspa_efw-l3_long_duration_20121013-20121015.cdf</a></td><td align="right">2021-03-02 08:33  </td><td align="right">5.6M</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbspa_efw-pflux_20140101_60-300sec_v01.cdf">rbspa_efw-pflux_20140101_60-300sec_v01.cdf</a></td><td align="right">2021-03-02 08:33  </td><td align="right"> 13M</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbspa_efw-pflux_20140101_10-60sec_v01.cdf">rbspa_efw-pflux_20140101_10-60sec_v01.cdf</a></td><td align="right">2021-03-02 08:34  </td><td align="right"> 50M</td><td>&nbsp;</td></tr>
+   <tr><th colspan="5"><hr></th></tr>
+</table>
+</body></html>

@@ -1,0 +1,6 @@
+date = 2014-01-01
+date type: STRING
+probe = a
+probe type: STRING
+bp = 12
+bp type: STRING

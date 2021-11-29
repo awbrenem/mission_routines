@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+ <head>
+  <title>Index of /rbsp_efw/codes/stdas/aaron_spedas_efw_code/efw/utils</title>
+ </head>
+ <body>
+<h1>Index of /rbsp_efw/codes/stdas/aaron_spedas_efw_code/efw/utils</h1>
+  <table>
+   <tr><th valign="top"><img src="/icons/blank.gif" alt="[ICO]"></th><th><a href="?C=N;O=A">Name</a></th><th><a href="?C=M;O=A">Last modified</a></th><th><a href="?C=S;O=D">Size</a></th><th><a href="?C=D;O=A">Description</a></th></tr>
+   <tr><th colspan="5"><hr></th></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="jbt_fileurls_tmp/">jbt_fileurls_tmp/</a></td><td align="right">2021-03-02 08:34  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="tplot_zoom_images/">tplot_zoom_images/</a></td><td align="right">2021-03-02 08:34  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="tplot_zoom_com.pro">tplot_zoom_com.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">137 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="jbt_fexist.pro">jbt_fexist.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">799 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="jbt_jday2date.pro">jbt_jday2date.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">1.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="jbt_get_lines.pro">jbt_get_lines.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">1.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="jbt_file_latest.pro">jbt_file_latest.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">1.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="jbt_date2jday.pro">jbt_date2jday.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">1.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="expand_tilde.pro">expand_tilde.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">1.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="jbt_iconsec.pro">jbt_iconsec.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">1.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="jbt_fileurls.pro">jbt_fileurls.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">2.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_btrange.pro">rbsp_btrange.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">2.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="findpath.pro">findpath.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">2.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_decimate.pro">rbsp_decimate.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">3.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="jbt_tplot_pos.pro">jbt_tplot_pos.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">3.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_min_var.pro">rbsp_min_var.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">3.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="jbt_extrema.pro">jbt_extrema.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">4.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_sample_rate.pro">rbsp_sample_rate.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">5.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_min_var_rot.pro">rbsp_min_var_rot.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right"> 11K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_rotate_field_2_vec.pro">rbsp_rotate_field_2_vec.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right"> 12K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="tplot_zoom.pro">tplot_zoom.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right"> 24K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/compressed.gif" alt="[   ]"></td><td><a href="tplot_zoom.zip">tplot_zoom.zip</a></td><td align="right">2021-03-02 08:34  </td><td align="right">134K</td><td>&nbsp;</td></tr>
+   <tr><th colspan="5"><hr></th></tr>
+</table>
+</body></html>
