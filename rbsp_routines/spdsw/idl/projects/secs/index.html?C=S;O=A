@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+ <head>
+  <title>Index of /rbsp_efw/codes/spdsw/idl/projects/secs</title>
+ </head>
+ <body>
+<h1>Index of /rbsp_efw/codes/spdsw/idl/projects/secs</h1>
+  <table>
+   <tr><th valign="top"><img src="/icons/blank.gif" alt="[ICO]"></th><th><a href="?C=N;O=A">Name</a></th><th><a href="?C=M;O=A">Last modified</a></th><th><a href="?C=S;O=D">Size</a></th><th><a href="?C=D;O=A">Description</a></th></tr>
+   <tr><th colspan="5"><hr></th></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="examples/">examples/</a></td><td align="right">2021-03-02 08:35  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="spedas_plugin/">spedas_plugin/</a></td><td align="right">2021-03-02 08:35  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="secs_config_filedir.pro">secs_config_filedir.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">969 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="secs_init.pro">secs_init.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">1.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="secs_stations2tplot.pro">secs_stations2tplot.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">2.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="secs_read_stations.pro">secs_read_stations.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">2.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sec_ascii2tplot.pro">sec_ascii2tplot.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">2.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sec_read_ascii_data.pro">sec_read_ascii_data.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">2.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="eic_ascii2tplot.pro">eic_ascii2tplot.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">2.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="eic_read_ascii_data.pro">eic_read_ascii_data.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">2.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="secs_write_config.pro">secs_write_config.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">2.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="secs_read_config.pro">secs_read_config.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">2.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="secs_load_data.pro">secs_load_data.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">5.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="seca_overlay_plots.pro">seca_overlay_plots.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">9.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="secs_fileconfig.pro">secs_fileconfig.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right"> 10K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="eics_overlay_plots.pro">eics_overlay_plots.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right"> 13K</td><td>&nbsp;</td></tr>
+   <tr><th colspan="5"><hr></th></tr>
+</table>
+</body></html>

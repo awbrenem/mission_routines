@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+ <head>
+  <title>Index of /rbsp_efw/codes/spdsw/idl/projects/goes</title>
+ </head>
+ <body>
+<h1>Index of /rbsp_efw/codes/spdsw/idl/projects/goes</h1>
+  <table>
+   <tr><th valign="top"><img src="/icons/blank.gif" alt="[ICO]"></th><th><a href="?C=N;O=A">Name</a></th><th><a href="?C=M;O=A">Last modified</a></th><th><a href="?C=S;O=A">Size</a></th><th><a href="?C=D;O=D">Description</a></th></tr>
+   <tr><th colspan="5"><hr></th></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="goes_combine_tdata.pro">goes_combine_tdata.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right"> 50K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="goes_config_filedir.pro">goes_config_filedir.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">938 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="goes_init.pro">goes_init.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">2.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="goes_lib.pro">goes_lib.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right"> 22K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="goes_load_crib_sheet.pro">goes_load_crib_sheet.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">6.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="goes_load_data.pro">goes_load_data.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right"> 12K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="goes_load_pos.pro">goes_load_pos.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">3.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="goes_overview_plot.pro">goes_overview_plot.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right"> 20K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="goes_overview_plot_wrapper.pro">goes_overview_plot_wrapper.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">9.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="goes_read_config.pro">goes_read_config.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">2.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="goes_write_config.pro">goes_write_config.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">2.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="goesstruct_to_cdfstruct.pro">goesstruct_to_cdfstruct.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">9.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="particles/">particles/</a></td><td align="right">2021-03-02 08:35  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="spedas_plugin/">spedas_plugin/</a></td><td align="right">2021-03-02 08:35  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+   <tr><th colspan="5"><hr></th></tr>
+</table>
+</body></html>

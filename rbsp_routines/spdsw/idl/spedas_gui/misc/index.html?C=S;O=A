@@ -1,0 +1,19 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+ <head>
+  <title>Index of /rbsp_efw/codes/spdsw/idl/spedas_gui/misc</title>
+ </head>
+ <body>
+<h1>Index of /rbsp_efw/codes/spdsw/idl/spedas_gui/misc</h1>
+  <table>
+   <tr><th valign="top"><img src="/icons/blank.gif" alt="[ICO]"></th><th><a href="?C=N;O=A">Name</a></th><th><a href="?C=M;O=A">Last modified</a></th><th><a href="?C=S;O=D">Size</a></th><th><a href="?C=D;O=A">Description</a></th></tr>
+   <tr><th colspan="5"><hr></th></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spedas_config_filedir.pro">spedas_config_filedir.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">937 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spedas_read_config.pro">spedas_read_config.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">3.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spedas_write_config.pro">spedas_write_config.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">3.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spedas_init.pro">spedas_init.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">6.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spd_ui_spedas_fileconfig.pro">spd_ui_spedas_fileconfig.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right"> 17K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="MSCAL.OCX">MSCAL.OCX</a></td><td align="right">2021-03-02 08:35  </td><td align="right">104K</td><td>&nbsp;</td></tr>
+   <tr><th colspan="5"><hr></th></tr>
+</table>
+</body></html>

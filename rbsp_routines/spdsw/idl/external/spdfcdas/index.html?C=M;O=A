@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+ <head>
+  <title>Index of /rbsp_efw/codes/spdsw/idl/external/spdfcdas</title>
+ </head>
+ <body>
+<h1>Index of /rbsp_efw/codes/spdsw/idl/external/spdfcdas</h1>
+  <table>
+   <tr><th valign="top"><img src="/icons/blank.gif" alt="[ICO]"></th><th><a href="?C=N;O=A">Name</a></th><th><a href="?C=M;O=D">Last modified</a></th><th><a href="?C=S;O=A">Size</a></th><th><a href="?C=D;O=A">Description</a></th></tr>
+   <tr><th colspan="5"><hr></th></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spdfauthenticator__define.pro">spdfauthenticator__define.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">5.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spdfcdawebchooserauthenticator__define.pro">spdfcdawebchooserauthenticator__define.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">3.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spdfgetdefaultsslverifypeer.pro">spdfgetdefaultsslverifypeer.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">1.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spdfthumbnaildescription__define.pro">spdfthumbnaildescription__define.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">5.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="compile_spdf.pro">compile_spdf.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">1.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spdfcdas__define.pro">spdfcdas__define.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right"> 52K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spdfcdasdatarequest__define.pro">spdfcdasdatarequest__define.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">3.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spdfcdasdataresult__define.pro">spdfcdasdataresult__define.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">6.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spdfcdaswsexample.pro">spdfcdaswsexample.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">8.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spdfcdawebchooser.pro">spdfcdawebchooser.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right"> 42K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spdfcdfrequest__define.pro">spdfcdfrequest__define.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">5.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spdfdatasetdescription__define.pro">spdfdatasetdescription__define.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">7.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spdfdatasetlink__define.pro">spdfdatasetlink__define.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">3.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spdfdatasetrequest__define.pro">spdfdatasetrequest__define.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">3.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spdfdataviewdescription__define.pro">spdfdataviewdescription__define.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">5.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spdffiledescription__define.pro">spdffiledescription__define.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right"> 11K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spdfgetdata.pro">spdfgetdata.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right"> 13K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spdfgraphrequest__define.pro">spdfgraphrequest__define.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">5.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spdfhttperrordialog__define.pro">spdfhttperrordialog__define.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">2.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spdfhttperrorreporter__define.pro">spdfhttperrorreporter__define.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">4.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spdfinstrumenttypedescription__define.pro">spdfinstrumenttypedescription__define.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">2.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spdfinventorydescription__define.pro">spdfinventorydescription__define.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">3.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spdfobservatorygroupdescription__define.pro">spdfobservatorygroupdescription__define.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">3.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spdftextrequest__define.pro">spdftextrequest__define.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">4.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spdftimeinterval__define.pro">spdftimeinterval__define.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">7.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spdfvariabledescription__define.pro">spdfvariabledescription__define.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">3.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/text.gif" alt="[TXT]"></td><td><a href="spedas_spdf_readme.txt">spedas_spdf_readme.txt</a></td><td align="right">2021-03-02 08:35  </td><td align="right">2.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="spd_cdawlib/">spd_cdawlib/</a></td><td align="right">2021-03-02 08:36  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+   <tr><th colspan="5"><hr></th></tr>
+</table>
+</body></html>

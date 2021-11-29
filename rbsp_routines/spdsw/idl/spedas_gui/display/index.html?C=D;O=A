@@ -1,0 +1,25 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+ <head>
+  <title>Index of /rbsp_efw/codes/spdsw/idl/spedas_gui/display</title>
+ </head>
+ <body>
+<h1>Index of /rbsp_efw/codes/spdsw/idl/spedas_gui/display</h1>
+  <table>
+   <tr><th valign="top"><img src="/icons/blank.gif" alt="[ICO]"></th><th><a href="?C=N;O=A">Name</a></th><th><a href="?C=M;O=A">Last modified</a></th><th><a href="?C=S;O=A">Size</a></th><th><a href="?C=D;O=D">Description</a></th></tr>
+   <tr><th colspan="5"><hr></th></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="draw_object/">draw_object/</a></td><td align="right">2021-03-02 08:36  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spd_ui_display_options.pro">spd_ui_display_options.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">3.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spd_ui_display_tracking_data.pro">spd_ui_display_tracking_data.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">2.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spd_ui_draw_event.pro">spd_ui_draw_event.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right"> 15K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spd_ui_draw_object__define.pro">spd_ui_draw_object__define.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">7.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spd_ui_draw_save__define.pro">spd_ui_draw_save__define.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">7.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spd_ui_make_spec.pro">spd_ui_make_spec.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">3.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spd_ui_orientation_update.pro">spd_ui_orientation_update.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">1.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spd_ui_reset_tracking.pro">spd_ui_reset_tracking.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">1.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spd_ui_rubber_band_box.pro">spd_ui_rubber_band_box.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">4.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spd_ui_xyclip.pro">spd_ui_xyclip.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">5.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spd_ui_xyzclip.pro">spd_ui_xyzclip.pro</a></td><td align="right">2021-03-02 08:35  </td><td align="right">1.2K</td><td>&nbsp;</td></tr>
+   <tr><th colspan="5"><hr></th></tr>
+</table>
+</body></html>

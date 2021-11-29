@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+ <head>
+  <title>Index of /rbsp_efw/codes/spdsw/idl/general/science</title>
+ </head>
+ <body>
+<h1>Index of /rbsp_efw/codes/spdsw/idl/general/science</h1>
+  <table>
+   <tr><th valign="top"><img src="/icons/blank.gif" alt="[ICO]"></th><th><a href="?C=N;O=A">Name</a></th><th><a href="?C=M;O=A">Last modified</a></th><th><a href="?C=S;O=A">Size</a></th><th><a href="?C=D;O=A">Description</a></th></tr>
+   <tr><th colspan="5"><hr></th></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="xyz_to_polar.pro">xyz_to_polar.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">5.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="wind/">wind/</a></td><td align="right">2021-03-02 08:37  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="wavpol/">wavpol/</a></td><td align="right">2021-03-02 08:35  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="vth_3d.pro">vth_3d.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">1.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="v_3d.pro">v_3d.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">1.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="units_string.pro">units_string.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">465 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="units.pro">units.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">422 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="t_3d.pro">t_3d.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">1.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="symmetry_dir.pro">symmetry_dir.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">1.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="symm3d.pro">symm3d.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">759 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="superpo_interpol.pro">superpo_interpol.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">4.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="superpo_histo.pro">superpo_histo.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">5.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sum3d.pro">sum3d.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">1.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sub3d.pro">sub3d.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">1.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sphere_to_cart.pro">sphere_to_cart.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">710 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spec3d.pro">spec3d.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">3.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spd_units_string.pro">spd_units_string.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">2.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="spd_slice2d/">spd_slice2d/</a></td><td align="right">2021-03-02 08:37  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="spd_part_products/">spd_part_products/</a></td><td align="right">2021-03-02 08:35  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="smooth_periodic.pro">smooth_periodic.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">2.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="slice2d.pro">slice2d.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right"> 22K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rotate_tensor.pro">rotate_tensor.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">600 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="reform_3d_struct.pro">reform_3d_struct.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">2.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="prestens.pro">prestens.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">1.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="plot_map.pro">plot_map.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">3.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="plot3d_options.pro">plot3d_options.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">1.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="plot3d_new.pro">plot3d_new.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right"> 11K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="plot3d_com.pro">plot3d_com.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">381 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="plot3d.pro">plot3d.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">2.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="pangle.pro">pangle.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">679 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="padplot.pro">padplot.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">2.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="pad.pro">pad.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">2.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="p_3d.pro">p_3d.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">4.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="omni3d.pro">omni3d.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">1.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="n_3d.pro">n_3d.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">3.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="mat_diag.pro">mat_diag.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">1.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="make_3dmap.pro">make_3dmap.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">2.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="je_3d.pro">je_3d.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">3.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="j_3d.pro">j_3d.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">3.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/text.gif" alt="[TXT]"></td><td><a href="help_list.html">help_list.html</a></td><td align="right">2021-03-02 08:34  </td><td align="right"> 49K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/text.gif" alt="[TXT]"></td><td><a href="help.html">help.html</a></td><td align="right">2021-03-02 08:34  </td><td align="right"> 48K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="heatflux.pro">heatflux.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">1.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="get_symm.pro">get_symm.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">1.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="get_bsn2.pro">get_bsn2.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">3.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="get_3dt.pro">get_3dt.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">3.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="edit3dbins_reform.pro">edit3dbins_reform.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">3.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="edit3dbins.pro">edit3dbins.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">5.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="dist3d/">dist3d/</a></td><td align="right">2021-03-02 08:35  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="diag_p.pro">diag_p.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">1.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="convert_vframe.pro">convert_vframe.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">4.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="convert_ph_units.pro">convert_ph_units.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">2.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="convert_flux_units.pro">convert_flux_units.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">581 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="convert_esa_units2.pro">convert_esa_units2.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">1.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="convert_esa_units.pro">convert_esa_units.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">1.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="conv_units.pro">conv_units.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">1.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="calc_omega_flt2.pro">calc_omega_flt2.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">2.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="cal_bsn2.pro">cal_bsn2.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">6.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="c_3d.pro">c_3d.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">2.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="add_bdir.pro">add_bdir.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">638 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/text.gif" alt="[TXT]"></td><td><a href="3dp_ref_man.html">3dp_ref_man.html</a></td><td align="right">2021-03-02 08:34  </td><td align="right"> 51K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="3d_structure.pro">3d_structure.pro</a></td><td align="right">2021-03-02 08:34  </td><td align="right">2.7K</td><td>&nbsp;</td></tr>
+   <tr><th colspan="5"><hr></th></tr>
+</table>
+</body></html>
