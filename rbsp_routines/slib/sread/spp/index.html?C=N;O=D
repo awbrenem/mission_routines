@@ -1,0 +1,17 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+ <head>
+  <title>Index of /rbsp_efw/codes/slib/sread/spp</title>
+ </head>
+ <body>
+<h1>Index of /rbsp_efw/codes/slib/sread/spp</h1>
+  <table>
+   <tr><th valign="top"><img src="/icons/blank.gif" alt="[ICO]"></th><th><a href="?C=N;O=A">Name</a></th><th><a href="?C=M;O=A">Last modified</a></th><th><a href="?C=S;O=A">Size</a></th><th><a href="?C=D;O=A">Description</a></th></tr>
+   <tr><th colspan="5"><hr></th></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spp_read_orbit.pro">spp_read_orbit.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">631 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spp_read_fields.pro">spp_read_fields.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">6.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spp_read_efield_l1.pro">spp_read_efield_l1.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spp_read_bfield_l1.pro">spp_read_bfield_l1.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.4K</td><td>&nbsp;</td></tr>
+   <tr><th colspan="5"><hr></th></tr>
+</table>
+</body></html>

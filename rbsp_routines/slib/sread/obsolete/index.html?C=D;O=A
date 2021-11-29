@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+ <head>
+  <title>Index of /rbsp_efw/codes/slib/sread/obsolete</title>
+ </head>
+ <body>
+<h1>Index of /rbsp_efw/codes/slib/sread/obsolete</h1>
+  <table>
+   <tr><th valign="top"><img src="/icons/blank.gif" alt="[ICO]"></th><th><a href="?C=N;O=A">Name</a></th><th><a href="?C=M;O=A">Last modified</a></th><th><a href="?C=S;O=A">Size</a></th><th><a href="?C=D;O=D">Description</a></th></tr>
+   <tr><th colspan="5"><hr></th></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_gen_eclipse_times.pro">rbsp_gen_eclipse_times.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">4.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_gen_spice_product.pro">rbsp_gen_spice_product.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">5.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sprepfile0.pro">sprepfile0.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sprepfn.pro">sprepfn.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_dmsp_pos.pro">sread_dmsp_pos.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_fast_esa.pro">sread_fast_esa.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">7.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_fast_pos.pro">sread_fast_pos.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">7.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_fast_tms.pro">sread_fast_tms.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">4.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_image_fuv.pro">sread_image_fuv.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right"> 10K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_image_fuv_fix_spinphase.pro">sread_image_fuv_fix_spinphase.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right"> 12K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_mms_hpca_l2.pro">sread_mms_hpca_l2.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_omni.pro">sread_omni.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_omni_lowres.pro">sread_omni_lowres.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_polar_hydra.pro">sread_polar_hydra.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">6.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_polar_hydra_moment.pro">sread_polar_hydra_moment.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">4.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_polar_hydra_moments.pro">sread_polar_hydra_moments.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">6.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_polar_mfe.pro">sread_polar_mfe.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_polar_orbit.pro">sread_polar_orbit.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">7.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_polar_pixie.pro">sread_polar_pixie.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_polar_pos.pro">sread_polar_pos.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_polar_timas.pro">sread_polar_timas.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">6.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_polar_timas_sheng_moment.pro">sread_polar_timas_sheng_moment.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_polar_uvi.pro">sread_polar_uvi.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right"> 10K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_prep.pro">sread_prep.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_rbsp_eclipse_time.pro">sread_rbsp_eclipse_time.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_rbsp_efw_burst.pro">sread_rbsp_efw_burst.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_rbsp_efw_l1.pro">sread_rbsp_efw_l1.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_rbsp_efw_l2.pro">sread_rbsp_efw_l2.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">4.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_rbsp_efw_l3.pro">sread_rbsp_efw_l3.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_rbsp_efw_sdt_time.pro">sread_rbsp_efw_sdt_time.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">4.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_rbsp_hope.pro">sread_rbsp_hope.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_rbsp_hope_l2.pro">sread_rbsp_hope_l2.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">7.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_rbsp_hope_l3.pro">sread_rbsp_hope_l3.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">6.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_rbsp_hope_l3.pro.v2016_0228">sread_rbsp_hope_l3.pro.v2016_0228</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_rbsp_hope_moments.pro">sread_rbsp_hope_moments.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_rbsp_load_eclipse_times.pro">sread_rbsp_load_eclipse_times.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">4.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_rbsp_mageis_l3.pro">sread_rbsp_mageis_l3.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_rbsp_spice_product.pro">sread_rbsp_spice_product.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_thg_asc.pro">sread_thg_asc.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_thg_asi.pro">sread_thg_asi.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">7.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_thg_asi_mosaic_diff.pro">sread_thg_asi_mosaic_diff.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_thg_check_data.pro">sread_thg_check_data.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_thg_mag.pro">sread_thg_mag.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_thg_mag_location.pro">sread_thg_mag_location.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_thg_mlt.pro">sread_thg_mlt.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right"> 16K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_thg_mosaic.pro">sread_thg_mosaic.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right"> 20K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_thg_rmdat.pro">sread_thg_rmdat.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_thm_eff_l1.pro">sread_thm_eff_l1.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_thm_efi_l2.pro">sread_thm_efi_l2.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_thm_esa_l2.pro">sread_thm_esa_l2.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_thm_fgm_l2.pro">sread_thm_fgm_l2.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_thm_orbit.pro">sread_thm_orbit.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_thm_vaf_l1.pro">sread_thm_vaf_l1.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_xml_parse_tag.pro">sread_xml_parse_tag.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sread_xml_parse_xml.pro">sread_xml_parse_xml.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.1K</td><td>&nbsp;</td></tr>
+   <tr><th colspan="5"><hr></th></tr>
+</table>
+</body></html>

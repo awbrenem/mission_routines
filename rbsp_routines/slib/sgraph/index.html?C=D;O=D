@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+ <head>
+  <title>Index of /rbsp_efw/codes/slib/sgraph</title>
+ </head>
+ <body>
+<h1>Index of /rbsp_efw/codes/slib/sgraph</h1>
+  <table>
+   <tr><th valign="top"><img src="/icons/blank.gif" alt="[ICO]"></th><th><a href="?C=N;O=A">Name</a></th><th><a href="?C=M;O=A">Last modified</a></th><th><a href="?C=S;O=A">Size</a></th><th><a href="?C=D;O=A">Description</a></th></tr>
+   <tr><th colspan="5"><hr></th></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sgtv.pro">sgtv.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">4.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sgopen.pro">sgopen.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">6.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sgnum2str.pro">sgnum2str.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">8.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sgclose.pro">sgclose.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sgcalcpos.pro">sgcalcpos.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">5.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sg_device.pro">sg_device.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="plot_linlog.pro">plot_linlog.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="plot_cwt2.pro">plot_cwt2.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="plot_cwt.pro">plot_cwt.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="panel_scale.pro">panel_scale.pro</a></td><td align="right">2021-06-06 19:55  </td><td align="right">613 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="panel_resize.pro">panel_resize.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">1.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="panel_pos.pro">panel_pos.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">1.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="panel_normalize.pro">panel_normalize.pro</a></td><td align="right">2021-06-06 19:55  </td><td align="right">291 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="panel_init.pro">panel_init.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">3.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="panel_fit.pro">panel_fit.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">803 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="panel_center.pro">panel_center.pro</a></td><td align="right">2021-06-06 19:55  </td><td align="right">1.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="obsolete/">obsolete/</a></td><td align="right">2021-04-22 21:29  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="fig_init_simple.pro">fig_init_simple.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">602 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="fig_info.pro">fig_info.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">1.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/folder.gif" alt="[DIR]"></td><td><a href="color/">color/</a></td><td align="right">2021-04-22 21:29  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+   <tr><th colspan="5"><hr></th></tr>
+</table>
+</body></html>

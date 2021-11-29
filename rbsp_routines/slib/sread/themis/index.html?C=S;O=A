@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+ <head>
+  <title>Index of /rbsp_efw/codes/slib/sread/themis</title>
+ </head>
+ <body>
+<h1>Index of /rbsp_efw/codes/slib/sread/themis</h1>
+  <table>
+   <tr><th valign="top"><img src="/icons/blank.gif" alt="[ICO]"></th><th><a href="?C=N;O=A">Name</a></th><th><a href="?C=M;O=A">Last modified</a></th><th><a href="?C=S;O=D">Size</a></th><th><a href="?C=D;O=A">Description</a></th></tr>
+   <tr><th colspan="5"><hr></th></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_asi_sites.pro">themis_asi_sites.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">303 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_orbit.pro">themis_read_orbit.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">501 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_upward_current_ewo.pro">themis_read_upward_current_ewo.pro</a></td><td align="right">2021-06-06 19:55  </td><td align="right">584 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_downward_current_ewo.pro">themis_read_downward_current_ewo.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">592 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_ele_temp.pro">themis_read_ele_temp.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">740 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_ion_temp.pro">themis_read_ion_temp.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">751 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_mlonimg_default_site_info.pro">themis_read_mlonimg_default_site_info.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">888 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_density.pro">themis_read_density.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">956 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_ion_vel.pro">themis_read_ion_vel.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_ion_en_spec.pro">themis_read_ion_en_spec.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_ele_en_spec.pro">themis_read_ele_en_spec.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_asf.pro">themis_read_asf.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_mlonimg_keo.pro">themis_read_mlonimg_keo.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_mlonimg_ewo.pro">themis_read_mlonimg_ewo.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_asi_treat_raw_count.pro">themis_read_asi_treat_raw_count.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="test_eclipse_correction.pro">test_eclipse_correction.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_mltimg_ewo.pro">themis_read_mltimg_ewo.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">1.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_mltimg_keo.pro">themis_read_mltimg_keo.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">1.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_kev_proton.pro">themis_read_kev_proton.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_kev_electron.pro">themis_read_kev_electron.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_efield.pro">themis_read_efield.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_mag_gen_site_map.pro">themis_read_mag_gen_site_map.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_j_ver_keo.pro">themis_read_j_ver_keo.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">2.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_bfield.pro">themis_read_bfield.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_j_ver_ewo.pro">themis_read_j_ver_ewo.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">2.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_calc_emodel.pro">themis_calc_emodel.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_mag_metadata.pro">themis_read_mag_metadata.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_mltimg.pro">themis_read_mltimg.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">2.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_mlonimg_per_site.pro">themis_read_mlonimg_per_site.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_current_mltimg.pro">themis_read_current_mltimg.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">3.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_sst.pro">themis_read_sst.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_efi.pro">themis_read_efi.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_ssc.pro">themis_read_ssc.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_current_mlonimg.pro">themis_read_current_mlonimg.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">3.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_downward_current_ewo.pro.v2021_0315">themis_read_downward_current_ewo.pro.v2021_0315</a></td><td align="right">2021-04-22 21:29  </td><td align="right">3.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_mlonimg_photon_count.pro">themis_read_mlonimg_photon_count.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_upward_current_ewo.pro.v2021_0315">themis_read_upward_current_ewo.pro.v2021_0315</a></td><td align="right">2021-04-22 21:29  </td><td align="right">3.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_fgm.pro">themis_read_fgm.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_asc.pro">themis_read_asc.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">3.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_gen_j_ver_mlonimg_movie.pro">themis_gen_j_ver_mlonimg_movie.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">4.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_gen_j_ver_mltimg_movie.pro">themis_gen_j_ver_mltimg_movie.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">4.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_asi.pro">themis_read_asi.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">4.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_gen_asf_mlonimg_movie.pro">themis_gen_asf_mlonimg_movie.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">5.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_gen_asf_mltimg_movie_circle.pro">themis_gen_asf_mltimg_movie_circle.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">5.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_gen_j_ver_mltimg_movie_circle.pro">themis_gen_j_ver_mltimg_movie_circle.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">5.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_esa.pro">themis_read_esa.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">6.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_asi_test.pro">themis_read_asi_test.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">6.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_mag.pro">themis_read_mag.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">6.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_mlonimg_metadata.pro">themis_read_mlonimg_metadata.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">9.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_weygand.pro">themis_read_weygand.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right"> 12K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="themis_read_mlonimg.pro">themis_read_mlonimg.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right"> 17K</td><td>&nbsp;</td></tr>
+   <tr><th colspan="5"><hr></th></tr>
+</table>
+</body></html>

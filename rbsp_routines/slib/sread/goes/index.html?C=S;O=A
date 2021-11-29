@@ -1,0 +1,24 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+ <head>
+  <title>Index of /rbsp_efw/codes/slib/sread/goes</title>
+ </head>
+ <body>
+<h1>Index of /rbsp_efw/codes/slib/sread/goes</h1>
+  <table>
+   <tr><th valign="top"><img src="/icons/blank.gif" alt="[ICO]"></th><th><a href="?C=N;O=A">Name</a></th><th><a href="?C=M;O=A">Last modified</a></th><th><a href="?C=S;O=D">Size</a></th><th><a href="?C=D;O=A">Description</a></th></tr>
+   <tr><th colspan="5"><hr></th></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="goes_time_to_unix.pro">goes_time_to_unix.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">113 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="goes_read_bfield.pro">goes_read_bfield.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">1.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="goes_read_bfield_cdaweb.pro">goes_read_bfield_cdaweb.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">1.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="goes_read_orbit_cdaweb.pro">goes_read_orbit_cdaweb.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="goes_read_orbit.pro">goes_read_orbit.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="goes_read_fgm_l2_netcdf_prepare_files.pro">goes_read_fgm_l2_netcdf_prepare_files.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="goes_read_kev_proton.pro">goes_read_kev_proton.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="goes_read_kev_electron.pro">goes_read_kev_electron.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="goes_read_ssc.pro">goes_read_ssc.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="goes_read_fgm.pro">goes_read_fgm.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">5.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="goes_gen_orbit_data.pro">goes_gen_orbit_data.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">5.9K</td><td>&nbsp;</td></tr>
+   <tr><th colspan="5"><hr></th></tr>
+</table>
+</body></html>

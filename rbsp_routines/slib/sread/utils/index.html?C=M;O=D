@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+ <head>
+  <title>Index of /rbsp_efw/codes/slib/sread/utils</title>
+ </head>
+ <body>
+<h1>Index of /rbsp_efw/codes/slib/sread/utils</h1>
+  <table>
+   <tr><th valign="top"><img src="/icons/blank.gif" alt="[ICO]"></th><th><a href="?C=N;O=A">Name</a></th><th><a href="?C=M;O=A">Last modified</a></th><th><a href="?C=S;O=A">Size</a></th><th><a href="?C=D;O=A">Description</a></th></tr>
+   <tr><th colspan="5"><hr></th></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="extend_string.pro">extend_string.pro</a></td><td align="right">2021-09-03 21:28  </td><td align="right">911 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="tex2str.pro">tex2str.pro</a></td><td align="right">2021-08-31 22:44  </td><td align="right">1.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="lookup_index_file.pro">lookup_index_file.pro</a></td><td align="right">2021-07-13 22:54  </td><td align="right">1.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="default_local_root.pro">default_local_root.pro</a></td><td align="right">2021-06-06 19:55  </td><td align="right">695 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="convert_time.pro">convert_time.pro</a></td><td align="right">2021-06-06 19:55  </td><td align="right">1.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="read_all_lines.pro">read_all_lines.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">718 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="transpose_matrix.pro">transpose_matrix.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">409 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="net_check_connection.pro">net_check_connection.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="make_time_range.pro">make_time_range.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="fix_mtime.pro">fix_mtime.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">205 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="default_time_type.pro">default_time_type.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right"> 89 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="default_index_file.pro">default_index_file.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">325 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="vec_mag.pro">vec_mag.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">720 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="vec_dot.pro">vec_dot.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">489 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="vec_cross.pro">vec_cross.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">796 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="unique.pro">unique.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="time_to_range.pro">time_to_range.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sync_file.pro">sync_file.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="str_cap.pro">str_cap.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">265 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rotate_vector.pro">rotate_vector.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">875 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="read_data.pro">read_data.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="net_request_header.pro">net_request_header.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="lprmsg.pro">lprmsg.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">397 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="letters.pro">letters.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="lazy_where.pro">lazy_where.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="handle_error.pro">handle_error.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">530 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="get_remote_info.pro">get_remote_info.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="geopack_recalc.pro">geopack_recalc.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">382 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="gen_index_file.pro">gen_index_file.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="fix_model_mlat.pro">fix_model_mlat.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="find_rec.pro">find_rec.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">855 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="download_file.pro">download_file.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">4.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="dict2list.pro">dict2list.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">605 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="default_return_value.pro">default_return_value.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right"> 51 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="data_root_dir.pro">data_root_dir.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">607 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="construct_file.pro">construct_file.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="check_internet_connection.pro">check_internet_connection.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="break_down_times.pro">break_down_times.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="apply_version_to_pattern.pro">apply_version_to_pattern.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">786 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="apply_time_to_pattern.pro">apply_time_to_pattern.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">827 </td><td>&nbsp;</td></tr>
+   <tr><th colspan="5"><hr></th></tr>
+</table>
+</body></html>

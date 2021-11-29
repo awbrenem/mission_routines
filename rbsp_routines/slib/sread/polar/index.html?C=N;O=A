@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+ <head>
+  <title>Index of /rbsp_efw/codes/slib/sread/polar</title>
+ </head>
+ <body>
+<h1>Index of /rbsp_efw/codes/slib/sread/polar</h1>
+  <table>
+   <tr><th valign="top"><img src="/icons/blank.gif" alt="[ICO]"></th><th><a href="?C=N;O=D">Name</a></th><th><a href="?C=M;O=A">Last modified</a></th><th><a href="?C=S;O=A">Size</a></th><th><a href="?C=D;O=A">Description</a></th></tr>
+   <tr><th colspan="5"><hr></th></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="polar_gsm2spc.pro">polar_gsm2spc.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="polar_info.pro">polar_info.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">341 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="polar_orbit_patch_bad_day_with_sscweb_data.pro">polar_orbit_patch_bad_day_with_sscweb_data.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="polar_pwg_create_sdt_combo.pro">polar_pwg_create_sdt_combo.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">4.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="polar_pwg_uncompress.pro">polar_pwg_uncompress.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="polar_read_bfield.pro">polar_read_bfield.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">741 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="polar_read_cdaweb_hydra.pro">polar_read_cdaweb_hydra.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">6.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="polar_read_density.pro">polar_read_density.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">618 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="polar_read_ebv.pro">polar_read_ebv.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="polar_read_efield.pro">polar_read_efield.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="polar_read_ele_temp.pro">polar_read_ele_temp.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">669 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="polar_read_hydra.pro">polar_read_hydra.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="polar_read_ion_temp.pro">polar_read_ion_temp.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="polar_read_ion_vel.pro">polar_read_ion_vel.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">821 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="polar_read_mfe.pro">polar_read_mfe.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="polar_read_mltimg.pro">polar_read_mltimg.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="polar_read_orbit.pro">polar_read_orbit.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="polar_read_quaternion.pro">polar_read_quaternion.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">513 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="polar_read_ssc.pro">polar_read_ssc.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">8.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="polar_read_uvi.pro">polar_read_uvi.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="polar_sdt_check_missing_dates_for_field.pro">polar_sdt_check_missing_dates_for_field.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">4.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="polar_sdt_create_combo.pro">polar_sdt_create_combo.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">4.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="polar_sdt_create_combo_use_cdaweb_oa.pro">polar_sdt_create_combo_use_cdaweb_oa.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">4.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="polar_spc2gsm.pro">polar_spc2gsm.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.2K</td><td>&nbsp;</td></tr>
+   <tr><th colspan="5"><hr></th></tr>
+</table>
+</body></html>

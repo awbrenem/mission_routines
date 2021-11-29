@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+ <head>
+  <title>Index of /rbsp_efw/codes/slib/sread/rbsp</title>
+ </head>
+ <body>
+<h1>Index of /rbsp_efw/codes/slib/sread/rbsp</h1>
+  <table>
+   <tr><th valign="top"><img src="/icons/blank.gif" alt="[ICO]"></th><th><a href="?C=N;O=A">Name</a></th><th><a href="?C=M;O=A">Last modified</a></th><th><a href="?C=S;O=D">Size</a></th><th><a href="?C=D;O=A">Description</a></th></tr>
+   <tr><th colspan="5"><hr></th></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_ion_temp.pro">rbsp_read_ion_temp.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">691 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_ele_temp.pro">rbsp_read_ele_temp.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">696 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_density.pro">rbsp_read_density.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">778 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_quaternion.pro">rbsp_read_quaternion.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">921 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_uvw2gsm.pro">rbsp_uvw2gsm.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_orbit.pro">rbsp_read_orbit.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_sc_vel.pro">rbsp_read_sc_vel.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_gsm2uvw.pro">rbsp_gsm2uvw.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_bfield.pro">rbsp_read_bfield.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">1.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_b1_field.pro">rbsp_read_b1_field.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_spin_phase.pro">rbsp_read_spin_phase.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_maneuver_time.pro">rbsp_read_maneuver_time.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_pa_spec.pro">rbsp_read_pa_spec.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">1.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_info.pro">rbsp_info.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_q_uvw2gse_gen_file.pro">rbsp_read_q_uvw2gse_gen_file.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_burst_bfield.pro">rbsp_read_burst_bfield.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_en_spec.pro">rbsp_read_en_spec.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">2.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_spice_var.pro">rbsp_read_spice_var.pro</a></td><td align="right">2021-08-29 19:48  </td><td align="right">3.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_calc_emodel.pro">rbsp_calc_emodel.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_efield.pro">rbsp_read_efield.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">3.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_q_uvw2gse.pro">rbsp_read_q_uvw2gse.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_burst_efield.pro">rbsp_read_burst_efield.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">3.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_kev_electron.pro">rbsp_read_kev_electron.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">4.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_kev_proton.pro">rbsp_read_kev_proton.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">4.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_mageis.pro">rbsp_read_mageis.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">4.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_load_spice_kernel.pro">rbsp_load_spice_kernel.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">5.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_emfisis.pro">rbsp_read_emfisis.pro</a></td><td align="right">2021-08-26 14:43  </td><td align="right">7.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_eclipse_flag.pro">rbsp_read_eclipse_flag.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">7.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_spice.pro">rbsp_read_spice.pro</a></td><td align="right">2021-08-21 16:24  </td><td align="right">7.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_spice_gen_file.pro">rbsp_read_spice_gen_file.pro</a></td><td align="right">2021-08-21 16:24  </td><td align="right">8.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_efw.pro">rbsp_read_efw.pro</a></td><td align="right">2021-07-13 22:54  </td><td align="right">9.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_sdt_flag.pro">rbsp_read_sdt_flag.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right"> 10K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_hope.pro">rbsp_read_hope.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right"> 11K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="rbsp_read_boom_flag.pro">rbsp_read_boom_flag.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right"> 14K</td><td>&nbsp;</td></tr>
+   <tr><th colspan="5"><hr></th></tr>
+</table>
+</body></html>

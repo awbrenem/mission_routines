@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+ <head>
+  <title>Index of /rbsp_efw/codes/slib/math</title>
+ </head>
+ <body>
+<h1>Index of /rbsp_efw/codes/slib/math</h1>
+  <table>
+   <tr><th valign="top"><img src="/icons/blank.gif" alt="[ICO]"></th><th><a href="?C=N;O=A">Name</a></th><th><a href="?C=M;O=A">Last modified</a></th><th><a href="?C=S;O=A">Size</a></th><th><a href="?C=D;O=A">Description</a></th></tr>
+   <tr><th colspan="5"><hr></th></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="srmdim.pro">srmdim.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sinterpol.pro">sinterpol.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">2.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="wavelet_info.pro">wavelet_info.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="spoynt.pro">spoynt.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="find_node.pro">find_node.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sdot.pro">sdot.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="wavelet_make_scale.pro">wavelet_make_scale.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="make_bins.pro">make_bins.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sunitvec.pro">sunitvec.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="smkgmtrc.pro">smkgmtrc.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="smkarthm.pro">smkarthm.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="snorm.pro">snorm.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="choose_from.pro">choose_from.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sang.pro">sang.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">1.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="calc_thermal_pressure.pro">calc_thermal_pressure.pro</a></td><td align="right">2021-04-22 21:29  </td><td align="right">1.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="mesh_grid.pro">mesh_grid.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">961 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="wavelet_reconstruct.pro">wavelet_reconstruct.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">954 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="moving_median.pro">moving_median.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">906 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="suniq.pro">suniq.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">869 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="set_inter.pro">set_inter.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">808 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/text.gif" alt="[TXT]"></td><td><a href="readme.txt">readme.txt</a></td><td align="right">2021-03-02 08:31  </td><td align="right">483 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="lshell2ilat.pro">lshell2ilat.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">249 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="/icons/unknown.gif" alt="[   ]"></td><td><a href="sort_uniq.pro">sort_uniq.pro</a></td><td align="right">2021-03-02 08:31  </td><td align="right">186 </td><td>&nbsp;</td></tr>
+   <tr><th colspan="5"><hr></th></tr>
+</table>
+</body></html>
