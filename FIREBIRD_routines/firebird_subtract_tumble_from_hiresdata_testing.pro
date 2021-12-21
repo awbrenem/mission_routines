@@ -10,18 +10,22 @@
 
 rbsp_efw_init
 ;datetime = '2015-11-18'
-datetime = '2015-12-12'
+;datetime = '2015-12-12'
+datetime = '2019-10-04'
 ;datetime = '2015-06-11'  ;2 sec dettime doesn't work well here. 0.5 works much better
 
 timespan,datetime
 sc = '4'
 firebird_load_context_data_cdf_file,sc
-firebird_load_data,sc
+
+sctmp = sc
+firebird_load_data,sctmp
 
 
 dettime = 0.75  ;sec
 
-cal = firebird_get_calibration_counts2flux(datetime,sc)
+sctmp = sc
+cal = firebird_get_calibration_counts2flux(datetime,sctmp)
 ;chn = strtrim(cal.CHANNEL_USED_FOR_SURVEY_CALIBRATION - 1,2)
 
 
@@ -42,7 +46,7 @@ options,'comb_hires+survey','colors',[250,0]
 tplot,['comb_hires+survey','comb','fu'+sc+'_fb_col_hires_flux_0_detrend','flux_context_FU'+sc,'flux_context_FU'+sc+'_detrend']
 
 
-
+stop
 
 
 
@@ -82,11 +86,19 @@ options,'detcomb','ytitle','full detrended data vs!Cgap-reduced version'
 
 
 
-
-
-
-
 tplot,['comb','datagap_test','detcomb']
+
+
+;Compare to Shumko's microburst list 
+
+ub = load_firebird_microburst_list('4')
+;timed = time_double(ub.time)
+;goo = where((strmid(ub.time,0,10) eq datetime))
+
+store_data,'ub_shumko',data={x:ub.time,y:ub.flux_ch1}
+
+timebar,ub.time
+
 
 stop
 
