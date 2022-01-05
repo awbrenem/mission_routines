@@ -1,3 +1,5 @@
+;--Calibrate to flux and time-correct Mike Shumko's microbursts. 
+
 ;For a single date, turn the microburst values loaded from load_firebird_microburst_list.pro (which are signal/background ratios for each channel from column detector) into counts using:
 ;   counts = sig*sqrt(A+1) + A,
 ;where A is the running average.
@@ -36,7 +38,7 @@
 ; ub_flux = firebird_convert_shumko_microbursts2flux(fb, ub_list, tname, e_channel)
 
 
-function firebird_convert_shumko_microbursts2flux, fb, ub_list, tname, e_channel 
+function firebird_convert_shumko_microbursts2flux, fb, ub_list, tname, tname_timecorrection, e_channel 
 
 
 
@@ -62,13 +64,15 @@ function firebird_convert_shumko_microbursts2flux, fb, ub_list, tname, e_channel
 
 
 
+
+
   case e_channel of
      0: sig_vals = ub_list.sig_ch1
      1: sig_vals = ub_list.sig_ch2
      2: sig_vals = ub_list.sig_ch3
      3: sig_vals = ub_list.sig_ch4
      4: sig_vals = ub_list.sig_ch5
-     4: sig_vals = ub_list.sig_ch6
+     5: sig_vals = ub_list.sig_ch6
   endcase
 
 
@@ -80,18 +84,17 @@ function firebird_convert_shumko_microbursts2flux, fb, ub_list, tname, e_channel
 
   if good[0] ne -1 then begin
     for i=0, n_elements(good)-1 do begin
-      sig = sig_vals[good[i]]
-      A = tsample(,time_double(ub_list.time[good[i]]), time=tm)
-
-      ub_counts[i] = sig*sqrt(A+1) + A
+      A = tsample(tname,time_double(ub_list.time[good[i]]), time=tm)
+      tcorr = tsample(tname_timecorrection,time_double(ub_list.time[good[i]]))
+      ub_counts[i] = sig_vals[good[i]]*sqrt(A+1) + A
       ub_flux[i] = flux_conv * ub_counts[i]
-      ub_times[i] = tm
-
+      ub_times[i] = tm + tcorr
     endfor
 
 
-  return,{ub_times:ub_times, ub_flux:ub_flux} 
 
+    return,{ub_times:ub_times, ub_flux:ub_flux} 
+  endif else return, {ub_times:!values.f_nan, ub_flux:!values.f_nan} 
 
 
 end 
