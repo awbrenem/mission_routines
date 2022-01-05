@@ -3,7 +3,8 @@
 ;
 ; SYNTAX:
 ;
-; PURPOSE: Fetches/loads FIREBIRD official hires data and stores as tplot variables
+; PURPOSE: Fetches/loads FIREBIRD official hires data and stores as tplot variables.
+;         NOTE: applies the time correction to the data (only needed for hires data, not ephemeris)
 ;
 ; Usage: timespan,'2019-01-24'
 ;        firebird_load_data,'3'
