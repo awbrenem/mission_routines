@@ -9,11 +9,11 @@
 
 
 ;To calibrate from counts to flux (only for differential channels):
-;   flux = counts/cadence/energy_width/geometric_factor
+;   flux = counts/(cadence/1000.)/energy_width/geometric_factor
 
 
 ;Example usage (see firebird_load_context_data_cdf_file.pro):
-;   x = firebird_get_calibration_counts2flux,'2017-12-05','3'
+;   x = firebird_get_calibration_counts2flux('2017-12-05','3')
 
 
 function firebird_get_calibration_counts2flux,date,fb
