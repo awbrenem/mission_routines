@@ -1,0 +1,64 @@
+DATA FILE DESCRIPTIONS/CAVEATS
+
+Two rockets: low flyer (35.040) and high flyer (35.039) 
+
+-------------------------------------
+Instruments and files available: 
+-------------------------------------
+
+Low Flyer (35.040):
+-Langmuir probe 
+    ***Hassan will be analyzing sweeps to come up w/ calibrated density profile
+    ***No files yet
+-Efield DC (6m T-T stacers) 
+    ***No files yet
+-Efield AC
+    35040_LFDSP_S1_VLF12_mvm_AaronB.sav (de-boosted by Paulo, I think)
+-Impedance probe
+    ***No files yet
+-Magnetometer
+    Bartington: 35040_Bart_mag_NWU.sav
+    Bartington: 35040_Bart_mag_XYZ.sav
+    Bonalsky: 35040_BON_mag_model_NWU_LMC.sav
+    Bonalsky: 35040_Bonalsky_mag_XYZ.sav
+-Particles (EEA/EIA)
+    EEA: VISIONS2EEAShiresGSFC.sav (Clemmons)
+    EIA: VISIONS2EIAShiresGSFC.sav (Clemmons)
+    APES e- fluxes: ***No files yet
+    MILENA-1 and -2 (ENA fluxes): ***No files yet
+-Ephemeris
+    TRAJ35040.DAT
+    35040_WMM_poly_coefs.sav
+
+
+
+High Flyer (35.039):
+-Langmuir probe 
+    ***Hassan will be analyzing sweeps to come up w/ calibrated density profile
+    35039_Main_LFDSP_LPv_logamps_m10-930sec_v1.pdf
+    35039_Main_LFDSP_S1LPvHL_S1LPv-HLPv-L_amps_forhassan.sav
+-Efield DC (1.1m T-T)
+    ***Problematic boom deployment. Henry does not have any DC E field solution for 35.039
+-Efield AC
+    ***Have not yet received calibration/de-boost from Paulo (B=boosted channel)
+    35039_Main_VLF12B_sono_100-930sec_linear_v1.pdf
+    35039_Main_VLF12B_VLF12Boosted_counts.sav
+    35039_Main_VLF34B_sono_100-930sec_linear_v1.pdf
+    35039_Main_VLF34B_VLF34Boosted.sav
+-Magnetometer
+    Henry solution: 35039_dB_LMC.sav
+    Henry solution: 35039_dBmer_dBzon_dBpar_LMC_spinavg_v1.pdf
+-Particles
+    EEA/EIA: no particle instrumentation on high flyer
+    mNLP fast plasma params: ***No files yet
+    E-ENA fluxees: ***No files yet
+-Imager
+    RAI auroral images: ***No files yet
+-Ephemeris
+    ***No files yet
+
+
+
+
+
+
