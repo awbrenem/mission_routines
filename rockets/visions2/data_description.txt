@@ -8,12 +8,15 @@ Instruments and files available:
 
 Low Flyer (35.040):
 -Langmuir probe 
-    ***Hassan will be analyzing sweeps to come up w/ calibrated density profile
+    35040_FixedBiasDensity_forAaron.csv - low res from Hassan
     ***No files yet
 -Efield DC (6m T-T stacers) 
-    ***No files yet
--Efield AC
+    35040_unsmoothed_Esoln_v2.sav - Henry's solution from Jun 14, 2019 
+    35040_full_deglitched_Esoln.sav 
+-Efield VLF
     35040_LFDSP_S1_VLF12_mvm_AaronB.sav (de-boosted by Paulo, I think)
+-Efield HF (up to 1.5 MHz) 
+    ***No files yet
 -Impedance probe
     ***No files yet
 -Magnetometer
@@ -21,7 +24,7 @@ Low Flyer (35.040):
     Bartington: 35040_Bart_mag_XYZ.sav
     Bonalsky: 35040_BON_mag_model_NWU_LMC.sav
     Bonalsky: 35040_Bonalsky_mag_XYZ.sav
--Particles (EEA/EIA)
+    35040_dB_LMC_NWU_corrected.sav-Particles (EEA/EIA)
     EEA: VISIONS2EEAShiresGSFC.sav (Clemmons)
     EIA: VISIONS2EIAShiresGSFC.sav (Clemmons)
     APES e- fluxes: ***No files yet
@@ -34,17 +37,17 @@ Low Flyer (35.040):
 
 High Flyer (35.039):
 -Langmuir probe 
-    ***Hassan will be analyzing sweeps to come up w/ calibrated density profile
+    35039_FixedBiasDensity_forAaron.csv - low res from Hassan
     35039_Main_LFDSP_LPv_logamps_m10-930sec_v1.pdf
     35039_Main_LFDSP_S1LPvHL_S1LPv-HLPv-L_amps_forhassan.sav
--Efield DC (1.1m T-T)
-    ***Problematic boom deployment. Henry does not have any DC E field solution for 35.039
--Efield AC
+-Efield DC (1.1m T-T and 5m T-T)
+    ***Problematic deployment w/ boom 12 (one came out partially and the opposite one was fine). Thus Henry does not have any DC E field solution for 35.039
+-Efield VLF
     ***Have not yet received calibration/de-boost from Paulo (B=boosted channel)
-    35039_Main_VLF12B_sono_100-930sec_linear_v1.pdf
     35039_Main_VLF12B_VLF12Boosted_counts.sav
-    35039_Main_VLF34B_sono_100-930sec_linear_v1.pdf
     35039_Main_VLF34B_VLF34Boosted.sav
+-Efield HF (up to 1.5 MHz) 
+    ***No files yet
 -Magnetometer
     Henry solution: 35039_dB_LMC.sav
     Henry solution: 35039_dBmer_dBzon_dBpar_LMC_spinavg_v1.pdf
