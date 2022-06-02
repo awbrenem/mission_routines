@@ -1,5 +1,5 @@
-;Simulate a microburst at the location of FIREBIRD as a function of energy and time.
-;***USE IN CONCERT WITH microburst_fit_slope.pro by tplot_saving the data at end of program.
+;Create a microburst and simulate its detection at the location of a satellite (e.g. FIREBIRD) as a function of energy and time.
+;***To get microburst best fit and error slopes first run microburst_fit_slope.pro 
 
 ;*********************************************
 ;TODO: incorporate 10-50msec integration time that FIREBIRD uses for uB simulation.
@@ -80,30 +80,40 @@ rbsp_efw_init
 
 ;Estimate of ~31 counts/flux_unit 
 
-
 ;***********************************
 
 
-;;Load up spec of real microburst (from microburst_fit_slope.pro) so that I can set the 
-;;simulated uB parameters
-;tplot_restore,filename='/Users/aaronbreneman/Desktop/code/Aaron/github.umn.edu/research_projects/RBSP_Firebird_Colpitts_Chen/realistic_uB_spec_20160830_2047-2048.tplot'
-;;Note that times for the realistic spec have been shifted so that they start at 2014-01-01, just like
-;;the simulated microburst here. 
-;tplot,['ub_spec_after_detection_realuB']
-;
-;;Determine max flux of 220 keV bin 
-;get_data,'ub_spec_after_detection_realuB',data=dd
+;Load up spec of real microburst (from microburst_fit_slope.pro) so that I can set the 
+;simulated uB parameters
+datetime_real = '20160830_2047-2048'
+tplot_restore,filename='/Users/abrenema/Desktop/code/Aaron/github/mission_routines/IMPAX/realistic_uB_spec_'+datetime_real+'.tplot'
+;Note that times for the realistic spec have been shifted so that they start at 2014-01-01, just like
+;the simulated microburst here. 
+loadct,39
+zlim,'ub_spec_after_detection_realuB',0,0,0
+tplot,['ub_spec_after_detection_realuB']
+
+;Determine max flux of 220 keV bin 
+get_data,'ub_spec_after_detection_realuB',data=dd
 
 ;Flux max for 220 keV bin
-;print,max(dd.y[*,0])
+print,max(dd.y[*,0])
 ;       16.475281
+
+stop
 
 ;------------------------------------------------------------------------
 ;Define microburst parameters
+;Can define flux at 220 keV from either
+;1) direct observations of flux at 220 keV from actual microburst
+;2) flux at a lower energy extrapolated to 220 keV based on Arlo's fits.
 ;------------------------------------------------------------------------
 
+;---
 ;Flux max for the ~220 keV FIREBIRD bin (from observations)
-;f0 = 25.   ;flux
+f0 = max(dd.y[*,0])
+print,f0
+;f0 = 19.   ;flux
 ;f0 = 1000.  ;counts   
 
 
@@ -114,21 +124,26 @@ rbsp_efw_init
 ;E0tmp = 70.
 
 ;;uB at 2016-08-30/20:47:28
-f0tmp = 120. ;Flux at 0 keV
-E0tmp = 100.
+;f0tmp = 140. ;Flux at E0tmp (keV)
+;E0tmp = 100.
+;
+;f0 = f0tmp*exp(-1*220./E0tmp)  ;typical uB flux at 220 keV
+;---
 
-f0 = f0tmp*exp(-1*220./E0tmp)  ;typical uB flux at 220 keV
 
-
-
-
+;---
 ;Set detector cadence
-detector_cadence = 0.025 ;sec 
+cadence_newdetector = 0.05 ;sec 
+;---
 
 
+;---
 ;multiplicative factor for the noise.
 noise_scalefac = 0.01
+;---
 
+
+;---
 ;Add in contaminating microburst "noise" at sample rate cadence
 ;These are the sample rate bumps you see in real data that may correspond to 
 ;edge-detected microbursts?
@@ -139,8 +154,9 @@ noise_scalefac = 0.01
 ;noise in the realistic uB (say energy channel 500) to be 10% of the max value in that channel, 
 ;you would set noise_from_uB_fraction >> 0.1. 
 ;Just adjust so that things look real. 
-noise_from_uB_fraction = 3.  ;--> determined by comparison to 2016-08-30/20:47:28 dispersive event
-;noise_from_uB_fraction = 1.  ;--> determined by comparison to 2016-08-30/20:47:28 dispersive event
+;noise_from_uB_fraction = 3.  ;--> determined by comparison to 2016-08-30/20:47:28 dispersive event
+noise_from_uB_fraction = 1.  ;--> determined by comparison to 2016-08-30/20:47:28 dispersive event
+;---
 
 
 
@@ -148,35 +164,47 @@ noise_from_uB_fraction = 3.  ;--> determined by comparison to 2016-08-30/20:47:2
 
 
 
+;---
 ;energy profile ("infinite" resolution uB) --> exp(-(E-Eo)^epow/dE^epow)
 nenergies = 1000. ;number of microburst energy steps
 emin_keV = 0. 
 emax_keV = 1000.
 energies_uB = (emax_keV - emin_keV)*indgen(nenergies)/(nenergies-1) + emin_keV   ;creates a 1000 element array
 Eo = 0. ;Center energy for Gaussian
-dE = 100. ;Width of energy Gaussian curve (keV)
+dE = 75. ;Width of energy Gaussian curve (keV)
 epow = 1.  ;typically=1     flux[*,i] *= exp(-1*(energies_uB - Eo)^epow/dE^epow)
+;---
 
 
+;---
 ;time profile  (exp(-(t-to)^2/dt^2))
 ntsteps = 1000. ;number of microburst time steps for "infinite" resolution uB
 tend_sec = 1.15  ;total time duration considered in seconds (microburst contained within this)
 ;dt = 0.2  ;Width (sec) of the exponential falloff
 dt = 0.1  ;Width (sec) of the exponential falloff
-to = 0.47  ;time offset for the zeroth bin (sec). 
-t_dispersion = 0.12 ;sec  - delta time b/t lowest and highest energy channels
+to = 0.56  ;time offset for the zeroth bin (sec). Choose to align with actual microburst from microburst_fit_slope.pro
+t_dispersion = 0.134 ;sec  - delta time b/t lowest and highest energy channels from best fit line (emin_keV; emax_keV)
+;---
 
 
 
+
+;-----------------------------------------------------------------
 ;;Define FIREBIRD detector channels
+;-----------------------------------------------------------------
+
+
+
 ;;Values from Crew16 for the collimated detector on FU4
-;fblow = [220.,283.,384.,520.,721.]
-;fbhig = [283.,384.,520.,721.,985.]
+fblow = [220.,283.,384.,520.,721.]
+fbhig = [283.,384.,520.,721.,985.]
+fb_comparison = 1.
 
 
 ;;Stupidly fat channels
 ;fblow = [220.,520.]
 ;fbhig = [520.,721.]
+;fb_comparison = 0.
 
 
 ;;Hypothetical 10 channels
@@ -186,17 +214,21 @@ t_dispersion = 0.12 ;sec  - delta time b/t lowest and highest energy channels
 ;;oplot,indgen(n_elements(fblow2))/2.,fblow2,color=250,psym=-4
 ;fblow = fblow2 
 ;fbhig = fbhig2
+;fb_comparison = 0.
+
 
 ;;Extremely hires channels
-nch = 65.
-fblow = (1000 - 200.)*indgen(nch)/(nch-1) + 220.
-fbhig = shift(fblow,-1)
-fbhig[n_elements(fbhig)-1] = 1040.
+;nch = 65.
+;fblow = (1000 - 200.)*indgen(nch)/(nch-1) + 220.
+;fbhig = shift(fblow,-1)
+;fbhig[n_elements(fbhig)-1] = 1040.
+;fb_comparison = 0.
 
 ;nch = 5.
 ;fblow = (1000 - 200.)*indgen(nch)/(nch-1) + 220.
 ;fbhig = shift(fblow,-1)
 ;fbhig[n_elements(fbhig)-1] = 1040.
+;fb_comparison = 0.
 
 
 nchannels = n_elements(fblow)
@@ -262,14 +294,21 @@ options,'ub_timevariation','ytitle','Energy (keV)'
 options,'ub_timevariation','xtitle','time (unitless)'
 options,'ub_timevariation','title','Simulated Microburst time variation (normalized)'
 
-ylim,'ub_timevariation',200,1000
+options,'fitlineHR','colors',0
+store_data,'tmpcomb',data=['ub_timevariation','fitlineHR']
+store_data,'tmpcomb2',data=['ub_spec_after_detection_realuB','fitlineHR']
+
+ylim,['tmpcomb','tmpcomb2'],0,1000
 zlim,'ub_timevariation',0,1,0
-;Plot the normalized dispersive time signature
-tplot,'ub_timevariation'
+zlim,'ub_spec_after_detection_realuB',0.01,20,1
+loadct,39
+;Plot the normalized dispersive time signature. NOTE: don't expect the magnitude to match real microburst at this point.
+;***check to see that the dispersion is similar to real microburst 
+tplot,['tmpcomb','tmpcomb2']
 
 
 
-
+stop
 
 
 
@@ -295,10 +334,16 @@ options,'ub_spec_nonoise','ytitle','Energy (keV)'
 options,'ub_spec_nonoise','xtitle','time (unitless)'
 options,'ub_spec_nonoise','title','Simulated Microburst flux (normalized)!Cno noise'
 
-ylim,'ub_spec_nonoise',200,1000
-zlim,'ub_spec_nonoise',0.1,f0,1
-tplot,['ub_timevariation','ub_spec_nonoise']
+store_data,'tmpcomb3',data=['ub_spec_nonoise','fitlineHR']
 
+
+ylim,'tmpcomb3',0,1000
+zlim,'ub_spec_nonoise',0.1,f0,1
+loadct,39
+;tplot,['ub_timevariation','ub_spec_nonoise']
+tplot,['tmpcomb2','tmpcomb','tmpcomb3']
+
+stop
 
 ;fluxN = flux
 ;for ee=0.,nenergies-1 do begin $
@@ -309,9 +354,8 @@ tplot,['ub_timevariation','ub_spec_nonoise']
 ;endfor
 ;flux = fluxN
 
-;;Now add in instrumental noise spectrum to this. This will only effect channels
-;with low counts.  
-noisetimesteps = tend_sec/detector_cadence
+;Now add in instrumental noise spectrum to this. This will only effect channels with low counts.  
+noisetimesteps = tend_sec/cadence_newdetector
 noisetimes = tend_sec*indgen(noisetimesteps)/(noisetimesteps-1)
 noiseN = fltarr(nenergies,noisetimesteps)
 
@@ -350,7 +394,7 @@ flux = fluxN
 ;Just adjust so that things look real. 
 
 
-noisetimesteps = tend_sec/detector_cadence
+noisetimesteps = tend_sec/cadence_newdetector
 noisetimes = tend_sec*indgen(noisetimesteps)/(noisetimesteps-1)
 noiseN = fltarr(nenergies,noisetimesteps)
 
@@ -369,7 +413,7 @@ for i=0,nenergies-1 do noiseF[i,*] = interpol(reform(noiseN[i,*]),noisetimes,tim
 ;plot,noiseF[20,*]
 fluxN = flux + noiseF
 ;plot,fluxN[300,*]
-stop
+;stop
 
 
 
@@ -428,11 +472,16 @@ options,'ub_spec_wnoise','ytitle','Energy (keV)'
 options,'ub_spec_wnoise','xtitle','time (unitless)'
 options,'ub_spec_wnoise','title','Simulated Microburst flux (normalized)'
 
-ylim,'ub_spec_wnoise',200,1000
-zlim,'ub_spec_wnoise',0.1,f0,1
-tplot,['ub_timevariation','ub_spec_nonoise','ub_spec_wnoise']
+store_data,'tmpcomb4',data=['ub_spec_wnoise','fitlineHR']
 
-;stop
+
+ylim,'tmpcomb4',0,1000
+zlim,'ub_spec_wnoise',0.1,f0,1
+loadct,39
+tplot,['tmpcomb2','tmpcomb4']
+;tplot,['ub_timevariation','ub_spec_nonoise','ub_spec_wnoise']
+
+stop
 
 
 ;---------------------------------------------------------------------
@@ -499,18 +548,46 @@ endfor
 ;stop
 
 
+store_data,'uB_after_detection',tms,transpose(Fch_integrated)
+store_data,'ub_spec_after_detection',data={x:tms,y:transpose(Fch_integrated),v:ecenter} ;spectral version
+options,'ub_spec_after_detection','spec',1
+
+
+;******************************
+;Finally, downsample the ideal microburst to the cadence of the new detector. 
+
+;cadence_newdetector = 0.05  ;sec (what do you want cadence of new detector to be?)
+t0 = tms[0]
+t1 = tms[n_elements(tms)-1]
+nelem = (t1 - t0)/cadence_newdetector + 2
+newtimes = dindgen(nelem)*cadence_newdetector + t0
+;print,time_string(newtimes,prec=3)
+
+tinterpol_mxn,'uB_after_detection',newtimes,/overwrite
+tinterpol_mxn,'ub_spec_after_detection',newtimes,/overwrite
+
+
+;options,'ub_spec_after_detection_interp','spec',1
+;zlim,['ub_spec_after_detection','ub_spec_after_detection_interp'],0,20,0
+;
+;loadct,39
+;tplot,['ub_spec_after_detection','ub_spec_after_detection_interp']
+
+
+
+;*******FIX THIS???
+;tshift = newtimes[0] - time_double('2014-01-01')
+
+
+
 
 
 ;Plot resultant uB after FIREBIRD detect
 
-store_data,'uB_after_detection',tms,transpose(Fch_integrated)
 split_vec,'uB_after_detection',suffix='_'+chnameslow
 chnames = 'uB_after_detection_'+chnameslow
 
 
-;Create spectral version 
-store_data,'ub_spec_after_detection',data={x:tms,y:transpose(Fch_integrated),v:ecenter}
-options,'ub_spec_after_detection','spec',1 
 
 ;;ylim,'uB_after_detection_'+['220','283','384','520','721'],0,max(Fch_integrated)
 ;ylim,'uB_after_detection_220',0,200
@@ -533,55 +610,86 @@ options,'ub_spec_after_detection','spec',1
 ;RBSP_EFW> print,fbhig
 ;      283.000      384.000      520.000      721.000      985.000
 
-tplot,'ub_spec_after_detection'
+;tplot,'ub_spec_after_detection'
+
+
+store_data,'tmpcomb5',data=['ub_spec_after_detection','fitlineHR']
+
 
 zlim,['ub_spec_nonoise','ub_spec_wnoise','ub_spec_after_detection'],0.001,150,1
-ylim,['ub_spec_nonoise','ub_spec_wnoise','ub_spec_after_detection'],200,1000,0
+ylim,'tmpcomb5',0,1000,0
+zlim,'tmpcomb5',0.01,20,1
+;ylim,['ub_spec_nonoise','ub_spec_wnoise','ub_spec_after_detection'],0,1000,0
 ;tplot,['ub_spec_nonoise','ub_spec_wnoise','uB_after_detection_721','uB_after_detection_520','uB_after_detection_384','uB_after_detection_283','uB_after_detection_220']
-tplot,['ub_spec_nonoise','ub_spec_wnoise','ub_spec_after_detection',reverse(chnames)]
+loadct,39
+tplot,['tmpcomb2','tmpcomb4','tmpcomb5']
+stop
+
+
+
+;*********************************************************
+;When running the simulated microburst through the actual FIREBIRD channels:
+;For each energy bin, compare the line plot from simulated to real microbursts. 
+; *********************************************************
+if fb_comparison eq 1 then begin 
+
+  options,'uB_after_detection_???','color',250
+  store_data,'tmp220',data=['ub_spec_after_detection_realuB_line_0','uB_after_detection_220']
+  store_data,'tmp283',data=['ub_spec_after_detection_realuB_line_1','uB_after_detection_283']
+  store_data,'tmp384',data=['ub_spec_after_detection_realuB_line_2','uB_after_detection_384']
+  store_data,'tmp520',data=['ub_spec_after_detection_realuB_line_3','uB_after_detection_520']
+  store_data,'tmp721',data=['ub_spec_after_detection_realuB_line_4','uB_after_detection_721']
+  
+  loadct,39
+  ;tplot,[reverse(chnames)]
+  tplot,['tmp721','tmp520','tmp384','tmp283','tmp220']
+ stop
+
+endif
+
+
+;tplot,['ub_spec_wnoise','ub_spec_after_detection',reverse(chnames)]
 
 ;!p.charsize = 2
 ;!p.multi = [0,0,5]
 ;for i=0,4 do plot,Fch_integrated[4-i,*],xtitle='time',ytitle='FB channel = '+strtrim(fblow[4-i],2)
 
-stop
-
-;-----------------------------------------------------------------------------
-;Compare to the linefits of the realistic uB (from microburst_fit_slope.pro)
-;-----------------------------------------------------------------------------
-
-restore,'~/Desktop/code/Aaron/github/mission_routines/IMPAX/realistic_uB_linefits_20160830_2047-2048'
-tplot_restore,filename='~/Desktop/code/Aaron/github/mission_routines/realistic_uB_spec_20160830_2047-2048.tplot'
-;Note that times for the realistic spec have been shifted so that they start at 2014-01-01, just like
-;the simulated microburst here. 
-
-get_data,'ub_spec_after_detection_realuB',data=dd
-store_data,'ubREAL_after_detection_220',dd.x,dd.y[*,0]
-store_data,'ubREAL_after_detection_283',dd.x,dd.y[*,1]
-store_data,'ubREAL_after_detection_384',dd.x,dd.y[*,2]
-store_data,'ubREAL_after_detection_520',dd.x,dd.y[*,3]
-store_data,'ubREAL_after_detection_721',dd.x,dd.y[*,4]
-
-store_data,'ch1comb',data=['ubREAL_after_detection_220','uB_after_detection_220'] & options,'ch1comb','colors',[0,250]
-store_data,'ch2comb',data=['ubREAL_after_detection_283','uB_after_detection_283'] & options,'ch2comb','colors',[0,250]
-store_data,'ch3comb',data=['ubREAL_after_detection_384','uB_after_detection_384'] & options,'ch3comb','colors',[0,250]
-store_data,'ch4comb',data=['ubREAL_after_detection_520','uB_after_detection_520'] & options,'ch4comb','colors',[0,250]
-store_data,'ch5comb',data=['ubREAL_after_detection_721','uB_after_detection_721'] & options,'ch5comb','colors',[0,250]
-
-options,'ch1comb','ytitle','220-283!CkeV'
-options,'ch2comb','ytitle','283-384!CkeV'
-options,'ch3comb','ytitle','384-520!CkeV'
-options,'ch4comb','ytitle','520-721!CkeV'
-options,'ch5comb','ytitle','721-985!CkeV'
 
 
+;;-----------------------------------------------------------------------------
+;;Compare to the linefits of the realistic uB (from microburst_fit_slope.pro)
+;;-----------------------------------------------------------------------------
 
-zlim,['ub_spec_after_detection','ub_spec_after_detection_realuB'],0.01,10,1
-ylim,['ub_spec_after_detection','ub_spec_after_detection_realuB'],220,850,0
-options,['ub_spec_after_detection','ub_spec_after_detection_realuB'],'panel_size',2
-options,'ch?comb','panel_size',0.5
-;title = 'Simulated vs real uB-Real uB at 20160830_2047-2048-Simulated has J0='
-tplot,['ub_spec_after_detection_realuB','ub_spec_after_detection','ch5comb','ch4comb','ch3comb','ch2comb','ch1comb']
+;restore,'~/Desktop/code/Aaron/github/mission_routines/IMPAX/realistic_uB_linefits_20160830_2047-2048'
+;tplot_restore,filename='~/Desktop/code/Aaron/github/mission_routines/realistic_uB_spec_20160830_2047-2048.tplot'
+;;Note that times for the realistic spec have been shifted so that they start at 2014-01-01, just like
+;;the simulated microburst here. 
+;
+;get_data,'ub_spec_after_detection_realuB',data=dd
+;store_data,'ubREAL_after_detection_220',dd.x,dd.y[*,0]
+;store_data,'ubREAL_after_detection_283',dd.x,dd.y[*,1]
+;store_data,'ubREAL_after_detection_384',dd.x,dd.y[*,2]
+;store_data,'ubREAL_after_detection_520',dd.x,dd.y[*,3]
+;store_data,'ubREAL_after_detection_721',dd.x,dd.y[*,4]
+;
+;store_data,'ch1comb',data=['ubREAL_after_detection_220','uB_after_detection_220'] & options,'ch1comb','colors',[0,250]
+;store_data,'ch2comb',data=['ubREAL_after_detection_283','uB_after_detection_283'] & options,'ch2comb','colors',[0,250]
+;store_data,'ch3comb',data=['ubREAL_after_detection_384','uB_after_detection_384'] & options,'ch3comb','colors',[0,250]
+;store_data,'ch4comb',data=['ubREAL_after_detection_520','uB_after_detection_520'] & options,'ch4comb','colors',[0,250]
+;store_data,'ch5comb',data=['ubREAL_after_detection_721','uB_after_detection_721'] & options,'ch5comb','colors',[0,250]
+
+;options,'ch1comb','ytitle','220-283!CkeV'
+;options,'ch2comb','ytitle','283-384!CkeV'
+;options,'ch3comb','ytitle','384-520!CkeV'
+;options,'ch4comb','ytitle','520-721!CkeV'
+;options,'ch5comb','ytitle','721-985!CkeV'
+
+;zlim,['ub_spec_after_detection','ub_spec_after_detection_realuB'],0.01,10,1
+;ylim,['ub_spec_after_detection','ub_spec_after_detection_realuB'],220,850,0
+;options,['ub_spec_after_detection','ub_spec_after_detection_realuB'],'panel_size',2
+;options,'ch?comb','panel_size',0.5
+;;title = 'Simulated vs real uB-Real uB at 20160830_2047-2048-Simulated has J0='
+;tplot,['ub_spec_after_detection_realuB','ub_spec_after_detection','ch5comb','ch4comb','ch3comb','ch2comb','ch1comb']
 
 ;-----------------------------------------------------------------------------
 
@@ -592,13 +700,16 @@ stop
 
 ;-------------------------------------------------------
 ;Save the data so I can load it up with microburst_fit_slope.pro 
+tplot_save,'*',filename='~/Desktop/fb_ub_'+strtrim(nchannels,2)+'channel_cadence='+strtrim(cadence_newdetector,2)+'_recreation_of_'+datetime_real
 
-tplot_save,'*',filename='~/Desktop/fb_ub_5channel'
-tplot_save,'*',filename='~/Desktop/fb_ub_10channel'
-tplot_save,'*',filename='~/Desktop/fb_ub_5channel_nonoise_recreation_of_20160830_2047-2048'
-tplot_save,'*',filename='~/Desktop/fb_ub_10channel_nonoise_recreation_of_20160830_2047-2048'
-tplot_save,'*',filename='~/Desktop/fb_ub_20channel_nonoise_recreation_of_20160830_2047-2048'
-tplot_save,'*',filename='~/Desktop/fb_ub_40channel_nonoise_recreation_of_20160830_2047-2048'
+
+
+;tplot_save,'*',filename='~/Desktop/fb_ub_5channel_cadence='+strtrim(cadence_newdetector,2)
+;tplot_save,'*',filename='~/Desktop/fb_ub_10channel_cadence='+strtrim(cadence_newdetector,2)
+;tplot_save,'*',filename='~/Desktop/fb_ub_5channel_cadence='+strtrim(cadence_newdetector,2)+'_recreation_of_20160830_2047-2048'
+;tplot_save,'*',filename='~/Desktop/fb_ub_10channel_cadence='+strtrim(cadence_newdetector,2)+'_recreation_of_20160830_2047-2048'
+;tplot_save,'*',filename='~/Desktop/fb_ub_20channel_cadence='+strtrim(cadence_newdetector,2)+'_recreation_of_20160830_2047-2048'
+;tplot_save,'*',filename='~/Desktop/fb_ub_40channel_cadence='+strtrim(cadence_newdetector,2)+'_recreation_of_20160830_2047-2048'
 
 ;-------------------------------------------------------
 
