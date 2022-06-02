@@ -35,9 +35,9 @@
 ;---------------------------------------------------------------------------------------------------------
 
 
-option = '1' ;load FIREBIRD Data (SAVES DATA AT END THAT CAN BE LOADED WITH microburst_simulator.pro)
+;option = '1' ;load FIREBIRD Data (SAVES DATA AT END THAT CAN BE LOADED WITH microburst_simulator.pro)
              ;This is how I'll choose the test parameters in microburst_simulator.pro that mimic a real life event.
-;option = '2'  ;load simulated FIREBIRD microburst (from microburst_simulator.pro)
+option = '2'  ;load simulated FIREBIRD microburst (from microburst_simulator.pro)
 
 ;terror_pad = 1.  ;Using the sampling time as the +/- time error doesn't capture the real knowledge in the slope. 
 ;                 ;This value pads the errors to be more realistic. 
@@ -48,22 +48,30 @@ spec = 'ub_spec_after_detection'  ;after artificial uB goes through fake detecto
 ;spec = 'ub_spec_wnoise'   ;full [1000,1000] uB
 ;spec = 'ub_spec_nonoise'    ;full [1000,1000] uB
 
-;MAKE SURE THE NUMBER OF ENERGY CHANNELS IS SET CORRECTLY 
-;nchannels = floor(1000)  ;number of detector ENERGY channels in "spec"
-nchannels = floor(5)  ;number of detector ENERGY channels in "spec"
-;nchannels = floor(40)  ;number of detector ENERGY channels in "spec"
+
+;Select filename (don't include .tplot)
+;filename = 'fb_ub_25channel_cadence=0.0500000_recreation_of_20160830_2047-2048'
+;filename = 'fb_ub_25channel_cadence=0.0500000_Emin=89_Emax=1022_recreation_of_20160830_2047-2048'
+;filename = 'fb_ub_65channel_cadence=0.0500000_Emin=77_Emax=1022_recreation_of_20160830_2047-2048'
+filename = 'fb_ub_25channel_cadence=0.0300000_Emin=89_Emax=1022_recreation_of_20160830_2047-2048'
+;filename = 'fb_ub_10channel_cadence=0.0500000_recreation_of_20160830_2047-2048'
+;if nchannels eq 5 or nchannels eq 10 or nchannels eq 20 or nchannels eq 40 then filename = 'fb_ub_'+strtrim(nchannels,2)+'channel_recreation_of_20160830_2047-2048'
+;if nchannels eq 1000 then filename = 'fb_ub_10channel_recreation_of_20160830_2047-2048'
+;fb_ub_5channel_nonoise_recreation_of_20160830_2047-2048.
 
 
-if nchannels eq 5 or nchannels eq 10 or nchannels eq 20 or nchannels eq 40 then filename = 'fb_ub_'+strtrim(nchannels,2)+'channel_nonoise_recreation_of_20160830_2047-2048.tplot'
-if nchannels eq 1000 then filename = 'fb_ub_10channel_nonoise_recreation_of_20160830_2047-2048.tplot'
-;fb_ub_5channel_nonoise_recreation_of_20160830_2047-2048.tplot
+
+;;MAKE SURE THE NUMBER OF ENERGY CHANNELS IS SET CORRECTLY 
+;sstr = strsplit(filename,'_',/extract)
+;sstrtmp = sstr[2]
+;tmp = strpos(sstrtmp,'channel')
+;nchannels = float(strmid(sstrtmp,0,tmp))
 
 
 
-fluxpeak = fltarr(nchannels)
-fluxadj_high = fltarr(nchannels) 
-fluxadj_low = fltarr(nchannels) 
-tpeak = dblarr(nchannels)
+
+
+
 
 rbsp_efw_init
 device,decomposed=0
@@ -145,55 +153,9 @@ if option eq '2' then begin
 
     path = '/Users/abrenema/Desktop/code/Aaron/github/mission_routines/IMPAX/'
     ;SELECT DATA TO LOAD
-    tplot_restore,filename=path + filename
+    tplot_restore,filename=path + filename + '.tplot'
+    restore,path + filename + '.sav'
 
-
-    ;;Downsample fake microburst to cadence of FIREBIRD detector so that the
-    ;;best fit line is properly determined. 
-;
-;    cadence_new = 0.05  ;sec (what do you want cadence of new detector to be?) 
-;    t0 = dd.x[0]
-;    t1 = dd.x[n_elements(dd.x)-1]
-;    nelem = (t1 - t0)/cadence_new + 2
-;    newtimes = dindgen(nelem)*cadence_new + t0
-;    print,time_string(newtimes,prec=3)
-;   
-;    tinterpol_mxn,spec,newtimes
-;    tshift = newtimes[0] - time_double('2014-01-01')
-
-
-
-
-;    cadence = dd.x[1] - dd.x[0] ;sec
-
-    if nchannels eq 5 then begin 
-        ;Define FIREBIRD detector channels
-        ;Values from Crew16 for the collimated detector on FU4
-        fblow = [220.,283.,384.,520.,721.]
-        fbhig = [283.,384.,520.,721.,985.]
-    endif   
-
-    if nchannels eq 10 then begin 
-        fblow = [220.,251.,283.,333.,384.,452.,520.,620.,721.,853.]
-        fbhig = [251.,283.,333.,384.,452.,520.,620.,721.,853.,985.]
-    endif   
-
-    if nchannels eq 20 then begin 
-        fblow = [220.,262.,304.,346.,388.,430.,472.,514.,556.,598.,641.,683.,725.,767.,809.,851.,893.,935.,977.,1020.]
-        fbhig = [262.,304.,346.,388.,430.,472.,514.,556.,598.,641.,683.,725.,767.,809.,851.,893.,935.,977.,1020.,1040.]
-    endif   
-    if nchannels eq 40 then begin 
-       fblow = [220.00000,240.51282,261.02563,281.53845,302.05127,322.56409,343.07690,363.58972,384.10257,$
-        404.61539,425.12820,445.64102,466.15384,486.66666,507.17947,527.69232,548.20514,568.71796,$
-        589.23077,609.74359,630.25641,650.76923,671.28204,691.79486,712.30768,732.82050,753.33331,$
-        773.84613,794.35895,814.87177,835.38464,855.89746,876.41028,896.92310,917.43591,937.94873,$
-        958.46155,978.97437,999.48718,1020.0000]
-        fbhig = [240.51282,261.02563,281.53845,302.05127,322.56409,343.07690,363.58972,384.10257,404.61539,$
-        425.12820,445.64102,466.15384,486.66666,507.17947,527.69232,548.20514,568.71796,589.23077,$
-        609.74359,630.25641,650.76923,671.28204,691.79486,712.30768,732.82050,753.33331,773.84613,$
-        794.35895,814.87177,835.38464,855.89746,876.41028,896.92310,917.43591,937.94873,958.46155,$
-        978.97437,999.48718,1020.0000,1040.0000]
-    endif
 
     if nchannels eq 1000 then begin 
         fblow = dd.v
@@ -201,28 +163,11 @@ if option eq '2' then begin
     endif   
 
     ecenter = (fblow + fbhig)/2.
-    ;get_data,spec+'_interp',data=d2
-    ;store_data,spec+'_interp',newtimes-tshift,d2.y,ecenter
-    ;options,spec+'_interp','spec',1
 
 
 
-    ;Compare ideal microburst with version at cadence of desired detector.
+
     timespan,'2014-01-01/00:00',1,/sec
-    ;ylim,[spec,spec+'_interp'],200,1000
-    ;loadct,39
-    ;tplot,[spec,spec+'_interp']
-
-;    tms = dd.x
-;    ytmp = dd.y
-
-;    ;smooth the data
-;    ytmp2 = smooth(ytmp,2)
-;    store_data,'tst',data={x:dd.x,y:ytmp2,v:dd.v}
-;    options,'tst','spec',1
-;    ylim,'tst',200,1000 & zlim,'tst',0,150
-;    ytmp = ytmp2
-
 
  
     copy_data,spec,'ub_spec_after_detection'
@@ -237,9 +182,12 @@ endif
 
 
 
-;;random time error
-;trandom = randomu(1,5)*cadence
-;trandom -= median(trandom)
+fluxpeak = fltarr(nchannels)
+fluxadj_high = fltarr(nchannels)
+fluxadj_low = fltarr(nchannels)
+tpeak = dblarr(nchannels)
+
+
 
 
 
@@ -247,11 +195,11 @@ tpeak = dblarr(nchannels)
 ;extract time of max value in each channel 
 for i=0,nchannels-1 do begin
     fluxpeak[i] = max(ytmp[*,i],wh)
-    tpeak[i] = tms[wh] ;+ trandom[i]
-    fluxadj_high[i] = ytmp[wh+1,i]
-    fluxadj_low[i] = ytmp[wh-1,i]
-;plot,ytmp[*,i]
-;stop
+
+    tpeak[i] = tms[wh]
+    if wh le n_elements(tms)-2 then fluxadj_high[i] = ytmp[wh+1,i] else fluxadj_high[i] = ytmp[wh,i] 
+    if wh gt 0 then fluxadj_low[i] = ytmp[wh-1,i] else fluxadj_low[i] = ytmp[wh,i] 
+
 endfor
 
 ;(CHECK) Plot the peak flux value as well as the adjacent values
@@ -311,9 +259,16 @@ eerror = (fbhig - fblow)/2.
 ;eerror[4] = 10000.
 
 
-;Remove data points that have very low signal to noise 
-noiselevel = 0.1
-good = where(fluxpeak ge 2*noiselevel)
+;;Remove data points that have very low signal to noise 
+;Test highest bin to see what noise level should be. 
+
+
+;*************
+;Set noise level (higher values mean a datapoint is less likely to exceed noise)
+if option eq '1' then noiselevel = 0.02
+if option eq '2' then noiselevel = 2.*noise_max  ;set from microburst_simulator.pro
+;noiselevel = 0.18
+good = where(fluxpeak ge noiselevel)
 if good[0] ne -1 then begin
   times = times[good]
   ecenter = ecenter[good]
@@ -321,13 +276,6 @@ if good[0] ne -1 then begin
   terror = terror[good]
 endif
   
-;for i=0,nchannels-1 do if fluxpeak[i] le 2*noiselevel then eerror[i] = 10000.
-
-
-
-
-;p = errorplot(times,ecenter,terror,eerror,xrange=[-2*cadence,20*cadence],$
-;xtitle='time (sec, relative)',ytitle='Energy (keV)',title='Microburst')
 
 
 
@@ -423,17 +371,28 @@ options,'speccomb_real','panel_size',6
 options,'ub_spec_after_detection_line_?','panel_size',0.7
 
 
-device,decomposed=0
-loadct,39
-tplot,['ub_spec_after_detection_line_4',$
-'ub_spec_after_detection_line_3',$
-'ub_spec_after_detection_line_2',$
-'ub_spec_after_detection_line_1',$
-'ub_spec_after_detection_line_0',$
-'speccomb_real']
 
+;Plot for comparison b/t detectors of different energy channels
+if option eq '1' then options,'speccomb_real','ytitle','real uB!CkeV'
+if option eq '2' then options,'speccomb_real','ytitle','simulated uB!CkeV'
+tplot_options,'title','Best fit for nchannels='+strtrim(nchannels,2)
+ylim,'speccomb_real',0,1000,0
+loadct,39
+tplot,'speccomb_real'
+
+
+if nchannels eq 5 then begin
+  loadct,39
+  tplot,['ub_spec_after_detection_line_4',$
+  'ub_spec_after_detection_line_3',$
+  'ub_spec_after_detection_line_2',$
+  'ub_spec_after_detection_line_1',$
+  'ub_spec_after_detection_line_0',$
+  'speccomb_real']
+endif
 
 stop
+
 ;--------------------------------------------------------------------
 ;Find the delta-times for each of the fit lines for the ray tracing. 
 ;nelem = n_elements(times)
@@ -488,22 +447,28 @@ stop
 stop
 stop
 
-;Save the line fits for the realistic data 
-;in order to best modify the simulated data to match the real data. 
-save,/variables,filename='~/Desktop/realistic_uB_linefits_20160830_2047-2048'
-;tplot_save,'ub_spec_after_detection',filename='~/Desktop/realistic_uB_spec_20160830_2047-2048'
-tplot_save,'*',filename='~/Desktop/realistic_uB_spec_20160830_2047-2048'
+
+;For option 1 only, save the line fits for the realistic data
+;in order to best modify the simulated data to match the real data.
+if option eq '1' then begin 
+  save,/variables,filename='~/Desktop/realistic_uB_linefits_20160830_2047-2048'
+  ;tplot_save,'ub_spec_after_detection',filename='~/Desktop/realistic_uB_spec_20160830_2047-2048'
+  tplot_save,'*',filename='~/Desktop/realistic_uB_spec_20160830_2047-2048'
+endif
+
 
 end  
 
 
 
 
-
+;***OBSOLETE
 ;-------------------------------------------------------
 ;Make a plot that shows the fit lines and error bars
 ;-------------------------------------------------------
 ;
+
+
 ;;Flip axes so that time is on x-axis
 ;nelem = n_elements(fitline)
 ;;xr=[-0.02,1.4*max(times)]
