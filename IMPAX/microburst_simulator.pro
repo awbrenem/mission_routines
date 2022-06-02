@@ -1,5 +1,14 @@
-;Create a microburst and simulate its detection at the location of a satellite (e.g. FIREBIRD) as a function of energy and time.
-;***To get microburst best fit and error slopes first run microburst_fit_slope.pro 
+;Create a microburst (with ~infinite resolution) and simulate its detection in a hypothetical detector as a function of energy and time.
+;NOTE: one way to simulate a microburst is to imitate one detected on FIREBIRD. To do this first run microburst_fit_slope.pro to 
+;get the best-fit line. Use this to create the ideal microburst with the correct dispersion and spectrum.  
+
+;After you've created the ideal microburst and run it through a hypothetical detector using this code, you can then 
+;run microburst_fit_slope.pro with "option 2" to find a best-fit slope and error slopes. These two programs are thus a way to 
+;test how good a hypothetical detector is at detecting microburst dispersion. 
+
+;Finally, the test fit slope and error slopes can be used in my ray tracing routines to identify the region where the microbursts are created. 
+;The smaller the error in slopes (by having a better detector) the more restricted the possible source region would be. 
+
 
 ;*********************************************
 ;TODO: incorporate 10-50msec integration time that FIREBIRD uses for uB simulation.
@@ -96,11 +105,6 @@ tplot,['ub_spec_after_detection_realuB']
 ;Determine max flux of 220 keV bin 
 get_data,'ub_spec_after_detection_realuB',data=dd
 
-;Flux max for 220 keV bin
-print,max(dd.y[*,0])
-;       16.475281
-
-stop
 
 ;------------------------------------------------------------------------
 ;Define microburst parameters
@@ -133,13 +137,13 @@ print,f0
 
 ;---
 ;Set detector cadence
-cadence_newdetector = 0.05 ;sec 
+cadence_newdetector = 0.03 ;sec 
 ;---
 
 
 ;---
-;multiplicative factor for the noise.
-noise_scalefac = 0.01
+;multiplicative factor for the noise. Increase for more noise. 
+noise_scalefac = 0.001
 ;---
 
 
@@ -196,9 +200,9 @@ t_dispersion = 0.134 ;sec  - delta time b/t lowest and highest energy channels f
 
 
 ;;Values from Crew16 for the collimated detector on FU4
-fblow = [220.,283.,384.,520.,721.]
-fbhig = [283.,384.,520.,721.,985.]
-fb_comparison = 1.
+;fblow = [220.,283.,384.,520.,721.]
+;fbhig = [283.,384.,520.,721.,985.]
+;fb_comparison = 1.
 
 
 ;;Stupidly fat channels
@@ -210,25 +214,31 @@ fb_comparison = 1.
 ;;Hypothetical 10 channels
 ;fblow = [220.,251.,283.,333.,384.,452.,520.,620.,721.,853.]
 ;fbhig = [251.,283.,333.,384.,452.,520.,620.,721.,853.,985.]
-;;plot,indgen(n_elements(fblow)),fblow,psym=-2
-;;oplot,indgen(n_elements(fblow2))/2.,fblow2,color=250,psym=-4
-;fblow = fblow2 
-;fbhig = fbhig2
 ;fb_comparison = 0.
 
 
 ;;Extremely hires channels
-;nch = 65.
+;nch = 25.
 ;fblow = (1000 - 200.)*indgen(nch)/(nch-1) + 220.
 ;fbhig = shift(fblow,-1)
 ;fbhig[n_elements(fbhig)-1] = 1040.
 ;fb_comparison = 0.
+
+;;Extremely hires channels with different energy range
+nch = 25.
+fblow = (1000 - 65.)*indgen(nch)/(nch-1) + 70.
+fbhig = shift(fblow,-1)
+fbhig[n_elements(fbhig)-1] = 1040.
+fb_comparison = 0.
+
+
 
 ;nch = 5.
 ;fblow = (1000 - 200.)*indgen(nch)/(nch-1) + 220.
 ;fbhig = shift(fblow,-1)
 ;fbhig[n_elements(fbhig)-1] = 1040.
 ;fb_comparison = 0.
+ 
 
 
 nchannels = n_elements(fblow)
@@ -292,11 +302,15 @@ store_data,'ub_timevariation',data={x:tms,y:transpose(flux_tprofile),v:energies_
 options,'ub_timevariation','spec',1
 options,'ub_timevariation','ytitle','Energy (keV)'
 options,'ub_timevariation','xtitle','time (unitless)'
-options,'ub_timevariation','title','Simulated Microburst time variation (normalized)'
+;options,'ub_timevariation','title','Simulated Microburst time variation (normalized)'
 
 options,'fitlineHR','colors',0
 store_data,'tmpcomb',data=['ub_timevariation','fitlineHR']
 store_data,'tmpcomb2',data=['ub_spec_after_detection_realuB','fitlineHR']
+
+options,'tmpcomb','ytitle','Energy(keV)!Csimulated uB!Cdispersion only'
+options,'tmpcomb2','ytitle','Energy(keV)!Creal uB'
+
 
 ylim,['tmpcomb','tmpcomb2'],0,1000
 zlim,'ub_timevariation',0,1,0
@@ -304,7 +318,7 @@ zlim,'ub_spec_after_detection_realuB',0.01,20,1
 loadct,39
 ;Plot the normalized dispersive time signature. NOTE: don't expect the magnitude to match real microburst at this point.
 ;***check to see that the dispersion is similar to real microburst 
-tplot,['tmpcomb','tmpcomb2']
+tplot,['tmpcomb2','tmpcomb']
 
 
 
@@ -332,15 +346,14 @@ store_data,'ub_spec_nonoise',data={x:tms,y:transpose(flux),v:energies_uB}
 options,'ub_spec_nonoise','spec',1
 options,'ub_spec_nonoise','ytitle','Energy (keV)'
 options,'ub_spec_nonoise','xtitle','time (unitless)'
-options,'ub_spec_nonoise','title','Simulated Microburst flux (normalized)!Cno noise'
+;options,'ub_spec_nonoise','title','Simulated Microburst flux (normalized)!Cno noise'
 
 store_data,'tmpcomb3',data=['ub_spec_nonoise','fitlineHR']
-
+options,'tmpcomb3','ytitle','Energy(keV)!Csimulated uB!CSpectral falloff!Capplied'
 
 ylim,'tmpcomb3',0,1000
 zlim,'ub_spec_nonoise',0.1,f0,1
 loadct,39
-;tplot,['ub_timevariation','ub_spec_nonoise']
 tplot,['tmpcomb2','tmpcomb','tmpcomb3']
 
 stop
@@ -371,11 +384,11 @@ noiseF = fltarr(nenergies,ntsteps)
 for i=0,nenergies-1 do noiseF[i,*] = interpol(reform(noiseN[i,*]),noisetimes,times_sec)
 fluxN = flux + noiseF
 
-;stop
-;RBSP_EFW> print,max(noisef)
-;     0.109538
-;RBSP_EFW> print,median(noisef)
-;    0.0548391
+;These variables are used in microburst_fit_slope.pro to determine noise level at which to ignore datapoints. 
+noise_max = max(noiseF)
+noise_med = median(noiseF) 
+noise_mean = mean(noiseF)
+
 
 flux = fluxN
 
@@ -470,9 +483,10 @@ store_data,'ub_spec_wnoise',data={x:tms,y:transpose(fluxN),v:energies_uB}
 options,'ub_spec_wnoise','spec',1
 options,'ub_spec_wnoise','ytitle','Energy (keV)'
 options,'ub_spec_wnoise','xtitle','time (unitless)'
-options,'ub_spec_wnoise','title','Simulated Microburst flux (normalized)'
+;options,'ub_spec_wnoise','title','Simulated Microburst flux (normalized)'
 
 store_data,'tmpcomb4',data=['ub_spec_wnoise','fitlineHR']
+options,'tmpcomb4','ytitle','Energy(keV)!Csimulated uB!Cnoise added'
 
 
 ylim,'tmpcomb4',0,1000
@@ -614,6 +628,7 @@ chnames = 'uB_after_detection_'+chnameslow
 
 
 store_data,'tmpcomb5',data=['ub_spec_after_detection','fitlineHR']
+options,'tmpcomb5','ytitle','Energy(keV)!Csimulated uB!Cafter detection!Cwith hypothetical!Cinstrument'
 
 
 zlim,['ub_spec_nonoise','ub_spec_wnoise','ub_spec_after_detection'],0.001,150,1
@@ -695,21 +710,18 @@ endif
 
 
 
-stop
+;stop
 
 
 ;-------------------------------------------------------
 ;Save the data so I can load it up with microburst_fit_slope.pro 
-tplot_save,'*',filename='~/Desktop/fb_ub_'+strtrim(nchannels,2)+'channel_cadence='+strtrim(cadence_newdetector,2)+'_recreation_of_'+datetime_real
+tplot_save,'*',filename='~/Desktop/fb_ub_'+strtrim(nchannels,2)+'channel_cadence='+strtrim(cadence_newdetector,2)+'_Emin='+strtrim(floor(ecenter[0]),2)+'_Emax='+strtrim(floor(max(ecenter)),2)+'_recreation_of_'+datetime_real
 
 
+savevars = [fblow,fbhig,nchannels,noise_max,noise_med,noise_mean] 
+fnn = '~/Desktop/fb_ub_'+strtrim(nchannels,2)+'channel_cadence='+strtrim(cadence_newdetector,2)+'_Emin='+strtrim(floor(ecenter[0]),2)+'_Emax='+strtrim(floor(max(ecenter)),2)+'_recreation_of_'+datetime_real + '.sav'
+save,savevars,filename=fnn,/variables
 
-;tplot_save,'*',filename='~/Desktop/fb_ub_5channel_cadence='+strtrim(cadence_newdetector,2)
-;tplot_save,'*',filename='~/Desktop/fb_ub_10channel_cadence='+strtrim(cadence_newdetector,2)
-;tplot_save,'*',filename='~/Desktop/fb_ub_5channel_cadence='+strtrim(cadence_newdetector,2)+'_recreation_of_20160830_2047-2048'
-;tplot_save,'*',filename='~/Desktop/fb_ub_10channel_cadence='+strtrim(cadence_newdetector,2)+'_recreation_of_20160830_2047-2048'
-;tplot_save,'*',filename='~/Desktop/fb_ub_20channel_cadence='+strtrim(cadence_newdetector,2)+'_recreation_of_20160830_2047-2048'
-;tplot_save,'*',filename='~/Desktop/fb_ub_40channel_cadence='+strtrim(cadence_newdetector,2)+'_recreation_of_20160830_2047-2048'
 
 ;-------------------------------------------------------
 
