@@ -1,6 +1,6 @@
 ;Create a microburst (with ~infinite resolution) and simulate its detection in a hypothetical detector as a function of energy and time.
 ;NOTE: one way to simulate a microburst is to imitate one detected on FIREBIRD. To do this first run microburst_fit_slope.pro to 
-;get the best-fit line. Use this to create the ideal microburst with the correct dispersion and spectrum.  
+;get the best-fit line for a selected microburst. Use this to create the ideal microburst with the correct dispersion and spectrum.  
 
 ;After you've created the ideal microburst and run it through a hypothetical detector using this code, you can then 
 ;run microburst_fit_slope.pro with "option 2" to find a best-fit slope and error slopes. These two programs are thus a way to 
@@ -8,14 +8,11 @@
 
 ;Finally, the test fit slope and error slopes can be used in my ray tracing routines to identify the region where the microbursts are created. 
 ;The smaller the error in slopes (by having a better detector) the more restricted the possible source region would be. 
-
-
-;*********************************************
-;TODO: incorporate 10-50msec integration time that FIREBIRD uses for uB simulation.
-;*********************************************
+;SEE microburst_fit_slope.pro and crib_raytrace_IMPAX.pro
 
 
 
+;Microburst profile
 ;f(E,t) = A(t)*exp(-1*(E - Eo)/deltaE(t))
 
 ;A(t) = For each time step this defines the peak amplitude value and the energy it occurs at.
@@ -40,56 +37,49 @@
 ;for ex: f(t) = int(F(E,t)) from 250-400
 
 
+;Noise: Two types of noise are added
+;1) edge-detected microburst "noise". This is meant to imitate the existence of other random microburst. 
+;The noise values scale with the peak flux (all times) of EACH energy channel. This noise is added to the 
+;"infinite resolution" microburst (e.g. 1000 energies by 1000 times)
+;2) Instrument noise. Energy channel independent. A set value with fluctuations. This is added after the simulated 
+;microburst is run through the hypothetical detector. 
 
-;******************************************
-;Test to see how well we'll be able to resolve the microbursts 
-;given an instrument noise level plus a background level of 
-;"microburst noise" that I think occurs due to edge-detection of 
-;other microbursts. 
-;*************************************
-;Highest bin with visible microburst --> 2016-08-30/20:47:28 dispersive smallish amplitude uB
-;f0tmp = 120. ;Flux at 0 keV
-;E0tmp = 100.
-;epow = 1.2
-  ;5bin : 721-985
-  ;10bin: 721-853
-  ;20bin: 767-809
-  ;40bin: 753-773
-  ;65bin: 720-732
-;**RESULT: EVEN WITH 65 BINS WE CAN RESOLVE THIS SMALLISH AMPLITUDE MICROBURST
-;*************************************
 
-;Highest bin with visible microburst () --> typical FB microburst using Arlo's statistics
-;More typical uB with epow=1
-;f0tmp = 1000. ;Flux at 0 keV
-;E0tmp = 70.
-;epow = 1.
-  ;5bin :
-  ;10bin:
-  ;20bin: 
-  ;40bin: 
-  ;50bin: 
-  ;60bin: 
-;*************************************
+
+
+;***********************************
+;***********************************
+;Harlan email on IMPAX instrument AFIRE properties (from April 22, 2022):
+;Emin = 125 keV
+;nchannels = 64
+;dE=14 keV --> dE/E of ~10% at the lowest bin and <1.5% at the top differential channel.
+
+
+;Harlan email from 2021:
+;NOTE: I'm not sure how Harlan is defining "flux units"
+;FWHM is 12 keV for noise. (typically set threshold 3x noise)
+;Can go even lower in energy.
+;--mention that an even lower energy threshold would make dispersion more obvious (Saito)
+
+;Max instrument noise at 220 keV (65 bins) is about 5 in flux units.
+;Instrument noise is constant across bins at 0.05 in flux units and is only apparent in highest channels
+
+;Estimate of ~31 counts/flux_unit
+
+;***********************************
+
+
+
+;*********************************************
+;TODO: incorporate 10-50msec integration time that FIREBIRD uses for uB simulation.
+;*********************************************
+
 
 
 
 rbsp_efw_init
 !p.charsize = 1.5
 
-;***********************************
-;***********************************
-;Harlan says 12 keV channels doable
-;FWHM is 12 keV for noise. (typically set threshold 3x noise)
-;Can go even lower in energy. 
-;--mention that an even lower energy threshold would make dispersion more obvious (Saito)
-
-;Max noise at 220 keV (65 bins) is about 5 in flux units. 
-;Instrument noise is constant across bins at 0.05 in flux units and is only apparent in highest channels
-
-;Estimate of ~31 counts/flux_unit 
-
-;***********************************
 
 
 ;Load up spec of real microburst (from microburst_fit_slope.pro) so that I can set the 
@@ -117,8 +107,6 @@ get_data,'ub_spec_after_detection_realuB',data=dd
 ;Flux max for the ~220 keV FIREBIRD bin (from observations)
 f0 = max(dd.y[*,0])
 print,f0
-;f0 = 19.   ;flux
-;f0 = 1000.  ;counts   
 
 
 ;Determine f0 (flux in 1/(cm2-s-sr-keV) at 200 keV) by extrapolating Arlo's flux results (for 0 keV) to 220 keV. 
@@ -136,30 +124,36 @@ print,f0
 
 
 ;---
-;Set detector cadence
-cadence_newdetector = 0.03 ;sec 
+;Set detector cadence of the idealized detector (Harlan email)
+cadence_newdetector = 20 ;msec
 ;---
 
 
-;---
-;multiplicative factor for the noise. Increase for more noise. 
-noise_scalefac = 0.001
-;---
 
+;----------------------------------------------------------
+;FLUX-DEPENDENT NOISE CAUSED BY EDGE-DETECTED MICROBURSTS
+;----------------------------------------------------------
 
-;---
-;Add in contaminating microburst "noise" at sample rate cadence
 ;These are the sample rate bumps you see in real data that may correspond to 
 ;edge-detected microbursts?
 ;This "noise" is channel dependent. I'll set it at a fraction of the peak value 
-;detected in each channel (noise_from_uB_fraction). NOTE: this value will need to be 
-;abnormally high b/c the detectors integrate over many adjacent (1000x) energy bins and 
-;the noise tends to disappear to unrealistically low values. For example, if you want the 
-;noise in the realistic uB (say energy channel 500) to be 10% of the max value in that channel, 
-;you would set noise_from_uB_fraction >> 0.1. 
-;Just adjust so that things look real. 
-;noise_from_uB_fraction = 3.  ;--> determined by comparison to 2016-08-30/20:47:28 dispersive event
-noise_from_uB_fraction = 1.  ;--> determined by comparison to 2016-08-30/20:47:28 dispersive event
+;detected in each channel (noise_from_uB_fraction). 
+;e.g. noiseamp = noise_from_uB_fraction * max(flux[ee,*],/nan)
+;
+noise_from_uB_fraction = 2. 
+;noise_from_uB_fraction = 0.
+
+;NOTE: YOU MAY WANT TO SET noise_from_uB_fraction ARTIFICIALLY HIGH (i.e. > 1) FOR THE FOLLOWING REASON: The hypothetical detector 
+;will have less than 1000 energy channels, and thus represents an integration over a certain number of energy channels of the
+;idealized microburst. This will increase the signal/noise ratio. Set this value so that the end result (after detection in 
+;hypothetical detector) looks similar to what you think a real microburst would look like. 
+
+;Set max and min values (from 0-1) for the variation in random noise of contaminating microbursts RELATIVE to the 
+;peak value in each energy bin (for all times) 
+;For example, minn=0.6 and maxx = 0.8 means that the contaminating noise microbursts can range from 0.6 to 0.8
+;times the peak microburst value in each energy bin.
+maxx = 1.2
+minn = 0.4
 ;---
 
 
@@ -167,8 +161,10 @@ noise_from_uB_fraction = 1.  ;--> determined by comparison to 2016-08-30/20:47:2
 
 
 
+;-----------------------------------------
+;Set idealized microburst energy profile
+;-----------------------------------------
 
-;---
 ;energy profile ("infinite" resolution uB) --> exp(-(E-Eo)^epow/dE^epow)
 nenergies = 1000. ;number of microburst energy steps
 emin_keV = 0. 
@@ -177,10 +173,13 @@ energies_uB = (emax_keV - emin_keV)*indgen(nenergies)/(nenergies-1) + emin_keV  
 Eo = 0. ;Center energy for Gaussian
 dE = 75. ;Width of energy Gaussian curve (keV)
 epow = 1.  ;typically=1     flux[*,i] *= exp(-1*(energies_uB - Eo)^epow/dE^epow)
-;---
 
 
-;---
+
+;-----------------------------------------
+;Set idealized microburst time profile
+;-----------------------------------------
+
 ;time profile  (exp(-(t-to)^2/dt^2))
 ntsteps = 1000. ;number of microburst time steps for "infinite" resolution uB
 tend_sec = 1.15  ;total time duration considered in seconds (microburst contained within this)
@@ -188,8 +187,12 @@ tend_sec = 1.15  ;total time duration considered in seconds (microburst containe
 dt = 0.1  ;Width (sec) of the exponential falloff
 to = 0.56  ;time offset for the zeroth bin (sec). Choose to align with actual microburst from microburst_fit_slope.pro
 t_dispersion = 0.134 ;sec  - delta time b/t lowest and highest energy channels from best fit line (emin_keV; emax_keV)
-;---
 
+
+
+
+
+fb_comparison = 0.
 
 
 
@@ -208,28 +211,22 @@ t_dispersion = 0.134 ;sec  - delta time b/t lowest and highest energy channels f
 ;;Stupidly fat channels
 ;fblow = [220.,520.]
 ;fbhig = [520.,721.]
-;fb_comparison = 0.
 
 
 ;;Hypothetical 10 channels
 ;fblow = [220.,251.,283.,333.,384.,452.,520.,620.,721.,853.]
 ;fbhig = [251.,283.,333.,384.,452.,520.,620.,721.,853.,985.]
-;fb_comparison = 0.
 
 
-;;Extremely hires channels
-;nch = 25.
-;fblow = (1000 - 200.)*indgen(nch)/(nch-1) + 220.
-;fbhig = shift(fblow,-1)
-;fbhig[n_elements(fbhig)-1] = 1040.
-;fb_comparison = 0.
 
-;;Extremely hires channels with different energy range
-nch = 25.
-fblow = (1000 - 65.)*indgen(nch)/(nch-1) + 70.
+;;Harlan channels from Apr 22, 2022 email
+emaxtmp = 1000.  ;keV
+emintmp = 40.    ;keV
+nch = 6.
+fblow = (emaxtmp - emintmp)*indgen(nch)/(nch-1) + emintmp
 fbhig = shift(fblow,-1)
-fbhig[n_elements(fbhig)-1] = 1040.
-fb_comparison = 0.
+deltae = fbhig[0] - fblow[0]
+fbhig[n_elements(fbhig)-1] = emaxtmp + deltae
 
 
 
@@ -237,8 +234,15 @@ fb_comparison = 0.
 ;fblow = (1000 - 200.)*indgen(nch)/(nch-1) + 220.
 ;fbhig = shift(fblow,-1)
 ;fbhig[n_elements(fbhig)-1] = 1040.
-;fb_comparison = 0.
- 
+
+
+
+;----------------------------------------------------
+
+
+
+
+
 
 
 nchannels = n_elements(fblow)
@@ -248,6 +252,8 @@ Ecenter = (fblow + fbhig)/2.
 ;String channel names
 chnameslow = strtrim((floor(fblow)),2)
 chnameshig = strtrim((floor(fbhig)),2)
+
+deltae = fbhig[0] - fblow[0]
 
 
 ;----------------------------------------------------------------------------
@@ -358,44 +364,14 @@ tplot,['tmpcomb2','tmpcomb','tmpcomb3']
 
 stop
 
-;fluxN = flux
-;for ee=0.,nenergies-1 do begin $
-;  etmp = ee & $
-;  noise = noise_scalefac*(randomu(etmp,ntsteps) - 1.) & $
-;  noiseS = noise * sqrt(max(flux[*,*]) - flux[ee,*]) & $
-;  fluxN[ee,*] += noiseS
-;endfor
-;flux = fluxN
-
-;Now add in instrumental noise spectrum to this. This will only effect channels with low counts.  
-noisetimesteps = tend_sec/cadence_newdetector
-noisetimes = tend_sec*indgen(noisetimesteps)/(noisetimesteps-1)
-noiseN = fltarr(nenergies,noisetimesteps)
-
-fluxN = flux
-for ee=0.,nenergies-1 do begin $
-  etmp = ee & $
-  noise = noise_scalefac*(randomu(etmp,noisetimesteps)) & $
-  noiseS = noise * sqrt(max(flux[*,*]) - flux[ee,*]) & $
-  noiseN[ee,*] = noiseS
-endfor
-;Increase the cadence of noise array to the full time cadence. 
-noiseF = fltarr(nenergies,ntsteps)
-for i=0,nenergies-1 do noiseF[i,*] = interpol(reform(noiseN[i,*]),noisetimes,times_sec)
-fluxN = flux + noiseF
-
-;These variables are used in microburst_fit_slope.pro to determine noise level at which to ignore datapoints. 
-noise_max = max(noiseF)
-noise_med = median(noiseF) 
-noise_mean = mean(noiseF)
-
-
-flux = fluxN
 
 
 
 
+;-------------------------------------------------------------------
 ;Add in contaminating microburst "noise" at sample rate cadence
+;-------------------------------------------------------------------
+
 ;These are the sample rate bumps you see in real data that may correspond to 
 ;edge-detected microbursts?
 ;This "noise" is channel dependent. I'll set it at a fraction of the peak value 
@@ -407,26 +383,26 @@ flux = fluxN
 ;Just adjust so that things look real. 
 
 
-noisetimesteps = tend_sec/cadence_newdetector
+noisetimesteps = tend_sec/(cadence_newdetector/1000.)
 noisetimes = tend_sec*indgen(noisetimesteps)/(noisetimesteps-1)
 noiseN = fltarr(nenergies,noisetimesteps)
 
-for ee=0.,nenergies-1 do begin $
-  etmp = ee & $
-  noiseamp = noise_from_uB_fraction * max(flux[ee,*],/nan) & $
-  tmp = randomu(etmp,noisetimesteps) & $ 
-  noise = noiseamp*tmp & $
+for ee=0.,nenergies-1 do begin
+  etmp = ee
+  noiseamp = noise_from_uB_fraction * max(flux[ee,*],/nan)
+  tmp = (maxx - minn) * randomu(etmp,noisetimesteps) + minn
+  noise = noiseamp*tmp
   noiseN[ee,*] = noise
 endfor
 ;Increase the cadence of noise array to the full time cadence. 
 noiseF = fltarr(nenergies,ntsteps)
 for i=0,nenergies-1 do noiseF[i,*] = interpol(reform(noiseN[i,*]),noisetimes,times_sec)
-;!p.multi = [0,0,2]
-;plot,noiseN[20,*]
-;plot,noiseF[20,*]
 fluxN = flux + noiseF
-;plot,fluxN[300,*]
-;stop
+
+;These variables are used in microburst_fit_slope.pro to determine noise level at which to ignore datapoints.
+noise_max = max(noiseF)
+noise_med = median(noiseF)
+noise_mean = mean(noiseF)
 
 
 
@@ -447,30 +423,6 @@ fluxN = flux + noiseF
 ;stop
 
 ;fluxorig = flux
-
-;noisesize = 0.1*fluxmax
-;;
-;;Add random noise to flux
-;for t=0,ntsteps-1 do begin $
-;  ttmp = t & $
-;  noise = 0.2*(randomu(ttmp,nenergies)) & $
-;  noise_mod = noise / flux[*,t] & $
-;  flux[*,t] += noise_mod
-;endfor
-;
-;!p.multi = [0,0,3]
-;plot,fluxorig[*,100]
-;plot,flux[*,100]
-;plot,noise_mod
-;stop
-
-;;Make a plot of all times stacked on top of each other
-;;--define colors
-;deltac = 256/ntsteps - 1
-;colorv = deltac*indgen(ntsteps)
-;!p.multi = [0,0,1]
-;plot,energies_uB,flux[*,0],yrange=[0,1],xtitle='Energy (keV)',ytitle='flux'
-;for i=0,ntsteps-1 do oplot,energies_uB,flux[*,i],color=colorv[i]
 
 
 
@@ -503,6 +455,7 @@ stop
 ;---------------------------------------------------------------------
 
 
+
 fb_channel_resp = dblarr(nenergies,nchannels)
 
 
@@ -532,24 +485,23 @@ Fch_integrated = dblarr(nchannels,ntsteps)
 ;fluxfin = flux  ;flux with NO noise
 fluxfin = fluxN  ;flux with noise added
 
-;for t=0,ntsteps-1 do begin $
-;  fluxtmp = reform(fluxfin[*,t]) & $
-;  flux_after_fb = fltarr(nenergies,nchannels) & $
-;  for i=0,nchannels-1 do flux_after_fb[*,i] = fluxtmp*fb_channel_resp[*,i] & $
-;  ;Now integrate the FB fluxes for each channel over all energies.
-;  ;Also divide out bin width
-;  for i=0,nchannels-1 do Fch_integrated[i,t] = int_tabulated(energies_uB,flux_after_fb[*,i])/binwidth[i]
-;endfor ;each time
 
+;Flux array input is [nenergies, ntimes]  - idealized uB   e.g. [1000, 1000]
+;fb_channel_response is [nenergies, nchannels]  e.g. [1000, 64] (step function array)
+;Final output after detection by hypothetical detector is [nchannels, ntsteps]  ;e.g. [64, 1000]
 
-;Final output [nchannels, ntsteps]
-for t=0,ntsteps-1 do begin $
-  fluxtmp = reform(fluxfin[*,t]) & $
-  for n=0,nchannels-1 do begin & $
-    flux_after_fb_tmp = fluxtmp * reform(fb_channel_resp[*,n]) & $
-    Fch_integrated[n,t] = int_tabulated(energies_uB,flux_after_fb_tmp)/binwidth[n]
+for t=0,ntsteps-1 do begin
+  fluxtmp = reform(fluxfin[*,t])  ;slice of energies
+  for n=0,nchannels-1 do begin
+    flux_after_fb_tmp = fluxtmp * reform(fb_channel_resp[*,n])
+    ;Fch_integrated[n,t] = int_tabulated(energies_uB,flux_after_fb_tmp)/binwidth[n]
+    Fch_integrated[n,t] = total(flux_after_fb_tmp)/binwidth[n]
   endfor
-endfor 
+endfor
+
+
+;loadct,39
+;plot, Fch_integrated[*,0] * binwidth[0]
 
 
 ;;  ;plot output of FB detector at each time
@@ -562,23 +514,76 @@ endfor
 ;stop
 
 
-store_data,'uB_after_detection',tms,transpose(Fch_integrated)
+store_data,'ub_after_detection',tms,transpose(Fch_integrated)
 store_data,'ub_spec_after_detection',data={x:tms,y:transpose(Fch_integrated),v:ecenter} ;spectral version
 options,'ub_spec_after_detection','spec',1
 
 
 ;******************************
-;Finally, downsample the ideal microburst to the cadence of the new detector. 
+;Downsample the ideal microburst to the cadence of the new detector. 
 
-;cadence_newdetector = 0.05  ;sec (what do you want cadence of new detector to be?)
 t0 = tms[0]
 t1 = tms[n_elements(tms)-1]
-nelem = (t1 - t0)/cadence_newdetector + 2
-newtimes = dindgen(nelem)*cadence_newdetector + t0
+nelem = (t1 - t0)/(cadence_newdetector/1000.) + 2
+newtimes = dindgen(nelem)*(cadence_newdetector/1000.) + t0
 ;print,time_string(newtimes,prec=3)
 
-tinterpol_mxn,'uB_after_detection',newtimes,/overwrite
+tinterpol_mxn,'ub_after_detection',newtimes,/overwrite
 tinterpol_mxn,'ub_spec_after_detection',newtimes,/overwrite
+
+
+;---------------------------------------------------
+;Finally, add noise to the final values 
+noise_from_uB_fraction = 2.
+
+get_data,'ub_spec_after_detection',data=d,dlim=dlim,lim=lim
+
+
+;;Scale the instrument noise values (nominally from 0-1) to this range
+
+;Harlan has indicated that the noise level in "flux units" is 0.05. 
+;I think he may mean 0.05/cm2-sr. So, if we divide this by dE then we get 1/cm2-sr-keV (time independent)
+;---NO IDEA IF THIS IS RIGHT
+noise_flux = 0.05/deltae  ;noise level in flux units
+;noise_flux = 0.
+
+
+
+noiseN = fltarr(n_elements(d.v),n_elements(d.x))
+
+maxflux= max(d.y[*,*],/nan)
+
+for ee=0.,n_elements(d.v)-1 do begin
+  etmp = ee
+  noise = randomu(etmp,n_elements(d.x))
+  noise = 2.* (noise - median(noise))  ;+/- values
+  noiseS = noise * noise_flux
+  noiseN[ee,*] = noiseS
+endfor
+
+store_data,'ub_spec_after_detection',d.x,d.y + transpose(noiseN),d.v,dlim=dlim,lim=lim
+store_data,'ub_after_detection',d.x,d.y + transpose(noiseN)
+
+;store_data,'ub_spec_after_detectionN',d.x,d.y + transpose(noiseN),d.v,dlim=dlim,lim=lim
+;tplot,['ub_spec_after_detectionN','ub_spec_after_detection']
+;get_data,'ub_spec_after_detection',data=d1
+;get_data,'ub_spec_after_detectionN',data=d2
+;loadct,39
+;plot,d1.y[*,40]
+;oplot,d2.y[*,40],color=250
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ;options,'ub_spec_after_detection_interp','spec',1
@@ -598,23 +603,26 @@ tinterpol_mxn,'ub_spec_after_detection',newtimes,/overwrite
 
 ;Plot resultant uB after FIREBIRD detect
 
-split_vec,'uB_after_detection',suffix='_'+chnameslow
-chnames = 'uB_after_detection_'+chnameslow
+split_vec,'ub_after_detection',suffix='_'+chnameslow
+chnames = 'ub_after_detection_'+chnameslow
 
 
 
-;;ylim,'uB_after_detection_'+['220','283','384','520','721'],0,max(Fch_integrated)
-;ylim,'uB_after_detection_220',0,200
-;ylim,'uB_after_detection_283',0,150
-;ylim,'uB_after_detection_384',0,80
-;ylim,'uB_after_detection_520',0,25
-;ylim,'uB_after_detection_721',0,4
+;stop
 
-;options,'uB_after_detection_220','colors',0
-;options,'uB_after_detection_283','colors',50
-;options,'uB_after_detection_384','colors',100
-;options,'uB_after_detection_520','colors',150
-;options,'uB_after_detection_721','colors',200
+
+;;ylim,'ub_after_detection_'+['220','283','384','520','721'],0,max(Fch_integrated)
+;ylim,'ub_after_detection_220',0,200
+;ylim,'ub_after_detection_283',0,150
+;ylim,'ub_after_detection_384',0,80
+;ylim,'ub_after_detection_520',0,25
+;ylim,'ub_after_detection_721',0,4
+
+;options,'ub_after_detection_220','colors',0
+;options,'ub_after_detection_283','colors',50
+;options,'ub_after_detection_384','colors',100
+;options,'ub_after_detection_520','colors',150
+;options,'ub_after_detection_721','colors',200
 
 ;
 ;RBSP_EFW> print,fblow
@@ -641,6 +649,16 @@ tplot,['tmpcomb2','tmpcomb4','tmpcomb5']
 stop
 
 
+;******TESTING*********
+get_data,'ub_spec_after_detection',data=dd
+loadct,39
+plot,dd.y[*,4]
+
+
+;150 counts for 97 keV channel and 64 bins
+
+;93 counts for 141 keV channel and 8 bins
+;80 counts for 141 keV channel and 64 bins
 
 ;*********************************************************
 ;When running the simulated microburst through the actual FIREBIRD channels:
@@ -648,12 +666,12 @@ stop
 ; *********************************************************
 if fb_comparison eq 1 then begin 
 
-  options,'uB_after_detection_???','color',250
-  store_data,'tmp220',data=['ub_spec_after_detection_realuB_line_0','uB_after_detection_220']
-  store_data,'tmp283',data=['ub_spec_after_detection_realuB_line_1','uB_after_detection_283']
-  store_data,'tmp384',data=['ub_spec_after_detection_realuB_line_2','uB_after_detection_384']
-  store_data,'tmp520',data=['ub_spec_after_detection_realuB_line_3','uB_after_detection_520']
-  store_data,'tmp721',data=['ub_spec_after_detection_realuB_line_4','uB_after_detection_721']
+  options,'ub_after_detection_???','color',250
+  store_data,'tmp220',data=['ub_spec_after_detection_realuB_line_0','ub_after_detection_220']
+  store_data,'tmp283',data=['ub_spec_after_detection_realuB_line_1','ub_after_detection_283']
+  store_data,'tmp384',data=['ub_spec_after_detection_realuB_line_2','ub_after_detection_384']
+  store_data,'tmp520',data=['ub_spec_after_detection_realuB_line_3','ub_after_detection_520']
+  store_data,'tmp721',data=['ub_spec_after_detection_realuB_line_4','ub_after_detection_721']
   
   loadct,39
   ;tplot,[reverse(chnames)]
@@ -715,11 +733,11 @@ endif
 
 ;-------------------------------------------------------
 ;Save the data so I can load it up with microburst_fit_slope.pro 
-tplot_save,'*',filename='~/Desktop/fb_ub_'+strtrim(nchannels,2)+'channel_cadence='+strtrim(cadence_newdetector,2)+'_Emin='+strtrim(floor(ecenter[0]),2)+'_Emax='+strtrim(floor(max(ecenter)),2)+'_recreation_of_'+datetime_real
+tplot_save,'*',filename='~/Desktop/fb_ub_'+strtrim(nchannels,2)+'channel_cadence='+strtrim(floor(cadence_newdetector),2)+'msec_Emin='+strtrim(floor(ecenter[0]),2)+'_Emax='+strtrim(floor(max(ecenter)),2)+'_recreation_of_'+datetime_real
 
 
 savevars = [fblow,fbhig,nchannels,noise_max,noise_med,noise_mean] 
-fnn = '~/Desktop/fb_ub_'+strtrim(nchannels,2)+'channel_cadence='+strtrim(cadence_newdetector,2)+'_Emin='+strtrim(floor(ecenter[0]),2)+'_Emax='+strtrim(floor(max(ecenter)),2)+'_recreation_of_'+datetime_real + '.sav'
+fnn = '~/Desktop/fb_ub_'+strtrim(nchannels,2)+'channel_cadence='+strtrim(floor(cadence_newdetector),2)+'msec_Emin='+strtrim(floor(ecenter[0]),2)+'_Emax='+strtrim(floor(max(ecenter)),2)+'_recreation_of_'+datetime_real + '.sav'
 save,savevars,filename=fnn,/variables
 
 
