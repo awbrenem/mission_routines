@@ -12,7 +12,7 @@
 
 ;Adjustable parameters;
 ;nchannels = number of energy channels in detector. If option='1' is chosen this is set to the FIREBIRD channels. 
-;terror = error in time for each datapoint. Error bars span the duration of a sample.   
+;terror = error in time for each datapoint. Calculated based on uncertainty of 1/SNR.    
 ;eerror = error in energy for each datapoint. Data point is at the center of each energy bin and the error bars extend 
 ;         to the top and bottom of each bin
 ;noiselevel = the level of "noise" in the signal. When the microburst amplitude in a given channel is at or less than 
@@ -39,8 +39,6 @@
              ;This is how I'll choose the test parameters in microburst_simulator.pro that mimic a real life event.
 option = '2'  ;load simulated FIREBIRD microburst (from microburst_simulator.pro)
 
-;terror_pad = 1.  ;Using the sampling time as the +/- time error doesn't capture the real knowledge in the slope. 
-;                 ;This value pads the errors to be more realistic. 
 
 
 ;OPTION 2 ONLY: Choose the spectrum tplot variable 
@@ -50,11 +48,19 @@ spec = 'ub_spec_after_detection'  ;after artificial uB goes through fake detecto
 
 
 ;Select filename (don't include .tplot)
-;filename = 'fb_ub_25channel_cadence=0.0500000_recreation_of_20160830_2047-2048'
-;filename = 'fb_ub_25channel_cadence=0.0500000_Emin=89_Emax=1022_recreation_of_20160830_2047-2048'
-;filename = 'fb_ub_65channel_cadence=0.0500000_Emin=77_Emax=1022_recreation_of_20160830_2047-2048'
-filename = 'fb_ub_25channel_cadence=0.0300000_Emin=89_Emax=1022_recreation_of_20160830_2047-2048'
-;filename = 'fb_ub_10channel_cadence=0.0500000_recreation_of_20160830_2047-2048'
+;filename = 'fb_ub_63channel_cadence=20msec_Emin=132_Emax=1007_recreation_of_20160830_2047-2048'
+;filename = 'fb_ub_63channel_cadence=20msec_Emin=82_Emax=1007_recreation_of_20160830_2047-2048'
+;filename = 'fb_ub_32channel_cadence=20msec_Emin=139_Emax=1014_recreation_of_20160830_2047-2048'
+;filename = 'fb_ub_16channel_cadence=20msec_Emin=154_Emax=1029_recreation_of_20160830_2047-2048'
+;filename = 'fb_ub_6channel_cadence=20msec_Emin=212_Emax=1087_recreation_of_20160830_2047-2048'
+filename = 'fb_ub_6channel_cadence=20msec_Emin=136_Emax=1096_recreation_of_20160830_2047-2048'
+
+;filename = 'fb_ub_5channel_cadence=20msec_Emin=251_Emax=853_recreation_of_20160830_2047-2048'
+;filename = 'fb_ub_63channel_cadence=20msec_Emin=256_Emax=1006_recreation_of_20160830_2047-2048'
+
+
+;filename = 'fb_ub_63channel_cadence=20msec_Emin=82_Emax=1007_recreation_of_20160830_2047-2048_nonoise'
+;filename = 'fb_ub_63channel_cadence=20msec_Emin=82_Emax=1007_recreation_of_20160830_2047-2048_onlyinstrumentNoise'
 ;if nchannels eq 5 or nchannels eq 10 or nchannels eq 20 or nchannels eq 40 then filename = 'fb_ub_'+strtrim(nchannels,2)+'channel_recreation_of_20160830_2047-2048'
 ;if nchannels eq 1000 then filename = 'fb_ub_10channel_recreation_of_20160830_2047-2048'
 ;fb_ub_5channel_nonoise_recreation_of_20160830_2047-2048.
@@ -177,7 +183,6 @@ if option eq '2' then begin
     cadence = dd.x[1] - dd.x[0] ;sec
 
 
-
 endif
 
 
@@ -213,6 +218,12 @@ for i=0,nchannels-1 do print,fluxadj_low[i],' ',fluxpeak[i],' ',fluxadj_high[i]
 ;Determine error bars in TIME as well as time values
 ;------------------------------------------------------------
 
+
+;(1)---------------------------------------------
+;Define time error based on sampling rate - This is used as a backup value if 
+;the determination based on SNR doesn't work. 
+
+
 ;Error bars in time will extend to the halfway point b/t adjacent values
 ;*****TEMPORARY - COME UP WITH BETTER WAY TO DECIDE TIME ERROR BARS
 tmin = (tpeak - cadence/2.)
@@ -234,16 +245,86 @@ goolow = where((tpeak - tmin) gt cadence)
 if goohigh[0] ne -1 then for i=0,n_elements(goohigh)-1 do tpeak[goohigh[i]] += cadence/2.
 if goolow[0] ne -1 then for i=0,n_elements(goolow)-1 do tpeak[goolow[i]] -= cadence/2.
 
+terrorTMP = (tmax-tmin)/2.
+
+
+;(2)---------------------------------------------
+;Define time error based on SNR 
+;****THIS WORKS VERY POORLY FOR BELL-CURVES B/C THE STD IS VERY HIGH. 
+;****MAY BE BETTER TO TAKE THE STD OF THE HIGH-PASSED DATA. 
+;*****;*****;*****;*****;*****;*****;*****;*****
+;*****;*****;*****;*****;*****;*****;*****;*****
+
+
+;stderr = fltarr(n_elements(dd.v))
+;for i=0,nchannels-1 do stderr[i] = stddev(dd.y[*,i])/sqrt(n_elements(dd.x))
+
+;SNR (ratio of mean to stdev)
+snr = fltarr(n_elements(dd.v))
+for i=0,nchannels-1 do snr[i] = mean(dd.y[*,i])/stddev(dd.y[*,i])
+
+snr = snr^2.
+uncertainty = 1/snr  ;percentage uncertainty
+
+
+
+
+tmin = (tpeak - cadence/2.)
+tmax = (tpeak + cadence/2.)
+terror = fltarr(n_elements(dd.v))
+;testvalue = fltarr(n_elements(dd.v))
+
+;Now determine how far error bars must extend to left/right of peak based on the stdev
+for i=0,nchannels-1 do begin
+  ;testvalue = max(dd.y[*,i],whmax) - stderr[i]
+  testvalue = max(dd.y[*,i],whmax) * (1 - uncertainty[i])
+  print,max(dd.y[*,i],whmax)
+  print,testvalue
+  print,'****'
+  goo = where(dd.y[*,i] ge testvalue)
+  if goo[0] ne -1 then begin 
+    elocL = goo[0]
+    elocR = goo[-1]
+    terror[i] = dd.x[elocR] - dd.x[elocL]
+    if terror[i] eq 0. then terror[i] = (tmax[goo] - tmin[goo])/2.
+  endif else terror[i] = 2.*terrorTMP[i]
+
+;  loadct,39
+;  plot,dd.x,dd.y[*,i]
+;  oplot,[time_double('2014-01-01'),time_double('2014-01-01/00:00:01')],[testvalue,testvalue]
+;  oplot,[dd.x[whmax]-terror[i],dd.x[whmax]-terror[i]],[0,1000]
+;  oplot,[dd.x[whmax]+terror[i],dd.x[whmax]+terror[i]],[0,1000]
+;  stop
+endfor
+
+;goo = where(terror eq 0.)
+;if goo[0] ne -1 then terror[goo] = (tmax[goo] - tmin[goo])/2.  
+
+
+
+
+ecenter = (fbhig + fblow)/2.
+loadct,39
+
+
+;Compare the error from using only the sampling rate to the error determined from the SNR.
+plot,ecenter,terror
+oplot,ecenter,terrorTMP,color=250
+stop
+
+
+
 
 
 ;;reference times to zero for plotting and fitting
 times = tpeak - tpeak[0]
 
-;Time uncertainty
-terror = (tmax-tmin)/2.
-;terror = terror_pad*(tmax-tmin)/2.
 
 
+
+
+
+;stop
 
 ;------------------------------------------------------------
 ;Determine error bars in ENERGY as well as time values
@@ -266,7 +347,7 @@ eerror = (fbhig - fblow)/2.
 ;*************
 ;Set noise level (higher values mean a datapoint is less likely to exceed noise)
 if option eq '1' then noiselevel = 0.02
-if option eq '2' then noiselevel = 2.*noise_max  ;set from microburst_simulator.pro
+if option eq '2' then noiselevel = 0.02*noise_med  ;set from microburst_simulator.pro
 ;noiselevel = 0.18
 good = where(fluxpeak ge noiselevel)
 if good[0] ne -1 then begin
@@ -283,7 +364,6 @@ fit = lineslope_minmax(times,ecenter,eerror,xerr=terror)
 
 
 
-stop
 
 ;Best fit line
 fitline = fit.fitline
@@ -296,7 +376,7 @@ fitlinemin = fit.fitlinemin
 ;*************FIX THIS TO BE MORE GENERAL***************
 ;High time resolution versions of the fitlines
 maxsec = 0.5 
-timesHR = maxsec*indgen(1000)/999. - 0.1
+timesHR = maxsec*indgen(1000)/999. - 0.2
 ;Best fit line
 fitlineHR = fit.coeff[1]*timesHR + fit.coeff[0]
 ;Max slope line 
@@ -305,6 +385,7 @@ fitlinemaxHR = (fit.coeff[1]+fit.sigma[1])*timesHR + (fit.coeff[0]-fit.sigma[0])
 fitlineminHR = (fit.coeff[1]-fit.sigma[1])*timesHR + (fit.coeff[0]+fit.sigma[0])
 
 
+stop
 
 
 
@@ -330,6 +411,7 @@ options,['fitlinemin','fitlinemax'],'thick',2 & options,['fitlinemin','fitlinema
 
 options,'epeak','psym',4
 options,'epeak','thick',3
+options,'epeak','color',99
 
 times_left = tpeak - terror
 times_right = tpeak + terror
@@ -337,6 +419,8 @@ store_data,'epeak_left',times_left,ecenter
 store_data,'epeak_right',times_right,ecenter
 options,'epeak_left','psym',2
 options,'epeak_right','psym',2
+options,'epeak_left','color',220
+options,'epeak_right','color',220
 
 
 copy_data,'ub_spec_after_detection','ub_spec_after_detection_line'
@@ -391,7 +475,7 @@ if nchannels eq 5 then begin
   'speccomb_real']
 endif
 
-stop
+
 
 ;--------------------------------------------------------------------
 ;Find the delta-times for each of the fit lines for the ray tracing. 
@@ -419,8 +503,10 @@ dt_timesFITmax = timesHR[goo2[0]] - timesHR[goo1[0]]
 ;Print results of the linefits for use in microburst_simulator.pro
 ;--------------------------------------------------
 
-
+print,'*******************************'
+print,filename
 print,'Slope analysis (arrival time difference b/t lowest and highest energy (emin/emax))'
+print,'Probability of good fit ' + string(fit.prob_of_good_fit)
 print,'Emin = ' + strtrim(Emin) + ' ; Emax = ' + strtrim(Emax)
 print,'delta-time bestfit',' ',string(1000.*dt_timesFIT) + ' msec'
 print,'delta-time min',' ',string(1000.*dt_timesFITmin) + ' msec'
