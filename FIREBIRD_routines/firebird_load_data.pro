@@ -3,8 +3,7 @@
 ;
 ; SYNTAX:
 ;
-; PURPOSE: Fetches/loads FIREBIRD official hires data and stores as tplot variables.
-;         NOTE: applies the time correction to the data (only needed for hires data, not ephemeris)
+; PURPOSE: Fetches/loads FIREBIRD official hires data and stores as tplot variables
 ;
 ; Usage: timespan,'2019-01-24'
 ;        firebird_load_data,'3'
@@ -34,13 +33,11 @@
 
 pro firebird_load_data,cubesat,plot=plot,fileexists=fileexists
 
-  sc = cubesat
-
   ;default. Can change later if file not found
   fileexists = 1
 
-  if sc eq '3' then sc = 'FU_3' else sc = 'FU_4'
-  sc2 = strmid(sc,0,2) + strmid(sc,3,1)
+  if cubesat eq '3' then cubesat = 'FU_3' else cubesat = 'FU_4'
+  cubesat2 = strmid(cubesat,0,2) + strmid(cubesat,3,1)
 
   tr = timerange()
   date = time_string(tr[0],/date_only,tformat='YYYYMMDD')
@@ -51,22 +48,20 @@ pro firebird_load_data,cubesat,plot=plot,fileexists=fileexists
   type = 'hires'
   type2 = 'Hires'
 
-  url = 'http://solar.physics.montana.edu/FIREBIRD_II/Data/' + sc + '/' + type + '/'
+  url = 'http://solar.physics.montana.edu/FIREBIRD_II/Data/' + cubesat + '/' + type + '/'
 
-  fn = sc2 + '_' + type2 + '_' + yyyy+'-'+mm+'-'+dd+'_L2.txt'
+  fn = cubesat2 + '_' + type2 + '_' + yyyy+'-'+mm+'-'+dd+'_L2.txt'
 
   dprint,dlevel=3,verbose=verbose,relpathnames,/phelp
 
-
-
-  ;Grab local path to save data
-  homedir = (file_search('~',/expand_tilde))[0]+'/'
-  local_path = homedir +'data/firebird/'+sc2+'/' + yyyy + '/'
+  ;local_path = '/Users/aaronbreneman/Desktop/Research/RBSP_Firebird_microburst_conjunctions_all/firebird/'
+  local_path = '/Users/abrenema/data/firebird/' + cubesat2 + '/' + yyyy + '/'
 
   files = spd_download(remote_path=url,remote_file=fn,$
   local_path=local_path,$
   /last_version)
 
+stop
 
 ;---------------------------------------------------------------
 ;Read file
@@ -107,26 +102,21 @@ pro firebird_load_data,cubesat,plot=plot,fileexists=fileexists
 
   data = read_ascii(local_path+fn,template=template)
 
-  ;Get time stamps
-  ;"Time correction for count data expressed as (Ground Time - Spacecraft Time). 
-  ;Should be added to reported time stamp. 
-  ;Applies only to count and flux data, ephemeris does not need to be corrected."
   time = time_double(data.time)
-  time2 = time_double(data.time) + data.count_time_correction
 
-  csstr = strlowcase(sc2)
+  csstr = strlowcase(cubesat2)
 
-  store_data,csstr+'_fb_col_hires_flux',time2,double([[data.col_flux1],[data.col_flux2],[data.col_flux3],[data.col_flux4],[data.col_flux5],[data.col_flux6]])
-  store_data,csstr+'_fb_col_hires_counts',time2,double([[data.col_counts1],[data.col_counts2],[data.col_counts3],[data.col_counts4],[data.col_counts5],[data.col_counts6]])
-  store_data,csstr+'_fb_sur_hires_flux',time2,double([[data.sur_flux1],[data.sur_flux2],[data.sur_flux3],[data.sur_flux4],[data.sur_flux5],[data.sur_flux6]])
-  store_data,csstr+'_fb_sur_hires_counts',time2,double([[data.sur_counts1],[data.sur_counts2],[data.sur_counts3],[data.sur_counts4],[data.sur_counts5],[data.sur_counts6]])
+  store_data,csstr+'_fb_col_hires_flux',time,double([[data.col_flux1],[data.col_flux2],[data.col_flux3],[data.col_flux4],[data.col_flux5],[data.col_flux6]])
+  store_data,csstr+'_fb_col_hires_counts',time,double([[data.col_counts1],[data.col_counts2],[data.col_counts3],[data.col_counts4],[data.col_counts5],[data.col_counts6]])
+  store_data,csstr+'_fb_sur_hires_flux',time,double([[data.sur_flux1],[data.sur_flux2],[data.sur_flux3],[data.sur_flux4],[data.sur_flux5],[data.sur_flux6]])
+  store_data,csstr+'_fb_sur_hires_counts',time,double([[data.sur_counts1],[data.sur_counts2],[data.sur_counts3],[data.sur_counts4],[data.sur_counts5],[data.sur_counts6]])
 
   store_data,csstr+'_fb_geolat_from_hiresfile',time,double(data.lat) ;Geographic lat
   store_data,csstr+'_fb_geolon_from_hiresfile',time,double(data.lon) ;Geographic long
   store_data,csstr+'_fb_alt_from_hiresfile',time,double(data.alt)
   store_data,csstr+'_fb_mlt_from_hiresfile',time,double(data.mlt)
   store_data,csstr+'_fb_mcilwainL_from_hiresfile',time,double(data.mcilwainl)
-  store_data,csstr+'_fb_count_time_correction',time,float(data.count_time_correction)
+
 
 
   ylim,csstr+'_fb_col_hires_flux',0.1,1000,1
