@@ -1,15 +1,39 @@
 ;Returns FIREBIRD II (FU3 and FU4) geometric factors, energy channel ranges, and cadence 
 ;for the collimated detectors and surface detector (FU3 only) based on the date.
 ;Note that the date has to fall within the start/stop times of a campaign. See list below or in Table IV
-;in Johnson2020
+;in Johnson2020. 
+
 
 ;This comes from Arlo Johnson's 2020 paper (Tables 1,2,3)
 ;The FIREBIRD-II CubeSat mission: Focused investigations of relativistic electron burst intensity, range, and dynamics
 ;doi: 10.1063/1.5137905
 
 
-;To calibrate from counts to flux (only for differential channels):
+;********************************************************************
+;Code uses the correct (GEANT-determined) geometric factors. See this following note from the hires files:
+
+;#"CAVEAT": "Flux has been calculated using the analytic geometric factor of 9 cm^2 sr. 
+;#Modeling in GEANT4 suggests the real geometric factor is closer to 6, so actual flux is about 50% larger than reported.
+
+
+;Because of the above fact, it's best to use the "counts" (not flux) from the FIREBIRD files and then calibrate those into flux 
+;using this code rather than directly using the flux values. 
+;********************************************************************
+
+
+;*********************************************************************
+;NOTE ON HOW TO CALIBRATE FROM COUNTS TO FLUX (differential channels only)
+;Cadence = msec 
+;energy_width = keV 
+;geometric_factor = cm2 - sr 
+
+;***Counts as input (e.g. from FIREBIRD hires files gotten from firebird_load_data.pro)     
 ;   flux = counts/(cadence/1000.)/energy_width/geometric_factor
+
+;***Counts/sec as input (e.g. from Mike's microburst auto-id code, which outputs "counts_s").
+;   flux = counts_sec/energy_width/geometric_factor
+;*********************************************************************
+
 
 
 ;Example usage (see firebird_load_context_data_cdf_file.pro):
@@ -23,7 +47,7 @@ function firebird_get_calibration_counts2flux,date,fb
       print,'CHOSEN DATE OCCURS BEFORE START OF FIREBIRD MISSION ON 2015-02-01'
       return,-1
     endif
-    
+
 
 
     ;----------------------------------------------------
@@ -234,10 +258,17 @@ function firebird_get_calibration_counts2flux,date,fb
             channel_type = 'collimated'
             channel_for_context = 2
         endif 
-        if ((campaign ge 21) and (campaign le 24)) then begin
-            channel_type = 'collimated'
-            channel_for_context = 3
-        endif 
+;****NOTE: THE BELOW IS CORRECT. HOWEVER, THERE ARE MICROBURSTS FROM CAMPAIGNS > 24. 
+;I'M NOT SURE WHAT THE VALUES ARE FOR THESE LATER CAMPAIGNS. 
+;        if ((campaign ge 21) and (campaign le 24)) then begin
+;            channel_type = 'collimated'
+;            channel_for_context = 3
+;        endif 
+        if (campaign ge 21) then begin
+          channel_type = 'collimated'
+          channel_for_context = 3
+        endif
+
     endelse 
 
 
