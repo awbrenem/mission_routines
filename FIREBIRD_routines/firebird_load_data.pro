@@ -61,7 +61,7 @@ pro firebird_load_data,cubesat,plot=plot,fileexists=fileexists
   local_path=local_path,$
   /last_version)
 
-stop
+
 
 ;---------------------------------------------------------------
 ;Read file
