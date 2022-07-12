@@ -3,7 +3,9 @@
 ;
 ; SYNTAX:
 ;
-; PURPOSE: Fetches/loads FIREBIRD official hires data and stores as tplot variables
+; PURPOSE: Fetches/loads FIREBIRD official hires data and stores as tplot variables.
+; 
+; NOTE: the data are time-corrected
 ;
 ; Usage: timespan,'2019-01-24'
 ;        firebird_load_data,'3'
@@ -102,7 +104,11 @@ pro firebird_load_data,cubesat,plot=plot,fileexists=fileexists
 
   data = read_ascii(local_path+fn,template=template)
 
-  time = time_double(data.time)
+  
+  ;Add the time correction to the hires data 
+  time = time_double(data.time) + double(data.count_time_correction)
+  
+  
 
   csstr = strlowcase(cubesat2)
 
