@@ -10,7 +10,9 @@
 
 
 ;********************************************************************
-;Code uses the correct (GEANT-determined) geometric factors. See this following note from the hires files:
+;Code uses the correct (GEANT-determined) geometric factors.
+;
+;See this following note from the hires files:
 
 ;#"CAVEAT": "Flux has been calculated using the analytic geometric factor of 9 cm^2 sr. 
 ;#Modeling in GEANT4 suggests the real geometric factor is closer to 6, so actual flux is about 50% larger than reported.
@@ -22,22 +24,39 @@
 
 
 ;*********************************************************************
-;NOTE ON HOW TO CALIBRATE FROM COUNTS TO FLUX (differential channels only)
-;Cadence = msec 
+;3 METHODS TO CALIBRATE COUNTS TO FLUX  (differential channels only)   (Arlo's email on July 13, 2021)
+
+;Flux is always calculated as
+;   flux = counts/(cadence*energy_width*geometric_factor)
+
 ;energy_width = keV 
-;geometric_factor = cm2 - sr 
+;geometric_factor = cm2-sr 
 
-;***Counts as input (e.g. from FIREBIRD hires files gotten from firebird_load_data.pro)     
-;   flux = counts/(cadence/1000.)/energy_width/geometric_factor
+;However, the definition of "counts" and "cadence" vary. 
 
-;***Counts/sec as input (e.g. from Mike's microburst auto-id code, which outputs "counts_s").
-;   flux = counts_sec/energy_width/geometric_factor
+
+;(1) Hires data: e.g. from FIREBIRD hires files gotten from firebird_load_data.pro     
+;   counts --> counts per XXmsec   (XX can be anywhere from about 20-100 msec)
+;   cadence = XX/1000. sec  
+
+
+;(2) Output of Mike's microburst auto-id code ("counts_s")
+;   counts --> counts per sec
+;   cadence = 1. ;sec
+
+
+;(3) Survey data (from firebird_load_context_data_cdf_file.pro) 
+;   counts --> counts per 6sec
+;   cadence = 6.  ;sec
+
+
 ;*********************************************************************
 
 
 
 ;Example usage (see firebird_load_context_data_cdf_file.pro):
 ;   x = firebird_get_calibration_counts2flux('2017-12-05','3')
+
 
 
 function firebird_get_calibration_counts2flux,date,fb
