@@ -50,25 +50,17 @@ pro firebird_load_context_data_cdf_file,cubesat,$
   mn = strmid(datetime,5,2)
   dy = strmid(datetime,8,2)
 
+
+  ;file to load
   fn = 'FU' + cubesat + '_context_'+year+mn+dy+'_v01.cdf'
-
-
   ;Grab local path to save data
   homedir = (file_search('~',/expand_tilde))[0]+'/'
-
-
   folder = homedir+'data/firebird/FU'+cubesat+'/' + year + '/'
-
-
-
   url = 'http://rbsp.space.umn.edu/firebird/'     ;FU?/YYYY/
-
-
   path = 'FU' + cubesat+'/'+year+'/'+fn
-
-
   file_loaded = spd_download(remote_file=url+path,$
                 local_path=folder,$
+                local_file=folder+fn,$
                 /last_version)
 
 
@@ -87,19 +79,15 @@ pro firebird_load_context_data_cdf_file,cubesat,$
 
 
 
-  ;--------------------------------------------------------------
-  ;Change counts to flux 
-  ;From Arlo's email on July 13, 2021: 
 
-  ;The correct formula is flux = counts/(int_time*dE*G_factor). 
-  ;Note 1: these fluxes will be low by about 50% (from GEANT results), so multiply by 1.5
-  ;Note 2: you don't need to divide by both int_time and cadence. Once the data are downsampled to 6 seconds the 50 ms
-  ;cadence is irrelevant. 
+
+  ;--------------------------------------------------------------
+  ;Change counts to flux (see header for firebird_get_calibration_counts2flux.pro)
+  ;--------------------------------------------------------------
 
 
   cal = firebird_get_calibration_counts2flux(datetime,cubesat)
 
-  cadence = cal.cadence/1000.  ;sec 
 
   ;array reference for energy channels and geometric factor
   index = cal.channel_used_for_survey_calibration-1
@@ -116,12 +104,12 @@ pro firebird_load_context_data_cdf_file,cubesat,$
 
 
 
-  get_data,'D1',data=d1  ;counts/6sec
+  get_data,'D1',data=d1  ;Only differential channel (counts/6sec)
 
   ;Divide out the integration time for the counts channel
-  int_time = 6  ;sec   (counts are actually counts/6sec)
+  cadence = 6.  ;sec   (counts are actually counts/6sec)
 
-  flux = 1.5*d1.y/dE/gfactor/int_time   ;#/s-cm2-sr-keV
+  flux = d1.y/(dE*gfactor*cadence)   ;#/s-cm2-sr-keV  
 
 
 
@@ -137,7 +125,7 @@ pro firebird_load_context_data_cdf_file,cubesat,$
   options,'counts_context_FU'+cubesat,'ytitle','Context counts!CFrom '+ cal.channel_type_for_survey_data +' channel' + strtrim(cal.channel_used_for_survey_calibration,2)
   options,'counts_context_FU'+cubesat,'ysubtitle','[counts/6sec]'
 
-  get_data,'D0',data=d0  ;counts/6sec
+  get_data,'D0',data=d0  ;Only integral channel (counts/6sec)
   store_data,'counts_context_integral_channel_FU'+cubesat,d0.x+tc.y,d0.y
   options,'counts_context_integral_channel_FU'+cubesat,'ytitle','Context counts!Cintegral channel'
   options,'counts_context_integral_channel_FU'+cubesat,'ysubtitle','[counts/6sec]'
@@ -166,23 +154,25 @@ pro firebird_load_context_data_cdf_file,cubesat,$
   ;**************************************
   ;**************************************
   ;TESTING: compare to hires data 
-;stop
-;  sctmp = cubesat
-;  firebird_load_data,sctmp
-;  split_vec,'fu'+cubesat+'_fb_col_hires_flux'
-;  print,cal.CHANNEL_USED_FOR_SURVEY_CALIBRATION
-;  chn = strtrim(cal.CHANNEL_USED_FOR_SURVEY_CALIBRATION - 1,2)
-;  store_data,'comb',data=['flux_context_FU'+cubesat,'fu'+cubesat+'_fb_col_hires_flux_'+chn]
-;  options,'comb','colors',[250,0]
-;  ylim,'comb',0.1,1000,1
-;  rbsp_efw_init
-;
-;
-;  get_data,'D1',data=dd 
-;  store_data,'D1_tshift',dd.x+tc.y,dd.y
-;  ylim,'D1_tshift',1,5d5,1
-;
-;  tplot,['comb','D1_tshift']
+stop
+  sctmp = cubesat
+  firebird_load_data,sctmp
+  split_vec,'fu'+cubesat+'_fb_col_hires_flux'
+  print,cal.CHANNEL_USED_FOR_SURVEY_CALIBRATION
+  chn = strtrim(cal.CHANNEL_USED_FOR_SURVEY_CALIBRATION - 1,2)
+
+
+  store_data,'comb',data=['flux_context_FU'+cubesat,'fu'+cubesat+'_fb_col_hires_flux_'+chn]
+  options,'fu'+cubesat+'_fb_col_hires_flux_'+chn,'color',250
+  ylim,'comb',0.1,1000,1
+  rbsp_efw_init
+
+
+  get_data,'D1',data=dd 
+  store_data,'D1_tshift',dd.x+tc.y,dd.y
+  ylim,'D1_tshift',1,5d5,1
+
+  tplot,['comb','fu'+cubesat+'_fb_col_hires_flux_'+chn,'Count_Time_Correction']
   ;**************************************
   ;**************************************
   ;**************************************
