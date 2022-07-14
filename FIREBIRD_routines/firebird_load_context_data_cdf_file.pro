@@ -1,7 +1,12 @@
 ;Load FIREBIRD context (survey) CDF files that Aaron created at
 ;http://rbsp.space.umn.edu/firebird/FU?/YYYY/
 ;from the FIREBIRD context files (each of these spans an entire campaign, which is why I broke them up into daily files)
-
+;
+;NOTE: This code both time-corrects the data and applies the proper calibration of counts to flux 
+;(For testing see firebird_test_time_correction_flux_calibration.pro)
+;
+;
+;
 ;e.g. FU3_context_20150204_v01.cdf
 
 ;These files are created with
@@ -114,14 +119,22 @@ pro firebird_load_context_data_cdf_file,cubesat,$
 
 
 
+
   ;Apply time correction and rename channels
   get_data,'Count_Time_Correction',data=tc 
 
-  store_data,'flux_context_FU'+cubesat,d1.x+tc.y,flux
+
+  ;time-corrected times
+  time = d1.x+tc.y
+
+
+
+
+  store_data,'flux_context_FU'+cubesat,time,flux
   options,'flux_context_FU'+cubesat,'ytitle','Context flux:!CFrom '+ cal.channel_type_for_survey_data +' channel' + strtrim(cal.channel_used_for_survey_calibration,2)
   options,'flux_context_FU'+cubesat,'ysubtitle','[#/keV-sr-cm2-s]'
 
-  store_data,'counts_context_FU'+cubesat,d1.x+tc.y,d1.y
+  store_data,'counts_context_FU'+cubesat,time,d1.y
   options,'counts_context_FU'+cubesat,'ytitle','Context counts!CFrom '+ cal.channel_type_for_survey_data +' channel' + strtrim(cal.channel_used_for_survey_calibration,2)
   options,'counts_context_FU'+cubesat,'ysubtitle','[counts/6sec]'
 
@@ -130,6 +143,18 @@ pro firebird_load_context_data_cdf_file,cubesat,$
   options,'counts_context_integral_channel_FU'+cubesat,'ytitle','Context counts!Cintegral channel'
   options,'counts_context_integral_channel_FU'+cubesat,'ysubtitle','[counts/6sec]'
 
+  store_data,'channel_used_for_survey_calibration'+cubesat,d0.x+tc.y,replicate(cal.channel_used_for_survey_calibration,n_elements(d0.x))
+  ylim,'channel_used_for_survey_calibration'+cubesat,0,10
+
+
+
+  ;Correct the times on the following:
+  get_data,'Flag',data=dd
+  store_data,'Flag',time,dd.y
+  get_data,'McIlwainL',data=dd
+  store_data,'McIlwainL',time,dd.y
+  get_data,'Loss_cone_type',data=dd
+  store_data,'Loss_cone_type',time,dd.y
 
 
 
@@ -149,36 +174,6 @@ pro firebird_load_context_data_cdf_file,cubesat,$
 ;        'Loss_cone_type']              
 
 
-
-  ;**************************************
-  ;**************************************
-  ;**************************************
-  ;TESTING: compare to hires data 
-stop
-  sctmp = cubesat
-  firebird_load_data,sctmp
-  split_vec,'fu'+cubesat+'_fb_col_hires_flux'
-  print,cal.CHANNEL_USED_FOR_SURVEY_CALIBRATION
-  chn = strtrim(cal.CHANNEL_USED_FOR_SURVEY_CALIBRATION - 1,2)
-
-
-  store_data,'comb',data=['flux_context_FU'+cubesat,'fu'+cubesat+'_fb_col_hires_flux_'+chn]
-  options,'fu'+cubesat+'_fb_col_hires_flux_'+chn,'color',250
-  ylim,'comb',0.1,1000,1
-  rbsp_efw_init
-
-
-  get_data,'D1',data=dd 
-  store_data,'D1_tshift',dd.x+tc.y,dd.y
-  ylim,'D1_tshift',1,5d5,1
-
-  tplot,['comb','fu'+cubesat+'_fb_col_hires_flux_'+chn,'Count_Time_Correction']
-  ;**************************************
-  ;**************************************
-  ;**************************************
-
-
-;stop
 
 
   store_data,['D0','D1'],/del
