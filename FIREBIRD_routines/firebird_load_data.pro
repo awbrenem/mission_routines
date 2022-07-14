@@ -5,7 +5,10 @@
 ;
 ; PURPOSE: Fetches/loads FIREBIRD official hires data and stores as tplot variables.
 ; 
-; NOTE: the data are time-corrected
+; NOTE: the data are time-corrected AND have the proper flux calibration applied within this routine
+;(For testing see firebird_test_time_correction_flux_calibration.pro)
+;CAVEAT: I use the integral channel flux values from the FIREBIRD file, b/c I don't know how to properly calibrate these.
+;
 ;
 ; Usage: timespan,'2019-01-24'
 ;        firebird_load_data,'3'
@@ -56,7 +59,7 @@ pro firebird_load_data,cubesat,plot=plot,fileexists=fileexists
 
   dprint,dlevel=3,verbose=verbose,relpathnames,/phelp
 
-  ;local_path = '/Users/aaronbreneman/Desktop/Research/RBSP_Firebird_microburst_conjunctions_all/firebird/'
+
   local_path = '/Users/abrenema/data/firebird/' + cubesat2 + '/' + yyyy + '/'
 
   files = spd_download(remote_path=url,remote_file=fn,$
@@ -104,17 +107,45 @@ pro firebird_load_data,cubesat,plot=plot,fileexists=fileexists
 
   data = read_ascii(local_path+fn,template=template)
 
-  
+
+  ;-------------------------------------------------------------  
   ;Add the time correction to the hires data 
+  ;-------------------------------------------------------------
+
   time = time_double(data.time) + double(data.count_time_correction)
   
-  
+  ;-------------------------------------------------------------  
+  ;Properly calibrate counts to flux. 
+  ;NOTE: we won't return the flux values in this file b/c they are determined with the incorrect
+  ;geometric factor.
+  ;-------------------------------------------------------------
+
+
+
+  x = firebird_get_calibration_counts2flux(time_string(tr[0],tformat='YYYY-MM-DD'),strmid(cubesat2,2,1))
+
+
+  dE = x.ENERGY_RANGE_COLLIMATED[*,1] - x.ENERGY_RANGE_COLLIMATED[*,0]
+  col_flux1 = data.col_counts1/((x.cadence/1000.)*dE[0]*x.G_FACTOR_COLLIMATED[0])
+  col_flux2 = data.col_counts2/((x.cadence/1000.)*dE[1]*x.G_FACTOR_COLLIMATED[1])
+  col_flux3 = data.col_counts3/((x.cadence/1000.)*dE[2]*x.G_FACTOR_COLLIMATED[2])
+  col_flux4 = data.col_counts4/((x.cadence/1000.)*dE[3]*x.G_FACTOR_COLLIMATED[3])
+  col_flux5 = data.col_counts5/((x.cadence/1000.)*dE[4]*x.G_FACTOR_COLLIMATED[4])
+
+  dE = x.ENERGY_RANGE_SURFACE[*,1] - x.ENERGY_RANGE_SURFACE[*,0]
+  sur_flux1 = data.sur_counts1/((x.cadence/1000.)*dE[0]*x.G_FACTOR_SURFACE[0])
+  sur_flux2 = data.sur_counts2/((x.cadence/1000.)*dE[1]*x.G_FACTOR_SURFACE[1])
+  sur_flux3 = data.sur_counts3/((x.cadence/1000.)*dE[2]*x.G_FACTOR_SURFACE[2])
+  sur_flux4 = data.sur_counts4/((x.cadence/1000.)*dE[3]*x.G_FACTOR_SURFACE[3])
+  sur_flux5 = data.sur_counts5/((x.cadence/1000.)*dE[4]*x.G_FACTOR_SURFACE[4])
+
+
 
   csstr = strlowcase(cubesat2)
 
-  store_data,csstr+'_fb_col_hires_flux',time,double([[data.col_flux1],[data.col_flux2],[data.col_flux3],[data.col_flux4],[data.col_flux5],[data.col_flux6]])
+  store_data,csstr+'_fb_col_hires_flux',time,double([[col_flux1],[col_flux2],[col_flux3],[col_flux4],[col_flux5],[data.col_flux6]])
   store_data,csstr+'_fb_col_hires_counts',time,double([[data.col_counts1],[data.col_counts2],[data.col_counts3],[data.col_counts4],[data.col_counts5],[data.col_counts6]])
-  store_data,csstr+'_fb_sur_hires_flux',time,double([[data.sur_flux1],[data.sur_flux2],[data.sur_flux3],[data.sur_flux4],[data.sur_flux5],[data.sur_flux6]])
+  store_data,csstr+'_fb_sur_hires_flux',time,double([[sur_flux1],[sur_flux2],[sur_flux3],[sur_flux4],[sur_flux5],[data.sur_flux6]])
   store_data,csstr+'_fb_sur_hires_counts',time,double([[data.sur_counts1],[data.sur_counts2],[data.sur_counts3],[data.sur_counts4],[data.sur_counts5],[data.sur_counts6]])
 
   store_data,csstr+'_fb_geolat_from_hiresfile',time,double(data.lat) ;Geographic lat
@@ -126,43 +157,9 @@ pro firebird_load_data,cubesat,plot=plot,fileexists=fileexists
 
 
   ylim,csstr+'_fb_col_hires_flux',0.1,1000,1
-
-;Campaign 21 energy bins for FU_3
-;201.2 - 250.2 keV","250.2 - 299.2 keV","299.2 - 348.2 keV","348.2 - 446.2keV","446.2 - 1055.2 keV"
-;"ENERGY_WIDTHS": ["49.0 keV","49.0 keV","49.0 keV","98.0 keV","609.0 keV"],
-;Campaign 21 energy bins for FU_4
-;201.0 - 246.5 keV","246.5 - 301.1 keV","301.1 - 346.6 keV","346.6 - 446.7 keV","446.7 - 983.6 keV
-;"ENERGY_WIDTHS": ["45.5 keV","54.6 keV","45.5 keV","100.1 keV","536.9 keV"]
-
-
-;  probe = 'a'
-;  rbsp_load_efw_spec,probe=probe,type='calibrated',/pt
-;  rbsp_load_efw_spec,probe=probe,type='calibrated',/pt
-
-;  get_data,'fu3_fb_col_hires_flux_0',data=d
-;  period = d.x[1]-d.x[0]
-;  rbsp_detrend,csstr+'_fb_col_hires_flux_?',2*period
-;  rbsp_detrend,csstr+'_fb_sur_hires_flux_?',2*period
-
   options,csstr+'_fb_col_hires_flux_?','psym',-5
   options,csstr+'_fb_sur_hires_flux_?','psym',-5
 
-  if KEYWORD_SET(plot) then begin
-    rbsp_efw_init
-    split_vec,csstr+'_fb_col_hires_flux'
-    ylim,csstr+'_fb_col_hires_flux_?',0,0,0
-    tplot,['rbsp'+probe+'_efw_64_spec[0:4]',csstr+'_fb_col_hires_flux_[0-5]']
-    stop
-    split_vec,csstr+'_fb_sur_hires_flux'
-    ylim,csstr+'_fb_sur_hires_flux_?',0,0,0
-;    tplot,csstr+'_fb_sur_hires_flux_[0-5]'
-    tplot,['rbsp'+probe+'_efw_64_spec[0:4]',csstr+'_fb_sur_hires_flux_[0-5]']
-    stop
-  endif
-
-;upper = srt/2.
-;rbsp_decimate,'fu3_fb_col_hires_flux_0',upper=upper,level=lvl,newname='tst'
-;rbsp_decimate,'fu3_fb_col_hires_flux_0',level=1,newname='tst'
 
 
 
