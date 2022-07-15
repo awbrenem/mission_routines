@@ -1,7 +1,11 @@
 ;Load the list that Mike Shumko's FIREBIRD microburst id code ("microburst_detection" package)
 ;spits out. These are individual microbursts pulled from the FIREBIRD flux data. 
-;These microbursts have been time-corrected, as comparison to my detrended data from firebird_subtract_tumble...pro shows. 
+;These microbursts have been time-corrected and flux corrected (see test_firebird_time_correction_flux_calibration.pro)
 
+;Microbursts with the following flags have been removed:
+;'time_gap' 
+;'saturated'
+;'n_zeros'
 
 
 ;NOTES:
@@ -24,10 +28,13 @@
 function firebird_load_shumko_microburst_list,fb,filename=fntmp
 
 
+    ;Set the max allowed value of the flag variable "n_zeros".
+    max_n_zeros = 1.
+
     paths = get_project_paths()
 
 
-    if not keyword_set(fntmp) then fntmp = 'FU'+fb+'_microbursts.csv'
+    if not keyword_set(fntmp) then fntmp = 'FU'+fb+'_microburst_catalog_02.csv'
 
 
 
@@ -51,31 +58,67 @@ function firebird_load_shumko_microburst_list,fb,filename=fntmp
 
     vals = read_ascii(paths.SHUMKO_MICROBURST_DETECTION+fntmp,template=template)
 
-    vals.time = time_string(vals.time,prec=6)
+
+    ;----------------------------------------------------------------------------------------------------
+    ;Remove all "bad" microbursts. Note that some of the remaining ones may also not be microbursts, but
+    ;the bad ones are almost always bad. 
+    ;----------------------------------------------------------------------------------------------------
+
+
+    bad = where((vals.time_gap) or (vals.saturated) or (vals.n_zeros gt max_n_zeros))
+    vals.time[bad] = !values.f_nan
+    good = where(finite(vals.time) ne 0.)    
+    times = time_double(vals.time[good])
+
+
+
+    ;--------------------------
+    ;Time correct the data 
+    ;--------------------------
+
+    firebird_load_time_corrections
+
+
+    get_data,'FU'+fb+'_tcorr',data=tcorr
+
+    for i=0,n_elements(times)-1 do begin
+       goo = where(times[i] le tcorr.x)
+       if goo[0] ne -1 then times[i] += tcorr.y[goo[0]]
+    endfor
+
+
+    ;Corrected times
+    times = time_string(times,prec=3)
+
+
+
+
 
     ;day occurrence of each microburst
-    dates = time_string(vals.time,tformat='YYYY-MM-DD')
+    dates = time_string(times,tformat='YYYY-MM-DD')
 
 
     ;------------------------------
     ;Convert counts to flux (only differential channels)
-    flux = fltarr(n_elements(vals.counts_s_0),5)
+    flux = fltarr(n_elements(vals.counts_s_0[good]),5)
 
-    x = firebird_get_calibration_counts2flux(dates[0],fb)
-    energy_width = x.energy_range_collimated[*,1] - x.energy_range_collimated[*,0]     
+
     cadence = 1. ;sec  (Mike's counts are actually counts/sec)
 
-    for i=0.,n_elements(vals.counts_s_0)-1 do begin
+
+    for i=0.,n_elements(vals.counts_s_0[good])-1 do begin
       x = firebird_get_calibration_counts2flux(dates[i],fb)
+      energy_width = x.energy_range_collimated[*,1] - x.energy_range_collimated[*,0]
+
 
       if is_struct(x) then begin 
         ;To calibrate from counts to flux (only for differential channels):
         ;(see header of firebird_get_calibration_counts2flux.pro)
-        flux[i,0] = vals.counts_s_0[i]/cadence/energy_width[0]/x.g_factor_collimated[0]
-        flux[i,1] = vals.counts_s_1[i]/cadence/energy_width[1]/x.g_factor_collimated[1]
-        flux[i,2] = vals.counts_s_2[i]/cadence/energy_width[2]/x.g_factor_collimated[2]
-        flux[i,3] = vals.counts_s_3[i]/cadence/energy_width[3]/x.g_factor_collimated[3]
-        flux[i,4] = vals.counts_s_4[i]/cadence/energy_width[4]/x.g_factor_collimated[4]
+        flux[i,0] = vals.counts_s_0[good[i]]/cadence/energy_width[0]/x.g_factor_collimated[0]
+        flux[i,1] = vals.counts_s_1[good[i]]/cadence/energy_width[1]/x.g_factor_collimated[1]
+        flux[i,2] = vals.counts_s_2[good[i]]/cadence/energy_width[2]/x.g_factor_collimated[2]
+        flux[i,3] = vals.counts_s_3[good[i]]/cadence/energy_width[3]/x.g_factor_collimated[3]
+        flux[i,4] = vals.counts_s_4[good[i]]/cadence/energy_width[4]/x.g_factor_collimated[4]
       endif else begin
         flux[i,*] = !values.f_nan
       endelse
@@ -86,12 +129,11 @@ function firebird_load_shumko_microburst_list,fb,filename=fntmp
 
 
 
-    vals_fin = {TIME:vals.time,LAT:vals.lat,LON:vals.lon,ALT:vals.alt,MCILWAINL:vals.mcilwainl,MLT:vals.mlt,KP:vals.kp,$
+    vals_fin = {TIME:times,LAT:vals.lat[good],LON:vals.lon[good],ALT:vals.alt[good],MCILWAINL:vals.mcilwainl[good],MLT:vals.mlt[good],KP:vals.kp[good],$
     flux_0:flux[*,0],flux_1:flux[*,1],flux_2:flux[*,2],flux_3:flux[*,3],flux_4:flux[*,4],$
-    COUNTS_S_0:vals.counts_s_0,COUNTS_S_1:vals.counts_s_1,COUNTS_S_2:vals.counts_s_2,COUNTS_S_3:vals.counts_s_3,$
-    COUNTS_S_4:vals.counts_s_4,COUNTS_S_5:vals.counts_s_5,$
-    SIG_0:vals.sig_0,SIG_1:vals.sig_1,SIG_2:vals.sig_2,SIG_3:vals.sig_3,SIG_4:vals.sig_4,SIG_5:vals.sig_5,$
-    TIME_GAP:vals.time_gap,SATURATED:vals.saturated,N_ZEROS:vals.n_zeros}
+    COUNTS_S_0:vals.counts_s_0[good],COUNTS_S_1:vals.counts_s_1[good],COUNTS_S_2:vals.counts_s_2[good],COUNTS_S_3:vals.counts_s_3[good],$
+    COUNTS_S_4:vals.counts_s_4[good],COUNTS_S_5:vals.counts_s_5[good],$
+    SIG_0:vals.sig_0[good],SIG_1:vals.sig_1[good],SIG_2:vals.sig_2[good],SIG_3:vals.sig_3[good],SIG_4:vals.sig_4[good],SIG_5:vals.sig_5[good]}
 
 
     return,vals_fin
