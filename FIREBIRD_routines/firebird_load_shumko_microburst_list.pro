@@ -21,9 +21,11 @@
 ;----------------------------------------------------------------------------------------------------
 
 
-function load_firebird_microburst_list,fb,filename=fntmp
+function firebird_load_shumko_microburst_list,fb,filename=fntmp
 
-    pathtmp = '/Users/abrenema/Desktop/code/Aaron/github/research_projects/RBSP_Firebird_Colpitts_Chen/microburst_detection/data/'
+
+    paths = get_project_paths()
+
 
     if not keyword_set(fntmp) then fntmp = 'FU'+fb+'_microbursts.csv'
 
@@ -47,7 +49,7 @@ function load_firebird_microburst_list,fb,filename=fntmp
 
 
 
-    vals = read_ascii(pathtmp+fntmp,template=template)
+    vals = read_ascii(paths.SHUMKO_MICROBURST_DETECTION+fntmp,template=template)
 
     vals.time = time_string(vals.time,prec=6)
 
@@ -81,9 +83,6 @@ function load_firebird_microburst_list,fb,filename=fntmp
     endfor
 
 
-;TEST
-;store_data,'flux0',time_double(vals.time),flux[*,0]
-;store_data,'counts0',time_double(vals.time),vals.counts_s_0
 
 
 
