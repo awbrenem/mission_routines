@@ -6,7 +6,7 @@
 ;This code only needs to be run once. 
 ;
 
-fb = '4' 
+fb = '3' 
 
 
 
@@ -50,9 +50,9 @@ endfor
 ;times = times[goo]
 ;tcorr = tcorr[goo]
 
-store_data,'tcorr',times,tcorr
+store_data,'FU'+fb+'_tcorr',times,tcorr
 
-
+tplot_save,'FU'+fb+'_tcorr',filename=paths.root+'FU'+fb+'_time_corrections'
 
 openw,lun,paths.root+'FU'+fb+'_time_corrections.txt',/get_lun
 printf,lun,'Time correction values (sec) for the FIREBIRD data'
