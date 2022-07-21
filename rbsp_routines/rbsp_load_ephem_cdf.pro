@@ -57,8 +57,12 @@
 
 
 
-pro rbsp_load_ephem_cdf,sc,type,$
-  paths=paths,source=src
+;pro rbsp_load_ephem_cdf,sc,type,$
+;  paths=paths,source=src
+
+timespan,'2012-11-01',2,/days
+sc = 'a'
+src = 'efw'
 
 
 
@@ -118,33 +122,21 @@ pro rbsp_load_ephem_cdf,sc,type,$
         for j=0, n_elements(tnames)-1 do begin
 
 
-          sz = size(tnames[j],/n_dimensions)
-
-          ;print,'****' + tnames[j]
-
           get_data,tnames[j],data=tntmp
           get_data,tnames[j]+'_fin',data=tnfin
 
-          sz = size(tntmp.y,/n_dimensions)
 
-          ;print,'***before size'
-          ;help,tnfin
+          sz = size(tntmp.y,/n_dimensions)
           if sz eq 1 or sz eq 2 then store_data,tnames[j]+'_fin',data={x:[tnfin.x,tntmp.x],y:[tnfin.y,tntmp.y]}
           if sz eq 3 then store_data,tnames[j]+'_fin',data={x:[tnfin.x,tntmp.x],y:[tnfin.y,tntmp.y],v:tnfin.v}
 
-          ;get_data,tnames[j]+'_fin',data=ttt
-          ;print,'***after size'
-          ;help,ttt
-          ;stop
 
         endfor  ;for each tplot variable
       endif  ;i>0
       store_data,tnames,/del
     endif  ;if more than 1 day to load
-
-
-
   endfor  ;for each day to load
+
 
 
   ;Final rename of variables
