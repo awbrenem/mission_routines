@@ -140,7 +140,6 @@ pro rbsp_load_emfisis_cdf,sc,lvl,type,$
         for j=0, n_elements(tnames)-1 do begin
 
 
-          sz = size(tnames[j],/n_dimensions)
 
 
           get_data,tnames[j],data=tntmp
@@ -157,7 +156,7 @@ pro rbsp_load_emfisis_cdf,sc,lvl,type,$
           if lvl eq 'l3' then begin
             if sz eq 1 or sz eq 2 then store_data,tnames[j]+'_fin',data={x:[tnfin.x,tntmp.x],y:[tnfin.y,tntmp.y]},dlim=dlim,lim=lim
             if sz eq 3 then store_data,tnames[j]+'_fin',data={x:[tnfin.x,tntmp.x],y:[tnfin.y,tntmp.y],v:tnfin.v},dlim=dlim,lim=lim
-          endif
+         endif
 
 
         endfor  ;for each tplot variable
