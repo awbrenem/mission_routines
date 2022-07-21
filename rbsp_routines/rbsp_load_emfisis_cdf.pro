@@ -66,14 +66,9 @@
 
 
 
-;pro rbsp_load_emfisis_cdf,sc,lvl,type,$
-;  paths=paths
+pro rbsp_load_emfisis_cdf,sc,lvl,type,$
+  paths=paths
 
-
-sc = 'a' 
-lvl = 'l2'
-timespan,'2012-11-01',2,/days
-type ='hfr/spectra'
 
 
 
