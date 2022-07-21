@@ -32,8 +32,14 @@
 
 
 
-pro rbsp_load_efw_cdf,sc,lvl,type,$
-  paths=paths
+;pro rbsp_load_efw_cdf,sc,lvl,type,$
+;  paths=paths
+
+
+timespan,'2012-11-02',2,/days
+sc = 'a' 
+lvl = 'l2'
+type = 'spec'
 
 
 
@@ -105,24 +111,17 @@ pro rbsp_load_efw_cdf,sc,lvl,type,$
         for j=0, n_elements(tnames)-1 do begin
 
 
-sz = size(tnames[j],/n_dimensions)
 
-;print,'****' + tnames[j]
 
           get_data,tnames[j],data=tntmp
           get_data,tnames[j]+'_fin',data=tnfin
+
           
           sz = size(tntmp.y,/n_dimensions)
+          if sz eq 1 then store_data,tnames[j]+'_fin',data={x:[tnfin.x,tntmp.x],y:[tnfin.y,tntmp.y]}
+          if sz eq 2 or sz eq 3 then store_data,tnames[j]+'_fin',data={x:[tnfin.x,tntmp.x],y:[tnfin.y,tntmp.y],v:tnfin.v}
 
-;print,'***before size'
-;help,tnfin
-          if sz eq 1 or sz eq 2 then store_data,tnames[j]+'_fin',data={x:[tnfin.x,tntmp.x],y:[tnfin.y,tntmp.y]}
-          if sz eq 3 then store_data,tnames[j]+'_fin',data={x:[tnfin.x,tntmp.x],y:[tnfin.y,tntmp.y],v:tnfin.v}
 
-;get_data,tnames[j]+'_fin',data=ttt
-;print,'***after size'
-;help,ttt
-;stop
           
         endfor  ;for each tplot variable
       endif  ;i>0 
