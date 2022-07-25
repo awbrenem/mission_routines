@@ -57,12 +57,8 @@
 
 
 
-;pro rbsp_load_ephem_cdf,sc,type,$
-;  paths=paths,source=src
-
-timespan,'2012-11-01',2,/days
-sc = 'a'
-src = 'efw'
+pro rbsp_load_ephem_cdf,sc,type,$
+  paths=paths,source=src
 
 
 
@@ -107,7 +103,7 @@ src = 'efw'
     file = spd_download(remote_file=remote_file,remote_path=remote_path,$
       local_path=local_path,/last_version)
   
-    cdf2tplot,file,varnames=tnames
+    spd_cdf2tplot,file,varnames=tnames
 
   
   
