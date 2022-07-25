@@ -32,21 +32,16 @@
 
 
 
-;pro rbsp_load_efw_cdf,sc,lvl,type,$
-;  paths=paths
-
-
-timespan,'2012-11-02',2,/days
-sc = 'a' 
-lvl = 'l2'
-type = 'spec'
+pro rbsp_load_efw_cdf,sc,lvl,type,$
+  paths=paths
 
 
 
   ;Fix a very common user input error
-  if type eq 'vsvy-hires' then type = 'vsvy-highres'
-  if type eq 'e-hires-uvw' then type = 'e-highres-uvw'
-
+  if lvl eq 'l2' then begin 
+    if type eq 'vsvy-hires' then type = 'vsvy-highres'
+    if type eq 'e-hires-uvw' then type = 'e-highres-uvw'
+  endif
 
 
   sc2 = 'rbsp'+sc
@@ -95,7 +90,7 @@ type = 'spec'
     file = spd_download(remote_file=remote_file,remote_path=remote_path,$
             local_path=local_path,/last_version)
    
-    cdf2tplot,file,varnames=tnames
+    spd_cdf2tplot,file,varnames=tnames
   
   
 
