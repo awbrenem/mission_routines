@@ -183,8 +183,8 @@ pro firebird_load_context_data_cdf_file,cubesat,$
     
     
       ;final tplot names    
-      tnfinvars = ['flux_context_FU4','counts_context_FU4','counts_context_integral_channel_FU4',$
-        'channel_used_for_survey_calibration4','Alt','Count_Time_Correction','Flag','Lat','Lon',$
+      tnfinvars = ['flux_context_FU'+cubesat,'counts_context_FU'+cubesat,'counts_context_integral_channel_FU'+cubesat,$
+        'channel_used_for_survey_calibration'+cubesat,'Alt','Count_Time_Correction','Flag','Lat','Lon',$
         'Loss_cone_type','MLT','McIlwainL','kp']
 
     
