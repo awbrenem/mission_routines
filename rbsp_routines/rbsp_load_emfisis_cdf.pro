@@ -81,7 +81,7 @@ pro rbsp_load_emfisis_cdf,sc,lvl,type,$
 
 
   url = 'https://spdf.gsfc.nasa.gov/pub/data/rbsp/'
-  
+
 
 
   for i=0,ndays_load -1 do begin
@@ -99,12 +99,12 @@ pro rbsp_load_emfisis_cdf,sc,lvl,type,$
     if lvl eq 'l2' then begin  
       remote_path = url +scpath+'/'+lvl+'/emfisis/'+type+'/'+yr+'/'
 ;      remote_file = sc2+'_'+typefn[0]+'-'+typefn[1]+'_emfisis-l2_'+yr+mm+dd+'_v?.?.?.cdf
-      remote_file = sc2+'_'+typefn[0]+'-'+typefn[1]+'_emfisis-l2_'+yr+mm+dd+'_v?.?.?.cdf
+      remote_file = sc2+'_'+typefn[0]+'-'+typefn[1]+'_emfisis-l2_'+yr+mm+dd+'_v?.?.*'
       local_path = '/Users/abrenema/data/rbsp/'+scpath+'/'+lvl+'/emfisis/'+type+'/'+yr+'/'
     endif
     if lvl eq 'l3' then begin
       remote_path = url +scpath+'/'+lvl+'/emfisis/magnetometer/'+type+'/'+yr+'/'
-      remote_file = sc2 + '_magnetometer_'+typefn[0]+'-'+typefn[1]+'_emfisis-l3_'+yr+mm+dd+'_v?.?.?.cdf'
+      remote_file = sc2 + '_magnetometer_'+typefn[0]+'-'+typefn[1]+'_emfisis-l3_'+yr+mm+dd+'_v?.?.*'
       local_path = '/Users/abrenema/data/rbsp/'+scpath+'/'+lvl+'/emfisis/magnetometer/'+type+'/'+yr+'/'
     endif
   
@@ -117,14 +117,13 @@ pro rbsp_load_emfisis_cdf,sc,lvl,type,$
     spd_cdf2tplot,file,varnames=tnames
 
 
-    ;----------------------------------------------------------------------------
-    ;Some of the EMFISIS data has a format that's not compatible with tplot. Fix here
-    ;----------------------------------------------------------------------------
 
-    if type eq 'hfr/spectra' then begin
-      get_data,'HFR_Spectra',data=dd,dlim=dlim,lim=lim
-      store_data,'HFR_Spectra',dd.x,dd.y,reform(dd.v),dlim=dlim,lim=lim
-    endif
+
+
+
+
+    ;The cross terms for wfr/spectral data have a weird tplot format, and I don't care about these....
+    if tnames[0] eq 'BuBu' then tnames = ['BuBu','BvBv','BwBw','EuEu','EvEv','EwEw']
 
 
    
@@ -146,7 +145,7 @@ pro rbsp_load_emfisis_cdf,sc,lvl,type,$
           get_data,tnames[j]+'_fin',data=tnfin
 
           sz = size(tntmp.y,/n_dimensions)
-
+          tags = tag_names(tntmp)
 
           if lvl eq 'l2' then begin
             if sz eq 1 then store_data,tnames[j]+'_fin',data={x:[tnfin.x,tntmp.x],y:[tnfin.y,tntmp.y]},dlim=dlim,lim=lim
