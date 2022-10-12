@@ -51,6 +51,7 @@ def load_langmuir():
             hf = {"times":times, "alt":alt, "ne":ne}
 
 
+
     return {"lowflyer":lf, "highflyer":hf}
 
 """
@@ -63,7 +64,11 @@ Currently I have only Henry's low-flyer solution (64 S/sec) from Jun 14, 2019. N
 def load_efieldDC():
 
     edc = readsav(path + 'Low-Flyer/efield_DC/35040_unsmoothed_Esoln_v2.sav')
-    vals = {"Emerid":edc["emer"], "Ezonal":edc["ezon"], "Vmerid":edc["vmer"], "Vzonal":edc["vzon"], "times":edc["time"]}
+
+    #Get rid of negative times which can mess up spectrograms
+    good = np.squeeze(np.where(edc["time"] >= 0))
+
+    vals = {"Emerid":edc["emer"][good], "Ezonal":edc["ezon"][good], "Vmerid":edc["vmer"][good], "Vzonal":edc["vzon"][good], "times":edc["time"][good]}
     return vals
 
 
@@ -88,6 +93,14 @@ def load_mag():
 
     times = mag_bon_xyz['t']
     timesdB = mag_dB["btime"]
+
+    #Get rid of negative times which can mess up spectrograms
+    good = np.where(mag_bon_xyz['t'] >= 0)
+    mag_bon_xyz['t'] = mag_bon_xyz['t'][good]
+    mag_bon_xyz['xmag'] = mag_bon_xyz['xmag'][good]
+    mag_bon_xyz['ymag'] = mag_bon_xyz['ymag'][good]
+    mag_bon_xyz['zmag'] = mag_bon_xyz['zmag'][good]
+    times = times[good]
 
     bo = np.sqrt(mag_bon_xyz['xmag']**2 + mag_bon_xyz['ymag']**2 + mag_bon_xyz['zmag']**2)
     fce = [28.*bo[i] for i in range(len(bo))]
@@ -247,6 +260,12 @@ def load_particle(typeload, range="0",sumtype="0",FoldPitchangles="0"):
             "pitchangles":dataAll[typeload+"s_hires_pitchnom_gsfc"]}
 
 
+    #Get rid of negative times which can mess up spectrograms
+    good = np.squeeze(np.where(dataAllFin['times'] >= 0))
+    dataAllFin['times'] = dataAllFin['times'][good]
+    dataAllFin['flux'] = dataAllFin['flux'][good,:,:]
+
+
     return dataAllFin
 
 
@@ -257,6 +276,18 @@ def load_vlf():
     print('LOAD VLF: Currently low flyer only')
     vlf12_lf = readsav(path + "Low-Flyer/efield_VLF/" + '35040_LFDSP_S1_VLF12_mvm_AaronB.sav') #Low flyer (35.040)
     vlf34_hf = readsav(path + "High-Flyer/efield_VLF/" + '35039_Main_VLF34B_VLF34Boosted.sav') 
+
+
+    #Get rid of negative times which can mess up spectrograms
+    good = np.squeeze(np.where(vlf12_lf['tvlf12'] >= 0))
+    vlf12_lf['dvlf12'] = vlf12_lf['dvlf12'][good]
+    vlf12_lf['tvlf12'] = vlf12_lf['tvlf12'][good]
+
+    good = np.squeeze(np.where(vlf34_hf['tvals'] >= 0))
+    vlf34_hf['tvals'] = vlf34_hf['tvals'][good]
+    vlf34_hf['dvals'] = vlf34_hf['dvals'][good]
+    vlf34_hf['sfidvals'] = vlf34_hf['sfidvals'][good]
+
 
     data = {"vlf12_lf":vlf12_lf, "vlf34_hf":vlf34_hf}
     return data
@@ -285,8 +316,12 @@ if __name__ == '__main__':
     print("<> Running vision2_load_data.py as a script! <>")
     #x = load_particle("eea")
     #print(x)
-    x = load_mag()
-    x.keys()
+    m = load_mag() ##
+    v = load_vlf() ##
+    p = load_particle("eea")
+    e = load_efieldDC()
+    l = load_langmuir()
+
     print("here_fin")
 
 
