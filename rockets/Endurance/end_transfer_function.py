@@ -1,29 +1,95 @@
 """
-Calculate transfer function 
+Calculate transfer function for Endurance channels
 
 From Bode (gain/phase) plot:
 (1) Find gain as |H(w)| = 10^B/10, where B is gain in dB from Bode plot
 (2) H(w) = |H(w)| * exp(i*theta), where theta is the phase in radians
 
 (see https://resources.pcb.cadence.com/blog/2021-understanding-a-circuit-transfer-function-from-a-bode-plot)
+
 """
 
 
+import sys 
+sys.path.append('/Users/abrenema/Desktop/code/Aaron/github/mission_routines/rockets/Endurance/')
+sys.path.append('/Users/abrenema/Desktop/code/Aaron/github/signal_analysis/')
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy import signal
 import numpy as np
-import sys 
-sys.path.append('/Users/abrenema/Desktop/code/Aaron/github/mission_routines/rockets/Endurance/')
 import end_load_data as end
 from scipy.interpolate import interp1d
-sys.path.append('/Users/abrenema/Desktop/code/Aaron/github/signal_analysis/')
 import plot_spectrogram as ps
 
 
+#-------------------------------
+#Select desired gain/phase files (from Paulo) from the calibration testing.
+#From these files Paulo derives a fit (ax + b) that allows calibration from counts to volts.
+#These values (a, b) are found in the Endurance channel list document as the yellow boxes in far right column
+#-------------------------------
+
+def end_load_gainphase(fn):
+
+    path = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/gain_phase_files/'
 
 
+    with open(path + fn) as f:
+        lines = f.readlines()
+
+
+    f = lines[0].split()  #freq in Hz
+    p = lines[1].split()  #phase in deg
+    g = lines[2].split()  #gain in dB
+    f = [float(i) for i in f]
+    p = [float(i) for i in p]
+    g = [float(i) for i in g]
+
+    #change to radians
+    prad = [np.deg2rad(i) for i in p]
+
+    #change gain from dB to linear scaler for calculation of transfer function
+    #From Steve Martin email on Nov 7, 2022: 
+    #Gain=10^(0.05 * (opchan+gainoffset))
+    offset = 0.
+    Hmag = [10**(0.05*i + offset) for i in g]
+
+    fig, axs = plt.subplots(3)
+    axs[0].plot(f,g)
+    axs[1].plot(f,Hmag)
+    axs[2].plot(f,p)
+    #axs[2].plot(f,prad)
+    axs[0].set_title('gain/phase; \n fn='+ fn)
+    axs[0].set_xscale('log')
+    axs[1].set_xscale('log')
+    axs[2].set_xscale('log')
+    axs[0].set_yscale('linear')
+    axs[1].set_ylim(0,20)
+    axs[0].set(ylabel='gain(dB)',xlabel='freq(kHz)')
+    axs[1].set(ylabel='gain',xlabel='freq(kHz)')
+    axs[2].set(ylabel='phase(deg)',xlabel='freq(kHz)')
+    #axs[:].set_xlim(-40,10)
+    plt.show()
+
+
+    return prad, Hmag, f
+
+
+
+
+
+#-----------------------------------------------
+#Load gain/phase curves for desired channel
+#-----------------------------------------------
+ 
+prad, Hmag, f = end_load_gainphase("Endurance_Analog 1_VLF12D_6-30000-100.txt")
+
+
+
+
+#-------------------------------
 #Load Endurance data for testing
+#-------------------------------
+
 vlf = end.efield_vlf()
 tvlf = vlf.tvlf
 vlf12 = vlf.dvlf12_mvm
@@ -31,7 +97,10 @@ vlf12 = vlf.dvlf12_mvm
 fs = vlf.samplerate
 
 
+#-------------------------------
 #FFT Endurance VLF data
+#-------------------------------
+
 vr = [-80,-60]
 #vr = [-0.1,0.1]
 xr = [100,500]
@@ -40,80 +109,18 @@ yr = [0,12000]
 #FFT to get power spectral density (V^2/Hz). 
 #Mode defaults to PSD (V^2/Hz). 
 #Complex consists of amplitude (where magnitude = abs(complex))
-fspec, tspec, powerc = signal.spectrogram(vlf12, fs, nperseg=16384,noverlap=16384/2,window='hann',return_onesided=True,mode='complex')
-fspec, tspec, powerm = signal.spectrogram(vlf12, fs, nperseg=16384,noverlap=16384/2,window='hann',return_onesided=True,mode='magnitude')
-fspec, tspec, powera = signal.spectrogram(vlf12, fs, nperseg=16384,noverlap=16384/2,window='hann',return_onesided=True,mode='angle')
-#ft, tt, pt = signal.spectrogram(vlf12, fs, nperseg=16384,noverlap=16384/2,window='hann',return_onesided=True)
+fspec, tspec, powerc = signal.spectrogram(vlf12, fs, nperseg=1024,noverlap=1024/2,window='hann',return_onesided=True,mode='complex')
+fspec, tspec, powerm = signal.spectrogram(vlf12, fs, nperseg=1024,noverlap=1024/2,window='hann',return_onesided=True,mode='magnitude')
+fspec, tspec, powera = signal.spectrogram(vlf12, fs, nperseg=1024,noverlap=1024/2,window='hann',return_onesided=True,mode='angle')
+#ft, tt, pt = signal.spectrogram(vlf12, fs, nperseg=1024,noverlap=1024/2,window='hann',return_onesided=True)
 
-
-
-"""
-#Prove that abs(powerc) = powerm
-pr = np.abs(powerc)
-fig, axs3 = plt.subplots(2)
-axs3[0].plot(tspec,pr[3000,:])
-axs3[1].plot(tspec,powerm[3000,:])
-plt.show()
-"""
-
-
-
-
-
-path = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/gain_phase_files/'
-
-#fn = "Endurance_Analog 1_HF12_1000-20000000-100.txt"
-#fn = "Endurance_Analog 1_HF12 (1)_1000-20000000-100.txt"
-#fn = "Endurance_Analog 1_HF12 (2)_1000-20000000-100.txt"
-#fn = "Endurance_Analog 1_HF34 (3)_1000-20000000-100.txt"
-
-#fn = "Endurance_Analog 1_V12D_10-10000-100.txt"
-fn = "Endurance_Analog 1_VLF12D_6-30000-100.txt"
-
-#fn = "Endurance_Analog 1_HF34 (3)_1000-20000000-100.txt"
-with open(path + fn) as f:
-    lines = f.readlines()
-
-f = lines[0].split()  #freq in Hz
-p = lines[1].split()  #phase in deg
-g = lines[2].split()  #gain in dB
-f = [float(i) for i in f]
-p = [float(i) for i in p]
-g = [float(i) for i in g]
-
-#change to radians
-prad = [np.deg2rad(i) for i in p]
-
-
-
-
-#change gain from dB to linear scaler for calculation of transfer function
-#From Steve Martin email on Nov 7, 2022: 
-#Gain=10^(0.05 * (opchan+gainoffset))
-offset = 0.
-Hmag = [10**(0.05*i + offset) for i in g]
-
-fig, axs = plt.subplots(3)
-axs[0].plot(f,g)
-axs[1].plot(f,Hmag)
-axs[2].plot(f,p)
-#axs[2].plot(f,prad)
-axs[0].set_title('gain/phase; \n fn='+ fn)
-axs[0].set_xscale('log')
-axs[1].set_xscale('log')
-axs[2].set_xscale('log')
-axs[0].set_yscale('linear')
-axs[1].set_ylim(0,20)
-axs[0].set(ylabel='gain(dB)',xlabel='freq(kHz)')
-axs[1].set(ylabel='gain',xlabel='freq(kHz)')
-axs[2].set(ylabel='phase(deg)',xlabel='freq(kHz)')
-#axs[:].set_xlim(-40,10)
-plt.show()
 
 
 
 #------------------------------------------------------------------
 #Transfer function  H(w) = |H|*exp(i*theta)
+#------------------------------------------------------------------
+
 
 #Interpolate transfer function to frequencies of FFT'd waveform data
 interp = interp1d(f,Hmag,kind='cubic', bounds_error=False)
@@ -133,12 +140,14 @@ axs[1].set_xlim(0,15000)
 plt.show()
 """
 
+#----------------------------------------------------------------------------
+#Compare distribution of uncorrected vs corrected power FOR A SINGLE TEST TIME
+#----------------------------------------------------------------------------
+
+
 #Apply transfer function to the complex FFT data.
 #(1) apply it to the complex FFT 
 ttime = 2000
-
-#Htst = H
-#Htst = [1 + 0j for i in H]
 
 
 
@@ -163,118 +172,99 @@ axs[0].set_ylim(1e-7,1e-3)
 plt.show()
 
 
-
+#----------------------------------------------------------------------------
 #Gain/phase correct all the spectral data. 
+#----------------------------------------------------------------------------
 
 powerc_corr = powerc.copy()
-for i in range(len(powerc[0,:])):
+for i in range(len(powerc[0,:])):   #Loop through each time
     powerc_corr[:,i] = powerc[:,i]/H
 
 
-#fspec, tspec, powerc = signal.spectrogram(vlf12, fs, nperseg=16384,noverlap=16384/2,window='hann',return_onesided=True,mode='complex')
+
+
+ptmp = np.abs(powerc_corr)
 
 vr = [-80,-20]
 xr = [100,500]
 yr = [0,12000]
 
 fig, axs = plt.subplots(2)
-
-#plotargs = {'set_title':'TEST'}
-
 ps.plot_spectrogram(tspec, fspec, powerm, vr=vr, yscale='linear', zscale='log', xr=xr, yr=yr, ax=axs[0], show=False)
 axs[0].set_title = 'test'
-ps.plot_spectrogram(tspec, fspec, np.abs(powerc_corr), vr=vr, yscale='linear', zscale='log', xr=xr, yr=yr, ax=axs[1])
+ps.plot_spectrogram(tspec, fspec, ptmp, vr=vr, yscale='linear', zscale='log', xr=xr, yr=yr, ax=axs[1])
 axs[1].set_title = 'test2'
 plt.show()
 
-#V^2/Hz
-#fig, ax = plt.subplots()
 
-#im = ax.imshow(powerm,vmin=vr[0],vmax=vr[1],cmap='turbo',aspect='auto', extent=[np.min(tspec),np.max(tspec),np.min(fspec),np.max(fspec)], origin='lower','title':'test')
-#plt.show()
+plt.plot(fspec,powerm[:,3000])
+plt.plot(fspec,powerc[:,3000])
+plt.plot(fspec,powerc_corr[:,3000])
 
 
-#--------------------------------------------------------------
-#--------------------------------------------------------------
+#------------------------------------------------------
+#invert the corrected spectral data to waveforms
 #NOTE: IT SEEMS THAT I NEED THE NEGATIVE FREQUENCIES TO USE IFFT
-#--------------------------------------------------------------
-#--------------------------------------------------------------
+#------------------------------------------------------
 
-#inverse FFT data to compare waveforms 
-#fspec, tspec, powerc = signal.spectrogram(vlf12, fs, nperseg=16384,noverlap=16384/2,window='hann',return_onesided=True,mode='complex')
-ttime = 2000
+
+#array with positive followed by negative frequencies (as required by ifft)
+fspecc = np.concatenate((fspec,-1*np.flip(fspec)))
+
+#Loop through each time and add the negative freq data to the positive freq data to create array with both
+pgoo = []
+pgoo_corr = []
+for i in range(len(tspec)):
+    ftst = np.concatenate((powerc[:,i],np.flip(powerc[:,i])))
+    pgoo.append(ftst)
+    ftst = np.concatenate((powerc_corr[:,i],np.flip(powerc_corr[:,i])))
+    pgoo_corr.append(ftst)
+
+powerc2 = np.transpose(pgoo)
+powerc_corr2 = np.transpose(pgoo_corr)
+
+
+#plt.plot(fspecc,pgoo[:,100])
+plt.plot(fspecc,powerc2[:,0])
+plt.plot(fspecc,powerc_corr2[:,0])
+plt.ylim(-0.01,0.01)
+plt.xlim(-1000,1000)
+
 
 #get rid of NaN values
-ptmp = powerc[5:,ttime]
+#ttime = 2000
+#ptmp = powerc[5:,ttime]
+#ptmp_corr = powerc_corr[5:,ttime]
 
-wf = np.fft.ifft(np.abs(ptmp))
-wf = np.fft.ifft(np.abs(powerc[:,ttime]))
-plt.plot(wf[100:200])
+
+wf = np.fft.ifft(powerc2[:,10])
+wf_corr = np.fft.ifft(powerc_corr2[:,5900])
+
+wf2 = np.ndarray.flatten(wf)
+wf_corr2 = np.ndarray.flatten(wf_corr)
+
+wf2 = wf2[:len(wf2)//2]
+wf_corr2 = wf_corr2[:len(wf_corr2)//2]
+
+
+
+
+
+wf = np.fft.ifft(powerc2)
+wf_corr = np.fft.ifft(powerc_corr2)
+
+wf2 = np.ndarray.flatten(wf)
+wf_corr2 = np.ndarray.flatten(wf_corr)
+
+wf2 = wf2[:len(wf2)//2]
+wf_corr2 = wf_corr2[:len(wf_corr2)//2]
+
+#wf = np.fft.ifft(np.abs(powerc[:,ttime]))
+plt.plot(np.real(wf2[100:200]))
+plt.plot(np.real(wf_corr2[100:200]))
+
+plt.plot(np.abs(wf_corr2[0:len(wf_corr2)//10]))
 plt.show()
-
-
-
-
-
-
-
-
-t = np.arange(0, 10, 0.01);
-
-# Create a sine wave with multiple frequencies(1 Hz, 2 Hz and 4 Hz)
-
-a = np.sin(2*np.pi*t) + np.sin(2*2*np.pi*t) + np.sin(4*2*np.pi*t);
-
- # Do a Fourier transform on the signal
-
-tx  = np.fft.fft(a);
-
-
-# Do an inverse Fourier transform on the signal
-
-itx = np.fft.ifft(tx);
-
-# Plot the original sine wave using inverse Fourier transform
-
-plt.plot(t, a);
-
-plt.title("Sine wave plotted using inverse Fourier transform");
-
-plt.xlabel('Time')
-
-plt.ylabel('Amplitude')
-
-plt.grid(True)
-
- 
-
-plt.show()
-
-
-
-
-
-#Take Laplace transform:
-https://stackoverflow.com/questions/38316225/numerical-laplace-transform-python
-#Laplace from FFT:
-https://www.tutorialspoint.com/relation-between-laplace-transform-and-fourier-transform
-Therefore, the Laplace transform is just the complex Fourier transform of a signal. 
-Hence, the Fourier transform is equivalent to the 
-Laplace transform evaluated along the imaginary axis of the s-plane, i.e.,
-L[x(t)]=F[x(t)e−σt]
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 """
@@ -317,11 +307,4 @@ Endurance_Analog 1_V1SA_10-10000-100.txt
 
 """
 
-
-
-
-#Input frequency spectrum 
-Xs = []
-
-#Output frequency spectrum
 
