@@ -36,6 +36,35 @@ header = ['time','xvel','yvel','zvel','lat','long','alt']
 ephem =  pd.read_csv(path + folder + '/' + fn, skiprows=1, names=header)
 
 
+#vmag = np.sqrt(ephem.xvel**2 + ephem.yvel**2 + ephem.zvel**2)
+
+#fig, axs = plt.subplots(4)
+#axs[0].plot(ephem.time,vmag)
+#axs[1].plot(ephem.time,ephem.alt)
+#axs[2].plot(ephem.time,ephem.lat)
+#axs[3].plot(ephem.time,ephem.long)
+
+
+def efield_dc():
+
+    folder = "efield_DC"
+    fn = "47001_TM1_LFDSP_S5DCE_DCES5_calibrated.sav"
+
+    edc = readsav(path + folder + '/' + fn)
+    edckeys = list(edc.keys())
+    #dict_keys(['times', 'bl1234', 'bl13413224', 'dv12_mvm', 'dv12_volts', 'dv12_raw', 'dv12_rawnormal', 'a12', 'b12', 'dv34_mvm', 'dv34_volts', 'dv34_raw', 'dv34_rawnormal', 'a34', 'b34', 'dv13_mvm', 'dv13_volts', 'dv13_raw', 'dv13_rawnormal', 'a13', 'b13', 'dv32_mvm', 'dv32_volts', 'dv32_raw', 'dv32_rawnormal', 'a32', 'b32', 'dv24_mvm', 'dv24_volts', 'dv24_raw', 'dv24_rawnormal', 'a24', 'b24', 'dv41_mvm', 'dv41_volts', 'dv41_raw', 'dv41_rawnormal', 'a41', 'b41', 'author', 'timenote', 'calnote', 'dataunits', 'flight', 'format', 'filein', 'link', 'samplerate', 't0', 'timetagmethod', 'timeunits'])
+
+
+    #Get rid of all times t<0
+    good = np.squeeze(np.where(edc.times >= 0.))
+    tstlen = len(edc['times'])
+
+    for i in edckeys:
+        if np.shape(edc[i]) != ():
+            if len(edc[i]) == tstlen:
+                edc[i] = edc[i][good]
+
+    return edc
 
 
 
@@ -51,7 +80,7 @@ def efield_vlf():
 
     
     #fs = 1/(np.mean(vlf12.tsec - vlf12.tsec.shift()))
-    #freq12, tspec12, power12 = signal.spectrogram(vlf12.amp, fs, nperseg=512, return_onesided=1)
+    #freq12, tspec12, power12 = signal.spectrogram(vlf12.amp, fs, nperseg=512, return_onesided=1,window='hann')
     #ps.plot_spectrogram(tspec12,freq12,power12,vr=[0.4,0.65], xr=[0,900],yr=[1,10000],pl=1)
     #ps.plot_spectrogram(tspec12,freq12,power12,vr=[0.4,0.65], xr=[0,900],yr=[0,10000],pl=1)
 
@@ -76,7 +105,7 @@ def efield_vlf():
     vlf12['dvlf32_mvm'] = vlf12['dvlf32_mvm'][good]
 
     #fs = evlf.samplerate
-    #freq12, tspec12, power12 = signal.spectrogram(evlf.dvlf12_mvm, fs, nperseg=512, return_onesided=1)
+    #freq12, tspec12, power12 = signal.spectrogram(evlf.dvlf12_mvm, fs, nperseg=512, return_onesided=1,window='hann')
     #ps.plot_spectrogram(tspec12,freq12,power12,vr=[0.4,0.65], xr=[0,900],yr=[0,10000],pl=1)
 
 
@@ -137,7 +166,7 @@ def efield_hf():
     plt.plot(v1[:,1])
 
     fs = 8e6
-    freq12, tspec12, power12 = signal.spectrogram(hf.dhf12, fs, nperseg=512, return_onesided=1)
+    freq12, tspec12, power12 = signal.spectrogram(hf.dhf12, fs, nperseg=512, return_onesided=1,window='hann')
 
     """
 
