@@ -27,10 +27,9 @@ import end_load_gainphase as gainphase
 #Select data type (DC or VLF) and channel (12, 34, etc) for calibration 
 #Load data...
 #-------------------------------------------------------
-
 """
 type = 'VLF'
-chn = '32'
+chn = '12'
 filename = "Endurance_Analog 1_" + type + chn + "D_6-30000-100.txt"
 pathoutput = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/efield_VLF/'
 wavegoo = end.efield_vlf()
@@ -41,10 +40,14 @@ elif chn == '24': wavedat = wavegoo.dvlf24_mvm
 elif chn == '32': wavedat = wavegoo.dvlf32_mvm
 """
 
+#----------------------------------------------------
+#***WHY IS THE FIRST FREQUENCY 10 HZ???? *********
+#----------------------------------------------------
+#----------------------------------------------------
 type = 'DC'
 chn = '12'
 filename = "Endurance_Analog 1_V"+chn+"D_10-10000-100.txt"
-pathoutput = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/efield_DC /'
+pathoutput = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/efield_DC/'
 wavegoo = end.efield_dc()
 tdat = wavegoo.times
 if chn == '12': wavedat = wavegoo.dv12_mvm
@@ -53,6 +56,7 @@ elif chn == '13': wavedat = wavegoo.dv13_mvm
 elif chn == '32': wavedat = wavegoo.dv32_mvm
 elif chn == '24': wavedat = wavegoo.dv24_mvm
 elif chn == '41': wavedat = wavegoo.dv41_mvm
+
 
 
 fs = wavegoo.samplerate
@@ -269,6 +273,8 @@ axs[0].plot(tdat,wavedat)
 axs[1].plot(tdat,wf)
 axs[2].plot(tdat,wf_corr)
 for i in range(3): axs[i].set_ylim(-100,100)
+for i in range(3): axs[i].set_xlim(410,420)
+for i in range(3): axs[i].set_ylim(0,0)
 
 
 print('quick look at calibrated vs original waveforms')
@@ -285,6 +291,6 @@ dict_fin = {'tvals':tdat, 'wf':wf_corr}
 
 fnsav = filename[:-4] + '_gainphase_corrected'
 pickle.dump(dict_fin, open(pathoutput + fnsav + '.pkl','wb'))
-wf_corr_load = pickle.load(open(pathoutput + fnsav + ".pkl", 'rb'))
+#wf_corr_load = pickle.load(open(pathoutput + fnsav + ".pkl", 'rb'))
 
 
