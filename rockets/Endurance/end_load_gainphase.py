@@ -48,7 +48,7 @@ def end_load_gainphase(fn):
     axs[1].set_xscale('log')
     axs[2].set_xscale('log')
     axs[0].set_yscale('linear')
-    axs[1].set_ylim(0,20)
+    #axs[1].set_ylim(0,20)
     axs[0].set(ylabel='gain(dB)',xlabel='freq(kHz)')
     axs[1].set(ylabel='gain(linear)',xlabel='freq(kHz)')
     axs[2].set(ylabel='phase(deg)',xlabel='freq(kHz)')
