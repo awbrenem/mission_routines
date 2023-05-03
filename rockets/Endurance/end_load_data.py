@@ -25,6 +25,8 @@ import matplotlib.pyplot as plt
 import sys 
 sys.path.append('/Users/abrenema/Desktop/code/Aaron/github/signal_analysis/')
 import plot_spectrogram as ps
+import pickle
+
 
 #from scipy.fft import fftshift
 
@@ -67,49 +69,42 @@ def efield_dc():
     return edc
 
 
-
+#Load VLF channel data. Both Steve's version (DC gain corrected only) and my full gain/phase vs freq corrected 
 def efield_vlf():
 
-
     folder = 'efield_VLF'
-
-    """
-    fn = '47001_TM1_LFDSP_VLF12_Glyn_30kHz_v1.txt'
-    header = ['tsec', 'amp']
-    vlf12 = pd.read_csv(path + folder + '/' + fn, skiprows=17, names=header, delim_whitespace=True)
-
-    
-    #fs = 1/(np.mean(vlf12.tsec - vlf12.tsec.shift()))
-    #freq12, tspec12, power12 = signal.spectrogram(vlf12.amp, fs, nperseg=512, return_onesided=1,window='hann')
-    #ps.plot_spectrogram(tspec12,freq12,power12,vr=[0.4,0.65], xr=[0,900],yr=[1,10000],pl=1)
-    #ps.plot_spectrogram(tspec12,freq12,power12,vr=[0.4,0.65], xr=[0,900],yr=[0,10000],pl=1)
-
-    """
-
-
     fn = '47001_TM1_LFDSP_S5_VLF_mvm.sav'
 
-    vlf12 = readsav(path + folder + '/' + fn)
+    vlf = readsav(path + folder + '/' + fn)
     #dict_keys(['tvlf', 'dvlf12_mvm', 'dvlf34_mvm', 'dvlf24_mvm', 'dvlf32_mvm', 'author', 
     # 'calnote_vlf1234', 'calnote_vlf2432', 'dataunits', 'flight', 'format', 'filein', 'link', 
     # 'samplerate', 't0', 'timetagmethod', 'timeunits'])
 
 
     #Remove negative times (starts at t=-100 sec). Not doing so messes up my spectrogram plotting routines.
-    good = np.squeeze(np.where(vlf12.tvlf >= 0.))
+    good = np.squeeze(np.where(vlf.tvlf >= 0.))
 
-    vlf12['tvlf'] = vlf12['tvlf'][good]
-    vlf12['dvlf12_mvm'] = vlf12['dvlf12_mvm'][good]
-    vlf12['dvlf34_mvm'] = vlf12['dvlf34_mvm'][good]
-    vlf12['dvlf24_mvm'] = vlf12['dvlf24_mvm'][good]
-    vlf12['dvlf32_mvm'] = vlf12['dvlf32_mvm'][good]
-
-    #fs = evlf.samplerate
-    #freq12, tspec12, power12 = signal.spectrogram(evlf.dvlf12_mvm, fs, nperseg=512, return_onesided=1,window='hann')
-    #ps.plot_spectrogram(tspec12,freq12,power12,vr=[0.4,0.65], xr=[0,900],yr=[0,10000],pl=1)
+    vlf['tvlf'] = vlf['tvlf'][good]
+    vlf['dvlf12_mvm'] = vlf['dvlf12_mvm'][good]
+    vlf['dvlf34_mvm'] = vlf['dvlf34_mvm'][good]
+    vlf['dvlf24_mvm'] = vlf['dvlf24_mvm'][good]
+    vlf['dvlf32_mvm'] = vlf['dvlf32_mvm'][good]
 
 
-    return vlf12
+    #Load gain/phase calibrated VLF files and add to dictionary
+    pathoutput = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/efield_VLF/'
+    goo = pickle.load(open(pathoutput + 'Endurance_Analog 1_VLF12D_6-30000-100_gainphase_corrected' + ".pkl", 'rb'))
+    vlf['dvlf12_mvm_gpcal'] = goo['wf']
+    goo = pickle.load(open(pathoutput + 'Endurance_Analog 1_VLF34D_6-30000-100_gainphase_corrected' + ".pkl", 'rb'))
+    vlf['dvlf34_mvm_gpcal'] = goo['wf']
+    goo = pickle.load(open(pathoutput + 'Endurance_Analog 1_VLF32D_6-30000-100_gainphase_corrected' + ".pkl", 'rb'))
+    vlf['dvlf32_mvm_gpcal'] = goo['wf']
+    goo = pickle.load(open(pathoutput + 'Endurance_Analog 1_VLF24D_6-30000-100_gainphase_corrected' + ".pkl", 'rb'))
+    vlf['dvlf24_mvm_gpcal'] = goo['wf']
+
+
+
+    return vlf
 
 
 def efield_hf():
