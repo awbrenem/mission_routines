@@ -10,7 +10,6 @@ From Bode (gain/phase) plot:
 (see https://resources.pcb.cadence.com/blog/2021-understanding-a-circuit-transfer-function-from-a-bode-plot)
 """
 
-
 import sys 
 sys.path.append('/Users/abrenema/Desktop/code/Aaron/github/mission_routines/rockets/Endurance/')
 sys.path.append('/Users/abrenema/Desktop/code/Aaron/github/signal_analysis/')
@@ -30,7 +29,7 @@ import filter_wave_frequency as filt
 #Load data...
 #-------------------------------------------------------
 
-
+"""
 type = 'VLF'
 chn = '12'
 filename = "Endurance_Analog 1_" + type + chn + "D_6-30000-100.txt"
@@ -41,9 +40,10 @@ if chn == '12': wavedat = wavegoo.dvlf12_mvm
 elif chn == '34': wavedat = wavegoo.dvlf34_mvm
 elif chn == '24': wavedat = wavegoo.dvlf24_mvm
 elif chn == '32': wavedat = wavegoo.dvlf32_mvm
-
-#----------------------------------------------------
 """
+#----------------------------------------------------
+
+
 type = 'DC'
 chn = '12'
 filename = "Endurance_Analog 1_V"+chn+"D_10-10000-100.txt"
@@ -56,7 +56,12 @@ elif chn == '13': wavedat = wavegoo.dv13_mvm
 elif chn == '32': wavedat = wavegoo.dv32_mvm
 elif chn == '24': wavedat = wavegoo.dv24_mvm
 elif chn == '41': wavedat = wavegoo.dv41_mvm
-"""
+
+
+
+
+
+
 
 fs = wavegoo.samplerate
 
@@ -100,17 +105,12 @@ if type == 'DC':
     prad = np.insert(prad,0,Pgoo)
 
 if type == 'VLF':
-    #average value b/t 100-1000 Hz 
-    #goo = list(map(tuple, np.where((f > 100) & (f < 1000))))
-    #Hmag_avg = np.mean(Hmag[goo])
-    #badgain_ind = list(map(tuple, np.where(f < 30)))
-    #Hmag[badgain_ind] = Hmag_avg
 
     #Change any gain values < 1 to 1 so that low freqs are not amplified.     
     Hmag[Hmag < 1] = 1
 
 
-    #Remove values < 10 Hz b/c I don't trust these. The signal/noise ratio is very high in the 
+    #Remove VLF cal test gain/phase values < fmin_trust (Hz) b/c I don't trust these. The signal/noise ratio is very high in the 
     #cal tests, and these gain/phase values can be all over the place. 
     fmin_trust = 30
     tt = f < fmin_trust
@@ -195,6 +195,7 @@ plt.xscale('log')
 plt.ylim(-4,4)
 print('check wrapping')
 
+plt.close()
 
 
 
@@ -206,6 +207,10 @@ for i in range(2): axs[i].set_xlim(1,30000)
 axs[1].set_ylim(-4,4)
 
 print('Check modified gain/phase curves')
+
+fig.clear()
+plt.close(fig)
+
 
 #---------------------------------------------------
 #Define the transfer function.
@@ -234,7 +239,6 @@ H_unitygain = [Hmag2_unity[i] * np.exp(1j*prad2[i]) for i in range(len(prad2))]
 
 
 
-"""
 #Bode plots
 fig2, axs2 = plt.subplots(3)
 axs2[0].plot(freq,np.abs(H))
@@ -247,8 +251,6 @@ axs2[0].set_title('Bode plots \n ' + filename)
 axs2[0].set_ylabel('Magnitude |H(jw)|')
 axs2[1].set_ylabel('Re(H(jw))')
 axs2[2].set_ylabel('Phase Im(H(jw))')
-"""
-
 
 print('Check unity gain transfer function')
 
@@ -264,17 +266,25 @@ wavedatFFTc = [wavedatFFT[i]/H_unitygain[i] for i in range(len(H_unitygain))]
 #----------
 #----------
 #----------
-#UNDER CONSTRUCTION - need to test this
+#NOTE: THIS IS A VERY HARD FILTER AND LEAVES (FOR SMALL AMPS) A SINE WAVE AT THE FILTERED FREQ. PROBABLY NOT A GOOD METHOD TO USE....
+#UNDER CONSTRUCTION - need to test this - RESULT: I DON'T THINK THIS IS WORTH IT. THE HIGHPASS FILTER APPLIED AT END WORKS JUST FINE.
 #Remove very low freqs due to remaining artificial power
-#tst = freq < 20
-#wavedatFFTc2 = wavedatFFTc
-wavedatFFTc[freq < 20] = 0-0j
+"""
+if type == 'VLF':
+    #tst = freq < 20
+    #wavedatFFTc2 = wavedatFFTc
+    goo = freq > 20 
+    #wavedatFFTc[goo] = 0-0j
+
+    wavedatFFTc = goo * wavedatFFTc
+    #wavedatFFTc[freq < 20] = 0-0j
+"""
 #----------
 #----------
 #----------
 
 
-
+"""
 freq2 = list(freq)
 v1 = np.abs(wavedatFFT)
 v2 = np.abs(wavedatFFTc)
@@ -292,8 +302,9 @@ axs3[3].set_yscale('linear')
 for i in range(4): axs3[i].set_xlim(200,201)
 print('Quick look at calibrated vs original data')
 
-
-
+fig3.clear()
+plt.close(fig3)
+"""
 
 
 #---------------------------------------------------
@@ -305,26 +316,58 @@ wf_corr = irfft(wavedatFFTc, n=len(tdat))
 
 
 
-##Remove low freq power in the VLF channels. This can result in unrealistic sine wave at low freqs. 
-#wf_corr = filt.butter_highpass_filter(wf_corr, 20, fs, order=5)
+#There can still be some residual power at low freqs in the VLF channels (noticeable sine wave).
+#Bandpass to remove. 
+
+if type == 'VLF':
+    wf_corrTST = filt.butter_highpass_filter(wf_corr, 16, fs, order=8)
+#if type == 'DC':
+#    wf_corrTST = filt.butter_highpass_filter(wf_corr, 1, fs, order=10)
 
 
 
-
-fig,axs = plt.subplots(3)
-axs[0].plot(tdat,wavedat)
-axs[1].plot(tdat,wf)
-axs[2].plot(tdat,wf_corr)
+"""
+fig,axs = plt.subplots(3, clear=True)
+#axs[0].plot(tdat,wavedat)
+axs[0].plot(tdat,wf)
+axs[1].plot(tdat,wf_corr)
+axs[2].plot(tdat,wf_corrTST)
 #for i in range(3): axs[i].set_ylim(-100,100)
-for i in range(3): axs[i].set_xlim(400,402)
+
+#...DC signal test
+for i in range(3): axs[i].set_xlim(100,180)
+for i in range(3): axs[i].set_ylim(-10,10)
+
+#...Small amp test
+for i in range(3): axs[i].set_xlim(535,536.2)
+for i in range(3): axs[i].set_ylim(-0.25,0.25)
+#...Maneuver test
+for i in range(3): axs[i].set_xlim(524,525)
 for i in range(3): axs[i].set_ylim(-1,1)
 
 
 
-import plot_spectrogram as ps
-fspec, tspec, powerc = signal.spectrogram(wavedatFFT, fs, nperseg=1024,noverlap=1024/2,window='hann',return_onesided=True,mode='complex')
+for i in range(3): axs[i].set_xlim(656,656.06)
+for i in range(3): axs[i].set_xlim(656.02,656.03)
+for i in range(3): axs[i].set_xlim(450,460)
+for i in range(3): axs[i].set_ylim(-0.45,0.45)
+axs[1].set_ylim(-0.25,0.25)
+axs[2].set_ylim(-0.25,0.25)
+
+
+fig.clear()
+plt.close(fig)
+ 
+"""
+
+
+#import plot_spectrogram as ps
+#fspec, tspec, powerc = signal.spectrogram(wavedatFFT, fs, nperseg=1024,noverlap=1024/2,window='hann',return_onesided=True,mode='complex')
 #ps.plot_spectrogram(tspec,fspec,powerc,vr=[-50,-35],yr=[1,1000],xr=[100,800], yscale='log')
+
+
 #Before I inverse transform I need to get rid of NaN values at the beginning of new data arrays
+#NOTE: there shouldn't be any at this point, but good to be sure. 
 bad = list(map(tuple, np.where(np.isnan(wavedatFFTc))))
 wavedatFFTc = np.asarray(wavedatFFTc)
 wavedatFFTc[bad] = 0
