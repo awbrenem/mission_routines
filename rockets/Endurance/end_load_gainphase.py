@@ -3,6 +3,7 @@ Select desired gain/phase files (from Paulo) from the calibration testing.
 From these files Paulo derives a fit (ax + b) that allows calibration from counts to volts.
 These values (a, b) are found in the Endurance channel list document as the yellow boxes in far right column
 
+See end_gainphase_test.py for comparisons to theoretical behavior
 """
 
 
@@ -35,8 +36,32 @@ def end_load_gainphase(fn):
     #change gain from dB to linear scale for calculation of transfer function
     #From Steve Martin email on Nov 7, 2022: 
     #Gain=10^(0.05 * (opchan+gainoffset))
+    #NOTE: This gives the correct max gain values for all the channels EXCEPT for HF.
+
     offset = 0.
     Hmag = [10**(0.05*i + offset) for i in g]
+
+
+
+    #-----------------------------------------------
+    #Remove bad data points that can occur at very low frequencies. This happens b/c 
+    #the signal/noise ratio can become high leading to artificial values at very low freqs
+    #during the gain/phase tests. 
+    #-----------------------------------------------
+
+    if fn == 'Endurance_Analog 1_V13D_10-10000-100.txt':
+        Hmag[0] = Hmag[3]
+        Hmag[1] = Hmag[3]
+        Hmag[2] = Hmag[3]
+    if fn == 'Endurance_Analog 1_V34D_10-10000-100.txt':
+        Hmag[0] = Hmag[1]
+    if fn == 'Endurance_Analog 1_V32D_10-10000-100.txt':
+        Hmag[0] = Hmag[1]
+    if fn == 'Endurance_Analog 1_V24D_10-10000-100.txt':
+        Hmag[0] = Hmag[1]
+
+
+
 
     fig, axs = plt.subplots(3)
     axs[0].plot(f,g)
@@ -56,8 +81,6 @@ def end_load_gainphase(fn):
     plt.show()
 
     
-
-
     return prad, Hmag, f
 
 
