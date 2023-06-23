@@ -33,7 +33,7 @@ from scipy.interpolate import interp1d
 import plot_spectrogram as ps
 import filter_wave_frequency as filt
 import pickle
-
+import correlation_analysis
 
 
 
@@ -138,13 +138,35 @@ def plot_hod(tr):
 
 
 
+#Cross-spectral density
+def plot_csd(tr, xlm=[0,12000],ylm=[-180,180],nps=512,wfs=['12','34']):
+    goot = np.where((tdat >= tr[0]) & (tdat <= tr[1]))
+    window = np.hanning(len(goot[0]))
+    #wf1z = wfc12[goot]*window
+    wf1z = wfc24[goot]*window
+    wf2z = wfc34[goot]*window
+    csd, angle, f = correlation_analysis.cross_spectral_density(wf1z,wf2z,fs,nperseg=nps)
+
+    goodv = np.where(csd > 0.6)
+
+
+    fig = plt.figure()
+    ax1 = fig.add_subplot(2, 1, 1)
+    ax1.plot(f, csd)
+    ax1.plot(f[goodv],csd[goodv],'.')
+    ax1.set_xlim(xlm)
+    ax2 = fig.add_subplot(2, 1, 2)
+    ax2.plot(f, angle)
+    ax2.plot(f[goodv],angle[goodv],'.')
+    ax2.set_xlim(xlm)
+    ax2.set_ylim(ylm)
 
 
 #--------------------------------------
 #Wave 1: Berstein (~120-130 sec at 5000-8000 Hz)
 #--------------------------------------
 
-ps.plot_spectrogram(tspec,fspec,np.abs(powerc),vr=[-60,-30],yr=[4000,8000],xr=[110,140], yscale='linear')
+ps.plot_spectrogram(tspec,fspec,np.abs(powerc),vr=[-60,-30],yr=[4000,8000],xr=[120,130], yscale='linear')
 
 
 wfc12bp = filt.butter_bandpass_filter(wfc12, 4000, 6000, fs, order= 10)
@@ -152,12 +174,93 @@ wfc34bp = filt.butter_bandpass_filter(wfc34, 4000, 6000, fs, order= 10)
 wfc24bp = filt.butter_bandpass_filter(wfc24, 4000, 6000, fs, order= 10)
 wfc32bp = filt.butter_bandpass_filter(wfc32, 4000, 6000, fs, order= 10)
 
-fspecz, tspecz, powercz = signal.spectrogram(wfc12bp, fs, nperseg=1024,noverlap=512,window='hann',return_onesided=True,mode='complex')
-ps.plot_spectrogram(tspecz,fspecz,np.abs(powercz),vr=[-60,-30],yr=[4000,8000],xr=[120,125], yscale='linear')
+fspecz, tspecz, powercz = signal.spectrogram(wfc12bp, fs, nperseg=4*2048,noverlap=2*2048,window='hann',return_onesided=True,mode='complex')
+ps.plot_spectrogram(tspecz,fspecz,np.abs(powercz),vr=[-60,-30],yr=[4000,8000],xr=[120,130], yscale='linear')
+
+
+
+#Snapshot 1
+tr = [122.62,122.72]  #zoomed out
+tr = [122.67718,122.68]  #zoomed in
+plot_wf(tr)
+plot_csd([tr[0]-3, tr[1]+3])
+plot_hod(tr) #Fairly circular
+
+
+
+#Snapshot 2
+tr = [123.5,123.54]
+tr = [123.522,123.526] #Zoomed in
+plot_wf(tr)
+plot_csd([tr[0]-0.2, tr[1]+0.2])
+plot_hod(tr)
+
+
 
 
 plot_wf([123.00275,123.00375])
+plot_wf([115.00275,128.00375])
 plot_hod([123.00275,123.00375])
+
+
+
+
+
+
+#NOTES: angle for Bernstein waves (wf12, wf34) is > 0 and increases towards 90. 
+#Assuming wave vector propagates perp to Bo, this implies wavelengths < 5m * sin(90) = 5 m [Kintner+98]. 
+#The DC power is at phase = 0, which means long wavelength (or large structures)
+
+
+#Dynamic cross-spectral density
+goot = np.where((tdat >= 100) & (tdat <= 200))
+window = np.hanning(len(goot[0]))
+wf1z = wfc12[goot]*window
+wf2z = wfc34[goot]*window
+timechunk = 1  #sec
+Pxy, tchunks, freqs = correlation_analysis.cross_spectral_density_spectrogram(wf1z,wf2z,tdat[goot],fs,timechunk,nperseg=1024,plot=True)
+
+
+
+
+
+"""
+    from matplotlib import mlab
+
+    nperseg = 1024
+
+    # First create power spectral densities for normalization
+    (ps1, f) = mlab.psd(wf1z, Fs=fs, scale_by_freq=False, NFFT=nperseg)
+    (ps2, f) = mlab.psd(wf2z, Fs=fs, scale_by_freq=False, NFFT=nperseg)
+    #plt.plot(f, ps1)
+    #plt.plot(f, ps2)
+
+    
+    # Then calculate cross spectral density
+    (csd, f) = mlab.csd(wf1z, wf2z,NFFT=nperseg, Fs=fs,sides='default', scale_by_freq=False)
+    csd_norm = np.absolute(csd)**2 / (ps1 * ps2)
+
+    
+    fig = plt.figure()
+    ax1 = fig.add_subplot(1, 2, 1)
+    # Normalize cross spectral absolute values by auto power spectral density
+    ax1.plot(f, csd_norm)
+    ax2 = fig.add_subplot(1, 2, 2)
+    angle = np.angle(csd, deg=True)
+    angle[angle<-90] += 360
+    ax2.plot(f, angle)
+
+"""
+
+print("here")
+
+
+
+
+
+
+
+
 
 
 
