@@ -33,6 +33,28 @@ def end_load_gainphase(fn):
     #change to radians
     prad = [np.deg2rad(i) for i in p]
 
+
+    #-----------------------------------------------------------------------
+    #Note that some channels have a negative polarity as measured from the gain/phase tests. 
+    #For these, I need to flip the sign of the phase. 
+    #-----------------------------------------------------------------------
+
+    phaseflip = ["Endurance_Analog 1_V24D_10-10000-100.txt", 
+                 "Endurance_Analog 1_V41D_10-10000-100.txt",
+                 "Endurance_Analog 1_VLF24D_6-30000-100.txt",
+                 "Endurance_Analog 1_VLF41D_6-30000-100.txt",
+                 "Endurance_Analog 1_V1SD_10-10000-100.txt",
+                 "Endurance_Analog 1_V2SD_10-10000-100.txt",
+                 "Endurance_Analog 1_V3SD_10-10000-100.txt",
+                 "Endurance_Analog 1_V4SD_10-10000-100.txt"]
+
+
+    if fn in phaseflip:
+        prad = [-1*i for i in prad]
+
+
+
+
     #change gain from dB to linear scale for calculation of transfer function
     #From Steve Martin email on Nov 7, 2022: 
     #Gain=10^(0.05 * (opchan+gainoffset))
