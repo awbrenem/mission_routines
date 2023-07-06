@@ -1,8 +1,22 @@
 """
-Test the Endurance transfer function on DC and VLF data
+Test the Endurance transfer function by comparing two different channels 
+(e.g. VLF data with DC data for identified waves)
+
+
+#--------------------------------------
+Possible waves to test (VLF12 and V12DC)
+~630 Hz wave from 480-490 s
+
+#--------------------------------------
+#Test ~1000 Hz wave from 165.5 - 165.54. The V12DC and VLF12 gains match nicely, but the phases are different in the uncorrected data. 
+#See if they line up here. 
+
+#--------------------------------------
+#TEST WAVES:
+#Wave 1: 470-510 sec; ~4200 Hz 
+#--------------------------------------
 
 """
-
 
 import sys 
 sys.path.append('/Users/abrenema/Desktop/code/Aaron/github/mission_routines/rockets/Endurance/')
@@ -12,165 +26,220 @@ import matplotlib.pyplot as plt
 from scipy import signal
 import numpy as np
 import end_load_data as end
+import end_load_gainphase as gainphase
+
 from scipy.interpolate import interp1d
-from scipy.fft import rfft, irfft
 import plot_spectrogram as ps
-
-
-
-
-
-
-fig,axs = plt.subplots(3)
-axs[0].plot(tdat,wavedat)
-axs[1].plot(tdat,wf)
-axs[2].plot(tdat,wf_corr)
-
-#for i in range(3): axs[i].set_ylim([-0.5,0.5])
-#for i in range(3): axs[i].set_xlim([393.1+0.0625,393.1+0.065])
-
-
-plt.plot(tdat,wf, tdat, wf_corr)
-plt.xlim([393.1+0.0625,393.1+0.065])
-
-##Phase shift test using normalized gain versions.
-#goomax = np.max(wf)
-#wfnorm = wf/goomax
-#goomax = np.max(wf_corr)
-#wf_corrnorm = wf_corr/goomax
-
-#plt.plot(tdat,wfnorm, tdat,wf_corrnorm)
-#plt.xlim([393.1+0.0625,393.1+0.065])
-#plt.ylim(-0.02,0.02)
-
-
-
-#Test VLF data now that transfer function has been applied by comparing to EDC12 channel. 
-#There is a ~1000 Hz wave from 165.5 - 165.54. The EDC12 and VLF12 gains match nicely, but the phases are different in the uncorrected data. 
-#See if they line up here. 
-
 import filter_wave_frequency as filt
+from end_fields_loader import Endurance_Fields_Loader as EFL
+from math import remainder
+
+
+#---------------------------------------------
+#Load corrected data
+#---------------------------------------------
+
+c1 = 'V12D'
+c2 = 'V34D'
+
+
+v1c = EFL(c1)
+wf1c, tdat1c = v1c.load_data_gainphase_corrected()
+fs1 = v1c.chnspecs['fs']
+
+v2c = EFL(c2)
+wf2c, tdat2c = v2c.load_data_gainphase_corrected()
+fs2 = v2c.chnspecs['fs']
+
+
+
+#---------------------------------------------
+#Load uncorrected data
+#---------------------------------------------
+
+v1 = EFL(c1)
+v2 = EFL(c2)
+wf1, tdat1 = v1.load_data()
+wf2, tdat2 = v2.load_data()
+
+
+
 
 #----------------------------------------------------------------------------------------
-#First let's compare the phase channels b/t EDC and VLF to see where they are most different 
+#Compare phase b/t two channels at frequency of interest
 #----------------------------------------------------------------------------------------
 
-prad1, Hmag1, f1 = end_load_gainphase("Endurance_Analog 1_VLF12D_6-30000-100.txt")
-prad2, Hmag2, f2 = end_load_gainphase("Endurance_Analog 1_V12D_10-10000-100.txt")
-
-#unwrap phase angles
-prad1u = np.unwrap(prad1)
-prad2u = np.unwrap(prad2)
-
-interp = interp1d(f2,prad2u,kind='cubic', bounds_error=False)
-prad2ui = interp(f1)
+def phase_comparison(vline_hz=0):
 
 
-#Plot that clearly shows the phase differences b/t EDC and VLF channels (third panel)
-prad_diff = prad1u - prad2ui
-fig,axs = plt.subplots(3)
-axs[0].plot(f1,prad1, f2,prad2)
-axs[1].plot(f1,prad1u, f2,prad2u, f1,prad2ui)
-axs[2].plot(f1,prad_diff)
-for i in range(3): axs[i].set_xlim(0,10000)
+    v1c.plot_gainphase()
+    v2c.plot_gainphase()
+
+
+    #--Different channels have different x-axis (freq) values. Need to interpolate 
+    #--to common base. To do this, need to unwrap phase angles to remove sharp discontinuities
+    prad1u = np.unwrap(v1c.phase)
+    prad2u = np.unwrap(v2c.phase)
+
+
+    freq_interp = range(0,50000,1)
+    interp1 = interp1d(v1c.freq_gainphase,prad1u,kind='cubic', bounds_error=False)
+    prad1u = interp1(freq_interp)
+    interp2 = interp1d(v2c.freq_gainphase,prad2u,kind='cubic', bounds_error=False)
+    prad2u = interp2(freq_interp)
+
+    prad_diff = prad1u - prad2u
+
+
+    #--rewrap
+    prad_diff = (prad_diff + np.pi) % (2 * np.pi) - np.pi
 
 
 
-#----------------------------------------------------------------------------------------
-#Load EDC data and plot EDC and VLF spectrograms to find common wave events to analyze
-#----------------------------------------------------------------------------------------
+    #--Plot that clearly shows the phase differences b/t EDC and VLF channels (third panel)
+    fig,axs = plt.subplots(2)
+    axs[0].plot(v1c.freq_gainphase,v1c.phase, v2c.freq_gainphase,v2c.phase)
+    axs[1].plot(freq_interp,prad_diff)
+    axs[0].set_ylabel('phase\n(rad)\nBlue='+c1+' \nOrange='+c2)
+    axs[1].set_ylabel('delta-phase (rad)')
+    for i in range(2): axs[i].set_xlim(1,50000)
+    for i in range(2): axs[i].set_xscale('log')
 
-vlf12c = wf_corr
+    for i in range(2):
+        axs[i].axvline(vline_hz,linestyle='--', linewidth=0.8)
+        axs[i].axhline(np.pi, linestyle='--', linewidth=0.8)
+        axs[i].axhline(np.pi/2, linestyle='--', linewidth=0.8)
+        axs[i].axhline(np.pi/4, linestyle='--', linewidth=0.4)
+        axs[i].axhline(0, linestyle='--', linewidth=0.6)
+        axs[i].axhline(-np.pi, linestyle='--', linewidth=0.8)
+        axs[i].axhline(-np.pi/2, linestyle='--', linewidth=0.8)
+        axs[i].axhline(-np.pi/4, linestyle='--', linewidth=0.4)
+
+
+    print("here")
+
+#--------------------------------------------------------------------
+#Comparison plot of uncalibrated vs calibrated data for both channels
+#--------------------------------------------------------------------
+
+def wave_plot(fl, fh, x0=0, x1=800, y0=-10, y1=10, **kwargs):
+
+
+
+    wf1cbp = filt.butter_bandpass_filter(wf1c, fl, fh, fs1, order= 10)
+    wf1bp = filt.butter_bandpass_filter(wf1, fl, fh, fs1, order= 10)
+    wf2cbp = filt.butter_bandpass_filter(wf2c, fl, fh, fs2, order= 10)
+    wf2bp = filt.butter_bandpass_filter(wf2, fl, fh, fs2, order= 10)
+
+
+    #--limit to times of interest for faster plotting
+    goo1 = list(np.where((tdat1c >= x0) & (tdat1c <= x1)))[0]
+    goo2 = list(np.where((tdat2c >= x0) & (tdat2c <= x1)))[0]
+
+
+
+    fig,axs = plt.subplots(2,2,figsize=(8,8))
+    axs[0,0].plot(tdat2c[goo2],wf2cbp[goo2], tdat2[goo2],wf2bp[goo2])
+    axs[0,0].title.set_text(v2.chn + ' (corrected vs non-corrected)')
+    axs[0,1].plot(tdat1c[goo1],wf1cbp[goo1], tdat1[goo1],wf1bp[goo1])
+    axs[0,1].title.set_text(v1.chn + ' (corrected vs non-corrected)')
+    axs[1,0].plot(tdat2[goo2],wf2bp[goo2], tdat1[goo1],wf1bp[goo1])
+    axs[1,0].title.set_text(v2.chn + ' vs ' + v1.chn + ' (non-corrected)')
+    axs[1,1].plot(tdat2c[goo2],wf2cbp[goo2], tdat1c[goo1],wf1cbp[goo1])
+    axs[1,1].title.set_text(v2.chn + ' vs ' + v1.chn + ' (corrected)')
+    for i in range(2):
+        for j in range(2):
+            axs[i,j].set_xlim(x0,x1)
+            axs[i,j].set_ylim(y0,y1)
+
+
+    plt.show()
+
+
+#----------------------------------------------
+#Non-bandpassed plots showing calibrated non-calibrated data
+#Make sure there's no artificial sine waves present that can be introduced by 
+#bandpassing or improper application of transfer function, etc. 
+#----------------------------------------------
+
+#fig,axs = plt.subplots(2)
+#axs[0].plot(tdatDC,wfDC)
+#axs[1].plot(tdatDC,wfDCc)
+#for i in range(2): axs[i].set_xlim(500,500.4)
+#axs[0].set_ylim(-5,5)
+#axs[1].set_ylim(-5,5)
+
+
+
+#-------------------------------
+#Find wave events that can be used to test calibration
+#-------------------------------
+
+fspec1c, tspec1c, powerc1c = signal.spectrogram(wf1c, fs1, nperseg=1024,noverlap=1024/2,window='hann',return_onesided=True,mode='complex')
+fspec1, tspec1, powerc1 = signal.spectrogram(wf1, fs1, nperseg=1024,noverlap=1024/2,window='hann',return_onesided=True,mode='complex')
+fspec2c, tspec2c, powerc2c = signal.spectrogram(wf2c, fs2, nperseg=1024,noverlap=1024/2,window='hann',return_onesided=True,mode='complex')
+fspec2, tspec2, powerc2 = signal.spectrogram(wf2, fs2, nperseg=1024,noverlap=1024/2,window='hann',return_onesided=True,mode='complex')
+
+
+
+
+
 
 #--------------------------------------
-#TEST WAVES:
-#Wave 1: 470-510 sec; ~4200 Hz (***NEED TO GAIN/PHASE CORRECT THE EDC DATA FOR THIS COMPARISON)
+#TEST WAVES
 #--------------------------------------
 
-edc = end.efield_dc()
-edc12 = edc['dv12_mvm']
-tedc = edc['times']
-fs_edc = edc['samplerate']
-plt.plot(tedc,edc12)
 
-fsedc, tsedc, poweredc = signal.spectrogram(edc12, fs_edc, nperseg=1024,noverlap=1024/2,window='hann',return_onesided=True,mode='complex')
-ps.plot_spectrogram(tsedc,fsedc,np.abs(poweredc),vr=[-80,-20],yr=[10,6000],xr=[450,520], yscale='linear')
-ps.plot_spectrogram(tspec,fspec,np.abs(powerc),vr=[-80,-20],yr=[10,6000],xr=[450,520], yscale='linear')
+#--------------------------------------
+#Wave 1: 470-510 sec; ~4200 Hz
+#--------------------------------------
 
-
-edc12bp = filt.butter_bandpass_filter(edc12, 2000, 4500, fs_edc, order= 10)
-vlf12cbp = filt.butter_bandpass_filter(vlf12c, 2000, 4500, fs, order= 10)
-
-fig,axs = plt.subplots(2)
-axs[0].plot(tedc,edc12bp)
-axs[1].plot(tdat,vlf12cbp)
-for i in range(2): axs[i].set_xlim(510,510.02)
-for i in range(2): axs[i].set_ylim(-0.05,0.05)
+#wave 1
+#ps.plot_spectrogram(tspec1,fspec1,np.abs(powerc1),vr=[-50,-35],yr=[0,14000],xr=[100,800], yscale='linear')
+#fig,axs = plt.subplots(2)
+#ps.plot_spectrogram(tspec1c,fspec1c,np.abs(powerc1c),vr=[-50,-25],yr=[3000,5000],xr=[400,600], yscale='linear',ax=axs[0])
+#ps.plot_spectrogram(tspec2c,fspec2c,np.abs(powerc2c),vr=[-50,-25],yr=[3000,5000],xr=[400,600], yscale='linear',ax=axs[1])
 
 
-"""
-goo = list(map(tuple, np.where((tedc > 509) & (tedc < 511))))
-edc12bpz = edc12bp[goo]
-tedcz = tedc[goo]
-
-goo = list(map(tuple, np.where((tdat > 509) & (tdat < 511))))
-vlf12bpz = vlf12bp[goo]
-tdatz = tdat[goo]
-
-plt.plot(tedcz,edc12bpz, tdatz,vlf12bpz)
-"""
+phase_comparison(4200)
+wave_plot(3000, 4500, x0=480, x1=480.02, y0=-0.05, y1=0.05)
 
 
-#ft, tt, pt = signal.spectrogram(edc12bp, fs_edc, nperseg=1024,noverlap=1024/2,window='hann',return_onesided=True,mode='complex')
-#ps.plot_spectrogram(tt,ft,np.abs(pt),vr=[-80,-20],yr=[10,6000],xr=[450,520], yscale='linear')
-#ft, tt, pt = signal.spectrogram(vlf12bp, fs, nperseg=1024,noverlap=1024/2,window='hann',return_onesided=True,mode='complex')
-#ps.plot_spectrogram(tt,ft,np.abs(pt),vr=[-80,-20],yr=[10,6000],xr=[450,520], yscale='linear')
+
+#--------------------------------------
+#Wave 2: 794-795 sec; ~100-300 Hz
+#--------------------------------------
+
+#ps.plot_spectrogram(tspec1,fspec1,np.abs(powerc1),vr=[-60,-20],yr=[50,200],xr=[794,795], yscale='linear')
+#ps.plot_spectrogram(tspec2,fspec2,np.abs(powerc2),vr=[-60,-30],yr=[50,200],xr=[794,795], yscale='linear')
+
+phase_comparison(300)
+wave_plot(100, 300, x0=793.7, x1=793.9, y0=-0.02, y1=0.02)
 
 
 
 
-highpass = filt.butter_bandpass_filter(waveform, 1, 10, fs, order= 10)
+#--------------------------------------
+#Wave 3: 165.46 - 165.56 sec; ~80 Hz
+#--------------------------------------
+
+#fig, axs = plt.subplots(2)
+#ps.plot_spectrogram(tspec1c,fspec1c,np.abs(powerc1c),vr=[-60,-20],yr=[50,2000],xr=[150,160], yscale='linear', ax=axs[0])
+#ps.plot_spectrogram(tspec2c,fspec2c,np.abs(powerc2c),vr=[-60,-30],yr=[50,2000],xr=[150,160], yscale='linear', ax=axs[1])
+
+phase_comparison(80)
+wave_plot(60, 3000, x0=165.4, x1=165.6, y0=-0.8, y1=0.8)
+wave_plot(60, 3000, x0=165.2, x1=165.8, y0=-0.8, y1=0.8)
+
+
+print("end")
 
 
 
-"""
-#HF channels 
-Endurance_Analog 1_HF34 (3)_1000-20000000-100.txt
-Endurance_Analog 1_HF12_1000-20000000-100.txt
-Endurance_Analog 1_HF12 (2)_1000-20000000-100.txt
-Endurance_Analog 1_HF12 (1)_1000-20000000-100.txt
 
 
-#VLF digitial files
-Endurance_Analog 1_VLF12D_6-30000-100.txt
-Endurance_Analog 1_VLF13D_6-30000-100.txt
-Endurance_Analog 1_VLF41D_6-30000-100.txt
-Endurance_Analog 1_VLF24D_6-30000-100.txt
-Endurance_Analog 1_VLF42D_6-30000-100.txt
-Endurance_Analog 1_VLF32D_6-30000-100.txt
-Endurance_Analog 1_VLF34D_6-30000-100.txt
 
 
-Endurance_Analog 1_VLF12A_6-100000-100.txt
 
-Endurance_Analog 1_V42D_10-10000-100.txt
-Endurance_Analog 1_V41D_10-10000-100.txt
-Endurance_Analog 1_V34D_10-10000-100.txt
-Endurance_Analog 1_V34A_10-10000-100.txt
-Endurance_Analog 1_V32D_10-10000-100.txt
-Endurance_Analog 1_V24D_10-10000-100.txt
-Endurance_Analog 1_V13D_10-10000-100.txt
-Endurance_Analog 1_V12D_10-10000-100.txt
-Endurance_Analog 1_V12A_10-10000-100.txt
-Endurance_Analog 1_V4SD_10-10000-100.txt
-Endurance_Analog 1_V4SA_10-10000-100.txt
-Endurance_Analog 1_V3SD_10-10000-100.txt
-Endurance_Analog 1_V3SA_10-10000-100.txt
-Endurance_Analog 1_V2SD_10-10000-100.txt
-Endurance_Analog 1_V2SA_10-10000-100.txt
-Endurance_Analog 1_V1SD_10-10000-100.txt
-Endurance_Analog 1_V1SA_10-10000-100.txt
-
-"""
 
 
