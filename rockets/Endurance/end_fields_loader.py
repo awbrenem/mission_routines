@@ -47,19 +47,29 @@ class Endurance_Fields_Loader:
 
         if (self.chn == 'V12D') or (self.chn == 'V34D') or (self.chn == 'V13D') or (self.chn == 'V32D') or (self.chn == 'V24D') or (self.chn == 'V41D'): 
             self.type = 'DC'
+            filterpole = 4
         if (self.chn == 'V1SD') or (self.chn == 'V2SD') or (self.chn == 'V3SD') or (self.chn == 'V4SD'): 
             self.type = 'skins'
+            filterpole = 1
         if (self.chn == 'VLF12D') or (self.chn == 'VLF34D') or (self.chn == 'VLF13D') or (self.chn == 'VLF32D') or (self.chn == 'VLF24D') or (self.chn == 'VLF41D'): 
             self.type = 'VLF'
+            filterpole = 2
         if (self.chn == 'HF12') or (self.chn == 'HF34'):
             self.type = 'HF'
+            filterpole = 2
         if (self.chn == 'V12A') or (self.chn == 'V34A') or (self.chn == 'VLF12A') or (self.chn == 'V1SA') or (self.chn == 'V2SA') or (self.chn == 'V3SA') or (self.chn == 'V4SA'):
             self.type = 'analog'
+            filterpole = "nan"
 
+        self.chnspecs["folder"] = "efield_" + self.type
+        #low pass filter pole
+        self.chnspecs["lpf_pole"] = filterpole
 
         return 
     
 
+    def __str__(self):
+        return "Endurance " + self.chn + " object"
 
     #---------------------------------------------------------------------------------
     #Load gain/phase calibrated files. These are produced by end_transfer_function.py.
@@ -157,7 +167,8 @@ class Endurance_Fields_Loader:
             if self.chn == 'VLF13D': wf = vals.dvlf13_mvm
             if self.chn == 'VLF32D': wf = vals.dvlf32_mvm
             if self.chn == 'VLF24D': wf = vals.dvlf24_mvm
-            if self.chn == 'VLF41D': wf = vals.dvlf41_mvm
+            #NOTE: VLF41D missing from Steve's file
+            #if self.chn == 'VLF41D': wf = vals.dvlf41_mvm
 
             #Remove negative times (starts at t=-100 sec). Not doing so messes up my spectrogram plotting routines.
             good = np.squeeze(np.where(t >= 0.))
@@ -257,9 +268,11 @@ class Endurance_Fields_Loader:
     def _end_load_gainphase(self):
 
         import numpy as np
+        from math import remainder
 
         path = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/gain_phase_files/'
 
+        #Load gain/phase file
         if self.chn == "V1SD": fn = "Endurance_Analog 1_V1SD_10-10000-100.txt"
         elif self.chn == "V2SD": fn = "Endurance_Analog 1_V2SD_10-10000-100.txt"
         elif self.chn == "V3SD": fn = "Endurance_Analog 1_V3SD_10-10000-100.txt"
@@ -300,8 +313,16 @@ class Endurance_Fields_Loader:
         p = [float(i) for i in p]
         g = [float(i) for i in g]
 
-        #change to radians
+        #--change to radians
         prad = [np.deg2rad(i) for i in p]
+
+
+        #--"Fix" the phase data so that it can only vary b/t -pi and pi. Some of the curves 
+        #--extend a bit beyond this for some reason. To fix, unwrap and then rewrap angles.
+        prad = np.unwrap(prad)
+        prad = np.asarray([remainder(prad[i], 2*np.pi) for i in range(len(prad))])
+
+
 
 
         #--Note that some channels have a negative polarity as measured from the gain/phase tests. 
@@ -340,6 +361,7 @@ class Endurance_Fields_Loader:
 
 
 
+    
     #-------------------------------------------------
     #Plot the gain phase curves for requested channel
     #-------------------------------------------------
@@ -347,6 +369,42 @@ class Endurance_Fields_Loader:
     def plot_gainphase(self):
 
         import matplotlib.pyplot as plt
+        import numpy as np
+
+
+        index3dB = self._determine_3dB()
+
+
+
+        #slope of idealized filter
+        decades = 1
+        pole = self.chnspecs["lpf_pole"]
+
+        slope = -20*pole   #20 dB/decade of normalized freq
+        #intercept = -3 - (slope * self.chnspecs["lpf"])
+
+
+#        xv = [self.freq_gainphase[index3dB], self.freq_gainphase[index3dB] + 10**decades]
+#        xv = [self.freq_gainphase[index3dB], self.freq_gainphase[index3dB] + 10**decades]
+
+        x1 = self.freq_gainphase[index3dB]
+        x2 = x1*10*decades
+
+        #y1 = self.gaindB[index3dB] * slope + intercept
+
+        y1 = self.gaindB[index3dB]
+        #y2 = slope*(x2-x1) + y1
+        y2 = slope + y1
+
+#        y2 = (self.gaindB[index3dB] - 20*pole*decades) * slope + intercept
+#        yv = [y1,y2]
+
+
+        xv = [x1,x2]
+        yv = [y1,y2]
+
+
+
 
         fig, axs = plt.subplots(3)
         axs[0].plot(self.freq_gainphase,self.gaindB)
@@ -355,10 +413,21 @@ class Endurance_Fields_Loader:
         for i in range(3):
             axs[i].axvline(self.chnspecs["fs"]/2,color='r',linestyle='--')
 
+        #3dB point (actual)
+        axs[0].plot(self.freq_gainphase[index3dB], self.gaindB[index3dB], 'X')
+        #3dB point (expected)
+        #axs[0].plot(self.freq_gainphase[index3dB_exp], self.chnspecs["filter_3dB_dBvalue_measured"], 'o',markersize=4)
+        axs[0].plot(self.chnspecs["lpf"], self.chnspecs["filter_3dB_dBvalue_measured"], 'o',markersize=4)
+
+
+        #idealized filter falloff
+        axs[0].plot(xv,yv,linestyle='--')
+
         axs[0].set_title('gain/phase; \n fn='+ self.chnspecs["gainphase_file"])
-        axs[0].set_xscale('log')
-        axs[1].set_xscale('log')
-        axs[2].set_xscale('log')
+        for i in range(3):
+            axs[i].set_xscale('log')
+            axs[i].set_xlim(1, 50000)
+        
         axs[0].set_yscale('linear')
         axs[0].set(ylabel='gain(dB)',xlabel='freq(kHz)')
         axs[1].set(ylabel='gain(linear)',xlabel='freq(kHz)')
@@ -367,6 +436,31 @@ class Endurance_Fields_Loader:
 
 
 
+    #--------------------------------------------------------------
+    #Returns actual 3dB value below peak response and its frequency 
+    #--------------------------------------------------------------
+
+    def _determine_3dB(self):
+
+        import numpy as np 
+
+        #determine 3dB point. 
+        threedB = np.nanmax(self.gaindB) - 3
+        c1 = self.gaindB <= threedB
+        c2 = np.asarray(self.freq_gainphase) > self.chnspecs['fs']/6
+        c3 = (c1 & c2)
+        index3dB = [i for i in range(len(c3)) if c3[i] == True][0]
+
+        #Expected 3dB point 
+        #threedBfreq = self.chnspecs["lpf"]
+        #goo = [i for i in range(len(self.freq_gainphase)) if self.freq_gainphase[i] >= threedBfreq]
+        #index3dB_exp = goo[0]
+
+        self.chnspecs["filter_3dB_freq_measured"] = self.freq_gainphase[index3dB]
+        self.chnspecs["filter_3dB_dBvalue_measured"] = threedB
+
+
+        return index3dB
 
 
     #-------------------------------------------------------------
@@ -399,9 +493,14 @@ class Endurance_Fields_Loader:
 
         """
 
+        #NOTE: the sample freqs in the MEB doc are wrong. Correct values are:
+        fsDC = 10000
+        fsVLF = 30000
+        fsskins = 2000
+
         chns = ['V12D','V34D','V13D','V32D','V24D','V41D','VLF12D','VLF34D','VLF13D','VLF32D','VLF24D','VLF41D','V1SD','V2SD','V3SD','V4SD','V12A','V34A','VLF12A','V1SA','V2SA','V3SA','V4SA','HF12','HF34']
         tm = [8000,8000,8000,8000,8000,8000,32000,32000,32000,32000,32000,32000,2000,2000,2000,2000,2000,2000,64000,2000,2000,2000,2000,10e6,10e6]
-        fs = [16000,16000,16000,16000,16000,16000,64000,64000,64000,64000,64000,64000,4000,4000,4000,4000,float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),10e6,10e6]
+        fs = [fsDC,fsDC,fsDC,fsDC,fsDC,fsDC,fsVLF,fsVLF,fsVLF,fsVLF,fsVLF,fsVLF,fsskins,fsskins,fsskins,fsskins,float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),10e6,10e6]
         max_sig_pm_mV = [1251,1251,1251,1251,1251,1251,125,125,125,125,125,125,10000,10000,10000,10000,1251,1251,125,10000,10000,10000,10000,63,63]
         boom_length = [3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,float("nan"),float("nan"),float("nan"),float("nan"),3.0,3.0,3.0,float("nan"),float("nan"),float("nan"),float("nan"),3.0,3.0]
         max_sig_pm_mVm = [417.0,417.0,417.0,417.0,417.0,417.0,41.7,41.7,41.7,41.7,41.7,41.7,float("nan"),float("nan"),float("nan"),float("nan"),417.0,417.0,41.7,float("nan"),float("nan"),float("nan"),float("nan"),21.0,21.0]
@@ -417,7 +516,7 @@ class Endurance_Fields_Loader:
         coeffb = [1.1e-03,-4.6288e-05,0.00034567,0.00066907,-0.00074203,-0.00057493,5.5604e-05,5.1386e-05,4.4484e-05,5.4683e-05,5.7427e-05,-0.0005279,0.1449,0.1517,0.1444,0.1192,float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan")]
         polarity = [1,1,1,1,-1,-1,1,1,1,1,-1,-1,-1,-1,-1,-1,float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan")]
 
-
+ 
         #Select desired channel
         i = chns.index(self.chn)
 
