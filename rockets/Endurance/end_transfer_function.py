@@ -1,5 +1,5 @@
 """
-Calculate transfer function for Endurance channels
+Calculate transfer function for Endurance channels. This is used to gain/phase correct the data.
 
 From Bode (gain/phase) plot:
 (1) Find gain as |H(w)| = 10^B/10, where B is gain in dB from Bode plot
@@ -13,126 +13,109 @@ From Bode (gain/phase) plot:
 import sys 
 sys.path.append('/Users/abrenema/Desktop/code/Aaron/github/mission_routines/rockets/Endurance/')
 sys.path.append('/Users/abrenema/Desktop/code/Aaron/github/signal_analysis/')
+from end_fields_loader import Endurance_Fields_Loader as EFL
 import matplotlib.pyplot as plt
 import numpy as np
-import end_load_data as end
 from scipy.interpolate import interp1d
 from scipy.fft import rfft, irfft
-import end_load_gainphase as gainphase
-from scipy import signal
-import filter_wave_frequency as filt
-
+from math import remainder
 
 
 #-------------------------------------------------------
-#Select data type (DC or VLF) and channel (12, 34, etc) for calibration 
-#Load data...
+#Select data channel for calibration 
 #-------------------------------------------------------
 
-"""
-type = 'VLF'
-chn = '12'
-filename = "Endurance_Analog 1_" + type + chn + "D_6-30000-100.txt"
-pathoutput = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/efield_VLF/'
-wavegoo = end.efield_vlf()
-tdat = wavegoo.tvlf  #times
-if chn == '12': wavedat = wavegoo.dvlf12_mvm
-elif chn == '34': wavedat = wavegoo.dvlf34_mvm
-elif chn == '24': wavedat = wavegoo.dvlf24_mvm
-elif chn == '32': wavedat = wavegoo.dvlf32_mvm
-"""
-#----------------------------------------------------
+ch = 'V13D'
+#ch = 'V4SD'
+#ch = 'VLF41D'
+v = EFL(ch)
+
+v.plot_gainphase()
+
+vdat = v.load_data()
+wavedat = vdat[0]
+tdat = vdat[1]
 
 
-type = 'DC'
-chn = '12'
-filename = "Endurance_Analog 1_V"+chn+"D_10-10000-100.txt"
-pathoutput = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/efield_DC/'
-wavegoo = end.efield_dc()
-tdat = wavegoo.times
-if chn == '12': wavedat = wavegoo.dv12_mvm
-elif chn == '34': wavedat = wavegoo.dv34_mvm
-elif chn == '13': wavedat = wavegoo.dv13_mvm
-elif chn == '32': wavedat = wavegoo.dv32_mvm
-elif chn == '24': wavedat = wavegoo.dv24_mvm
-elif chn == '41': wavedat = wavegoo.dv41_mvm
-
-
-
-
-
-
-
-fs = wavegoo.samplerate
-
+#sample rate
+fs = v.chnspecs['fs']
 
 
 
 #-----------------------------------------------------------------------------------------
 #Load gain/phase data for selected channel. 
+#---NOTE: channels on the MEB with an identified negative polarity have had their phases flipped 
+#---in the following load routine. This needs to be done.
 #-----------------------------------------------------------------------------------------
 
 
-prad, Hmag, f = gainphase.end_load_gainphase(filename)
+phase_lowres = np.asarray(v.phase)
+gain_lowres = np.asarray(v.gain)
+freq_lowres = np.asarray(v.freq_gainphase)
+
+nyquist = fs/2
 
 
+#-----------------------------------------------------------------------------------------
 #Chop off calibration values above the Nyquist freq of data.
 #Not doing this can mess up the interpolations below...
+#-----------------------------------------------------------------------------------------
 
-f = np.asarray(f)
-prad = np.asarray(prad)
-Hmag = np.asarray(Hmag)
-
-f2 = np.asarray(f < fs)
-f = f[f2]
-prad = prad[f2]
-Hmag = Hmag[f2]
+good = np.where(freq_lowres <= nyquist)
+phase_lowres = phase_lowres[np.where(freq_lowres <= nyquist)]
+gain_lowres = gain_lowres[np.where(freq_lowres <= nyquist)]
+freq_lowres = freq_lowres[np.where(freq_lowres <= nyquist)]
 
 
 
-
+#-----------------------------------------------------------------------------------------
 #At this point we have an issue with the DC data. The interpolated frequency array (freq) does go down to 0 Hz, however
 #the gain and phase have NaN values at < 10 Hz (or similar) b/c the AC testing setup can't go to 0 Hz in freq. 
-#Therefore we need to assign these NaN values a finite value based on the values at ~10 Hz. 
+#Therefore we need to assign these NaN values a finite value based on the values near ~10 Hz. 
 #NOTE: need to do multiple values <10 Hz or else the interpolation to higher resolution (later) gets wonky
+#-----------------------------------------------------------------------------------------
 
-if type == 'DC':
-    newfgoo = np.arange(10)
-    Hgoo = np.full(10,Hmag[0]) 
-    Pgoo = np.full(10,prad[0])
-    f = np.insert(f,0,newfgoo)
-    Hmag = np.insert(Hmag,0,Hgoo)
-    prad = np.insert(prad,0,Pgoo)
+if v.type == 'DC' or v.type == 'skins':
 
-if type == 'VLF':
+    #NOTE: this method doesn't work if there's a phase flip at low freqs!!!
+        ##--Mean value b/t 20-100 Hz - to be used to populate <=10 Hz values
+        #g_replace = np.mean([gain_lowres[i] for i in range(len(freq_lowres)) if (freq_lowres[i] > 20) & (freq_lowres[i] < 100)])
+        #p_replace = np.mean([phase_lowres[i] for i in range(len(freq_lowres)) if (freq_lowres[i] > 20) & (freq_lowres[i] < 100)])
 
-    #Change any gain values < 1 to 1 so that low freqs are not amplified.     
-    Hmag[Hmag < 1] = 1
+    goo = np.where(freq_lowres >= 20)    
+    g_replace = gain_lowres[goo[0][0]]
+    p_replace = phase_lowres[goo[0][0]]
 
 
-    #Remove VLF cal test gain/phase values < fmin_trust (Hz) b/c I don't trust these. The signal/noise ratio is very high in the 
-    #cal tests, and these gain/phase values can be all over the place. 
+    #define additional value at zero freq
+    gain_lowres = np.append([g_replace]*10, gain_lowres)
+    phase_lowres = np.append([p_replace]*10, phase_lowres)
+    freq_lowres = np.append(list(range(10)), freq_lowres)
+
+
+    fmin_trust = 0  #used later
+
+if v.type == 'VLF':
+
+    #--Change any gain values < 1 to 1 so that low freqs are not amplified.     
+    gain_lowres[np.where(gain_lowres < 1)] = 1
+
+
+
+    #--Replace VLF cal test gain/phase values < fmin_trust (Hz) b/c I don't trust these. 
+    #--The signal/noise ratio is very high in the cal tests, and these gain/phase values can be all over the place. 
     fmin_trust = 30
-    tt = f < fmin_trust
-    f = np.delete(f, f < fmin_trust)
-    Hmag = np.delete(Hmag, tt)
-    prad = np.delete(prad, tt)
+    #--define replacement values 
+    whgoo = np.where(freq_lowres <= fmin_trust)
+    g_replace = gain_lowres[whgoo[0][-1]]
+    p_replace = phase_lowres[whgoo[0][-1]]
+    gain_lowres[whgoo] = g_replace
+    phase_lowres[whgoo] = p_replace
 
-    #Change the < fmin_trust (Hz) values to the gain/phase just above fmin_trust
-    #NOTE: best to have these low values as continuous as possible with higher freq values otherwise the 
-    #interpolation can have unrealistic peaks. I'll bandpass the data later to remove any remaining low freq power.
-    newfgoo = np.arange(fmin_trust)
-    Hnewval = Hmag[0]
-    Pnewval = prad[0]
-    Hgoo = np.full(fmin_trust,Hnewval) 
-    Pgoo = np.full(fmin_trust,Pnewval)
-    f = np.insert(f,0,newfgoo)
-    Hmag = np.insert(Hmag,0,Hgoo)
-    prad = np.insert(prad,0,Pgoo)
-    
-
-
-
+    #define additional value at zero freq
+    gain_lowres = np.append(g_replace, gain_lowres)
+    phase_lowres = np.append(p_replace, phase_lowres)
+    freq_lowres = np.append(0, freq_lowres)
 
 
 
@@ -145,69 +128,55 @@ if type == 'VLF':
 wavedatFFT = rfft(wavedat)
 
 
+#--Construct a list of higher resolution frequencies (than those from the gain/phase files) that go up to half the Nyquist
 N = len(wavedatFFT)
-n = np.arange(N)
+n = list(range(N))
 T = N/fs
-freq = n/T/2 
-
-#fig, axs = plt.subplots(3)
-#axs[0].plot(freq,np.abs(wavedatFFT))
-#axs[1].plot(freq,np.real(wavedatFFT))
-#axs[2].plot(freq,np.imag(wavedatFFT))
-#for i in range(3): axs[i].set_xscale('linear')
-#for i in range(3): axs[i].set_xlim(0,100)
-
-
-
+freq_hires = np.asarray([i/T/2 for i in n])
 
 
 #------------------------------------------------------------------
-#Transfer function H(w) = |H|*exp(i*theta)
+#Transfer function = |gain|*exp(i*theta)
 #------------------------------------------------------------------
 
 
-# The interpolated phase has an over/undershoot at 1 kHz. This is due to interpolating over a sudden change.
-# To get around this, need to unwrap values, interpolate, then rewrap
-prad_unwrapped = np.unwrap(prad)
-#plt.plot(f,prad, f,prad_unwrapped)
-#plt.xscale('log')
+#--To avoid interpolation issues due to phase jumps (-180 to 180), need to unwrap values, interpolate, then rewrap
+phase_lowres_unwrapped = np.unwrap(phase_lowres)
 
 
-#Interpolate transfer function to frequencies of FFT'd waveform data
-interp = interp1d(f,Hmag,kind='cubic', bounds_error=False)
-Hmag2 = interp(freq)
-interp2 = interp1d(f,prad_unwrapped,kind='cubic', bounds_error=False)
-prad2_unwrapped = interp2(freq)
+#--Interpolate transfer function to frequencies of FFT'd waveform data
+interp = interp1d(freq_lowres,gain_lowres,kind='cubic', bounds_error=False)
+gain_hires = interp(freq_hires)
+interp2 = interp1d(freq_lowres,phase_lowres_unwrapped,kind='cubic', bounds_error=False)
+phase_hires_unwrapped = interp2(freq_hires)
 
 
-#plt.plot(freq,Hmag2)
-#plt.plot(freq,prad2)
-#plt.xlim(0,1000)
 
 
-#-------------------------
-#rewrap angles from -2pi to 2pi 
-#Note that there are some minor interpolation issues here due to granularity of data (shoots past 2*pi)
-#THIS ISN'T AN ISSUE. 
-prad2 = (prad2_unwrapped + np.pi) % (2 * np.pi) - np.pi
-plt.plot(f, prad, freq,prad2_unwrapped, freq, prad2)
+#--rewrap angles from -2pi to 2pi 
+phase_hires = np.asarray([remainder(phase_hires_unwrapped[i], 2*np.pi) for i in range(len(phase_hires_unwrapped))])
+
+
+plt.plot(freq_lowres, phase_lowres, freq_hires,phase_hires_unwrapped, freq_hires, phase_hires)
+plt.axvline(x=nyquist, color='r', linestyle='--')
 plt.xscale('log')
+plt.xlim(1,50000)
 plt.ylim(-4,4)
 print('check wrapping')
-
 plt.close()
 
 
 
 fig, axs = plt.subplots(2)
-axs[0].plot(f, Hmag, freq, Hmag2)
-axs[1].plot(f, prad, freq, prad2)
+axs[0].plot(freq_lowres, gain_lowres, freq_hires, gain_hires)
+axs[1].plot(freq_lowres, phase_lowres, freq_hires, phase_hires)
+axs[0].axvline(nyquist, color='r', linestyle='--')
+axs[1].axvline(nyquist, color='r', linestyle='--')
 for i in range(2): axs[i].set_xscale('log')
 for i in range(2): axs[i].set_xlim(1,30000)
 axs[1].set_ylim(-4,4)
 
 print('Check modified gain/phase curves')
-
 fig.clear()
 plt.close(fig)
 
@@ -218,36 +187,50 @@ plt.close(fig)
 #1) gain + phase
 #2) unity gain + phase 
 
-#...note that the files Steve sent me for Endurance already have the DC gain correction applied
-#...for both the DC and VLF channels (Paulo must have done this). So when applying the transfer function
-#...to these data use the unity gain version. 
+#--note that the files Steve sent me for Endurance already have the DC gain correction applied
+#--for both the DC and VLF channels (Paulo must have done this using his yellow-highlighted fit values on the MEB). So when applying the transfer function
+#--to these data use the unity gain version. 
 #---------------------------------------------------
 
-H = [Hmag2[i] * np.exp(1j*prad2[i]) for i in range(len(prad2))]
-
-#fig2, axs2 = plt.subplots(3)
-#axs2[0].plot(freq,np.abs(H))
-#axs2[1].plot(freq,np.real(H))
-#axs2[2].plot(freq,np.imag(H))
-#for i in range(3): axs2[i].set_xscale('log')
-#print('Check transfer function')
+transfer_func = gain_hires * np.exp(1j*phase_hires)
+maxv = np.nanmax(gain_hires)
+transfer_func_unitygain = (gain_hires/maxv) * np.exp(1j*phase_hires)
 
 
-maxv = np.nanmax(Hmag2)
-Hmag2_unity = [i/maxv for i in Hmag2]
-H_unitygain = [Hmag2_unity[i] * np.exp(1j*prad2[i]) for i in range(len(prad2))]
+#Remove any NaN values in the transfer function. These will mess up the inverse FFT. 
+bad = np.where(np.isnan(transfer_func))
+if len(bad[0]) != 0:
+    transfer_func[bad] = transfer_func[bad[0][0]-1]
+    transfer_func_unitygain[bad] = transfer_func_unitygain[bad[0][0]-1]
 
 
 
-#Bode plots
 fig2, axs2 = plt.subplots(3)
-axs2[0].plot(freq,np.abs(H))
-axs2[1].plot(freq,np.real(H))
-axs2[2].plot(freq,np.imag(H))
+axs2[0].plot(freq_hires,np.abs(transfer_func))
+axs2[1].plot(freq_hires,np.real(transfer_func))
+axs2[2].plot(freq_hires,np.imag(transfer_func))
+for i in range(3): axs2[i].set_xscale('log')
+for i in range(3): axs2[i].set_xlim(1,20000)
+for i in range(3): 
+    axs2[i].axvline(nyquist, color='r', linestyle='--')
+for i in range(3): axs2[i].set_xscale('log')
+print('Check transfer function')
+
+
+
+
+
+#--Bode plots
+fig2, axs2 = plt.subplots(3)
+axs2[0].plot(freq_hires,np.abs(transfer_func_unitygain))
+axs2[1].plot(freq_hires,np.real(transfer_func_unitygain))
+axs2[2].plot(freq_hires,np.imag(transfer_func_unitygain))
 for i in range(3): axs2[i].set_xscale('log')
 for i in range(3): axs2[i].set_xlim(1,20000)
 for i in range(3): axs2[i].set_xlabel('freq(Hz)')
-axs2[0].set_title('Bode plots \n ' + filename)
+for i in range(3): 
+    axs2[i].axvline(nyquist, color='r', linestyle='--')
+axs2[0].set_title('Bode plots \n ' + v.chnspecs["gainphase_file"][:-4])
 axs2[0].set_ylabel('Magnitude |H(jw)|')
 axs2[1].set_ylabel('Re(H(jw))')
 axs2[2].set_ylabel('Phase Im(H(jw))')
@@ -260,28 +243,8 @@ print('Check unity gain transfer function')
 #Apply transfer function to FFT'd data (amplitude, not power)
 #---------------------------------------------------
 
-wavedatFFTc = [wavedatFFT[i]/H_unitygain[i] for i in range(len(H_unitygain))]
+wavedatFFTc = wavedatFFT/transfer_func_unitygain
 
-
-#----------
-#----------
-#----------
-#NOTE: THIS IS A VERY HARD FILTER AND LEAVES (FOR SMALL AMPS) A SINE WAVE AT THE FILTERED FREQ. PROBABLY NOT A GOOD METHOD TO USE....
-#UNDER CONSTRUCTION - need to test this - RESULT: I DON'T THINK THIS IS WORTH IT. THE HIGHPASS FILTER APPLIED AT END WORKS JUST FINE.
-#Remove very low freqs due to remaining artificial power
-"""
-if type == 'VLF':
-    #tst = freq < 20
-    #wavedatFFTc2 = wavedatFFTc
-    goo = freq > 20 
-    #wavedatFFTc[goo] = 0-0j
-
-    wavedatFFTc = goo * wavedatFFTc
-    #wavedatFFTc[freq < 20] = 0-0j
-"""
-#----------
-#----------
-#----------
 
 
 """
@@ -316,32 +279,20 @@ wf_corr = irfft(wavedatFFTc, n=len(tdat))
 
 
 
-#There can still be some residual power at low freqs in the VLF channels (noticeable sine wave).
-#Bandpass to remove. 
-
-if type == 'VLF':
-    wf_corrTST = filt.butter_highpass_filter(wf_corr, 16, fs, order=8)
-#if type == 'DC':
-#    wf_corrTST = filt.butter_highpass_filter(wf_corr, 1, fs, order=10)
-
-
-
-"""
 fig,axs = plt.subplots(3, clear=True)
-#axs[0].plot(tdat,wavedat)
+
 axs[0].plot(tdat,wf)
 axs[1].plot(tdat,wf_corr)
-axs[2].plot(tdat,wf_corrTST)
-#for i in range(3): axs[i].set_ylim(-100,100)
 
-#...DC signal test
+
+#--DC signal test
 for i in range(3): axs[i].set_xlim(100,180)
-for i in range(3): axs[i].set_ylim(-10,10)
-
-#...Small amp test
+for i in range(3): axs[i].set_xlim(110,115)
+for i in range(3): axs[i].set_ylim(-1,1)
+#--Small amp test
 for i in range(3): axs[i].set_xlim(535,536.2)
 for i in range(3): axs[i].set_ylim(-0.25,0.25)
-#...Maneuver test
+#--Maneuver test
 for i in range(3): axs[i].set_xlim(524,525)
 for i in range(3): axs[i].set_ylim(-1,1)
 
@@ -358,25 +309,7 @@ axs[2].set_ylim(-0.25,0.25)
 fig.clear()
 plt.close(fig)
  
-"""
 
-
-#import plot_spectrogram as ps
-#fspec, tspec, powerc = signal.spectrogram(wavedatFFT, fs, nperseg=1024,noverlap=1024/2,window='hann',return_onesided=True,mode='complex')
-#ps.plot_spectrogram(tspec,fspec,powerc,vr=[-50,-35],yr=[1,1000],xr=[100,800], yscale='log')
-
-
-#Before I inverse transform I need to get rid of NaN values at the beginning of new data arrays
-#NOTE: there shouldn't be any at this point, but good to be sure. 
-bad = list(map(tuple, np.where(np.isnan(wavedatFFTc))))
-wavedatFFTc = np.asarray(wavedatFFTc)
-wavedatFFTc[bad] = 0
-
-
-
-
-
-#print('quick look at calibrated vs original waveforms')
 
 
 
@@ -387,9 +320,11 @@ wavedatFFTc[bad] = 0
 import pickle
 
 dict_fin = {'tvals':tdat, 'wf':wf_corr}
+pathoutput = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/' + v.chnspecs['folder'] + '/'
 
-fnsav = filename[:-4] + '_gainphase_corrected'
+fnsav = v.chnspecs["gainphase_file"][:-4] + '_gainphase_corrected'
 pickle.dump(dict_fin, open(pathoutput + fnsav + '.pkl','wb'))
 #wf_corr_load = pickle.load(open(pathoutput + fnsav + ".pkl", 'rb'))
+
 
 
