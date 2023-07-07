@@ -93,7 +93,6 @@ class Endurance_Fields_Loader:
 
 
 
-
     #---------------------------------------------------------------------------------
     #Load the data sent to me by Steve Martin. These are gain corrected but not 
     #phase corrected (I use the unity gain to "gain/phase" correct these). 
@@ -117,16 +116,16 @@ class Endurance_Fields_Loader:
             vals = readsav(path + folder + '/' + fn)
 
             if self.chn == 'V1SD': 
-                 wf = vals.dv1s_volts
+                 wf = vals.dv1s_volts * self.chnspecs["polarity"]
                  t = vals.tv1s
             if self.chn == 'V2SD': 
-                 wf = vals.dv2s_volts
+                 wf = vals.dv2s_volts * self.chnspecs["polarity"]
                  t = vals.tv2s
             if self.chn == 'V3SD': 
-                 wf = vals.dv3s_volts
+                 wf = vals.dv3s_volts * self.chnspecs["polarity"]
                  t = vals.tv3s
             if self.chn == 'V4SD': 
-                 wf = vals.dv4s_volts
+                 wf = vals.dv4s_volts * self.chnspecs["polarity"]
                  t = vals.tv4s
 
             #Get rid of all times t<0
@@ -142,12 +141,12 @@ class Endurance_Fields_Loader:
             vals = readsav(path + folder + '/' + fn)
 
             t = vals.times
-            if self.chn == 'V12D': wf = vals.dv12_mvm
-            if self.chn == 'V34D': wf = vals.dv34_mvm
-            if self.chn == 'V13D': wf = vals.dv12_mvm
-            if self.chn == 'V32D': wf = vals.dv12_mvm
-            if self.chn == 'V24D': wf = vals.dv12_mvm
-            if self.chn == 'V41D': wf = vals.dv12_mvm
+            if self.chn == 'V12D': wf = vals.dv12_mvm * self.chnspecs["polarity"]
+            if self.chn == 'V34D': wf = vals.dv34_mvm * self.chnspecs["polarity"]
+            if self.chn == 'V13D': wf = vals.dv13_mvm * self.chnspecs["polarity"]
+            if self.chn == 'V32D': wf = vals.dv32_mvm * self.chnspecs["polarity"]
+            if self.chn == 'V24D': wf = vals.dv24_mvm * self.chnspecs["polarity"]
+            if self.chn == 'V41D': wf = vals.dv41_mvm * self.chnspecs["polarity"]
 
             #Get rid of all times t<0
             good = np.squeeze(np.where(t >= 0.))
@@ -162,11 +161,11 @@ class Endurance_Fields_Loader:
             vals = readsav(path + folder + '/' + fn)
 
             t = vals.tvlf
-            if self.chn == 'VLF12D': wf = vals.dvlf12_mvm
-            if self.chn == 'VLF34D': wf = vals.dvlf34_mvm
-            if self.chn == 'VLF13D': wf = vals.dvlf13_mvm
-            if self.chn == 'VLF32D': wf = vals.dvlf32_mvm
-            if self.chn == 'VLF24D': wf = vals.dvlf24_mvm
+            if self.chn == 'VLF12D': wf = vals.dvlf12_mvm * self.chnspecs["polarity"]
+            if self.chn == 'VLF34D': wf = vals.dvlf34_mvm * self.chnspecs["polarity"]
+            if self.chn == 'VLF13D': wf = vals.dvlf13_mvm * self.chnspecs["polarity"]
+            if self.chn == 'VLF32D': wf = vals.dvlf32_mvm * self.chnspecs["polarity"]
+            if self.chn == 'VLF24D': wf = vals.dvlf24_mvm * self.chnspecs["polarity"]
             #NOTE: VLF41D missing from Steve's file
             #if self.chn == 'VLF41D': wf = vals.dvlf41_mvm
 
@@ -252,7 +251,6 @@ class Endurance_Fields_Loader:
 
 
 
-
     #-------------------------------------------------------------------------------------
     #load the gain/phase files for desired channel
 
@@ -323,14 +321,6 @@ class Endurance_Fields_Loader:
         prad = np.asarray([remainder(prad[i], 2*np.pi) for i in range(len(prad))])
 
 
-
-
-        #--Note that some channels have a negative polarity as measured from the gain/phase tests. 
-        #--For these, I need to flip the sign of the phase. 
-        if self.chnspecs["polarity"] == -1:
-            prad = [-1*i for i in prad]
-
-
         #--change gain from dB to linear scale for calculation of transfer function
         #--From Steve Martin email on Nov 7, 2022: 
         #--Gain=10^(0.05 * (opchan+gainoffset))
@@ -381,29 +371,16 @@ class Endurance_Fields_Loader:
         pole = self.chnspecs["lpf_pole"]
 
         slope = -20*pole   #20 dB/decade of normalized freq
-        #intercept = -3 - (slope * self.chnspecs["lpf"])
 
-
-#        xv = [self.freq_gainphase[index3dB], self.freq_gainphase[index3dB] + 10**decades]
-#        xv = [self.freq_gainphase[index3dB], self.freq_gainphase[index3dB] + 10**decades]
 
         x1 = self.freq_gainphase[index3dB]
         x2 = x1*10*decades
 
-        #y1 = self.gaindB[index3dB] * slope + intercept
-
         y1 = self.gaindB[index3dB]
-        #y2 = slope*(x2-x1) + y1
         y2 = slope + y1
-
-#        y2 = (self.gaindB[index3dB] - 20*pole*decades) * slope + intercept
-#        yv = [y1,y2]
-
 
         xv = [x1,x2]
         yv = [y1,y2]
-
-
 
 
         fig, axs = plt.subplots(3)
@@ -416,7 +393,6 @@ class Endurance_Fields_Loader:
         #3dB point (actual)
         axs[0].plot(self.freq_gainphase[index3dB], self.gaindB[index3dB], 'X')
         #3dB point (expected)
-        #axs[0].plot(self.freq_gainphase[index3dB_exp], self.chnspecs["filter_3dB_dBvalue_measured"], 'o',markersize=4)
         axs[0].plot(self.chnspecs["lpf"], self.chnspecs["filter_3dB_dBvalue_measured"], 'o',markersize=4)
 
 
@@ -472,7 +448,7 @@ class Endurance_Fields_Loader:
         import numpy as np
 
         """
-        #NOTE: use this code to "quickly" read in the MEB file in order to populate values
+        #NOTE: For reference, use this code to "quickly" read in the MEB file in order to populate values
         
         import tabula
         path = "/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/Endurance Channel Specifications DC AC Cal 2-11-2022.pdf"
@@ -502,7 +478,7 @@ class Endurance_Fields_Loader:
         tm = [8000,8000,8000,8000,8000,8000,32000,32000,32000,32000,32000,32000,2000,2000,2000,2000,2000,2000,64000,2000,2000,2000,2000,10e6,10e6]
         fs = [fsDC,fsDC,fsDC,fsDC,fsDC,fsDC,fsVLF,fsVLF,fsVLF,fsVLF,fsVLF,fsVLF,fsskins,fsskins,fsskins,fsskins,float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),10e6,10e6]
         max_sig_pm_mV = [1251,1251,1251,1251,1251,1251,125,125,125,125,125,125,10000,10000,10000,10000,1251,1251,125,10000,10000,10000,10000,63,63]
-        boom_length = [3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,float("nan"),float("nan"),float("nan"),float("nan"),3.0,3.0,3.0,float("nan"),float("nan"),float("nan"),float("nan"),3.0,3.0]
+        boom_length = [3.212,3.212,2.271227,2.271227,2.271227,2.271227,3.212,3.212,2.271227,2.271227,2.271227,2.271227,float("nan"),float("nan"),float("nan"),float("nan"),3.0,3.0,3.0,float("nan"),float("nan"),float("nan"),float("nan"),3.212,3.212]
         max_sig_pm_mVm = [417.0,417.0,417.0,417.0,417.0,417.0,41.7,41.7,41.7,41.7,41.7,41.7,float("nan"),float("nan"),float("nan"),float("nan"),417.0,417.0,41.7,float("nan"),float("nan"),float("nan"),float("nan"),21.0,21.0]
         gain_desired = [2.0,2.0,2.0,2.0,2.0,2.0,19.98,19.98,19.98,19.98,19.98,19.98,0.25,0.25,0.25,0.25,2.0,2.0,19.98,0.25,0.25,0.25,0.25,39.68,39.68]
         gaindB_desired = [6.0,6.0,6.0,6.0,6.0,6.0,26.0,26.0,26.0,26.0,26.0,26.0,-12.0,-12.0,-12.0,-12.0,6.0,6.0,26.0,-12.0,-12.0,-12.0,-12.0,32.0,32.0]
@@ -514,9 +490,9 @@ class Endurance_Fields_Loader:
         bits = [18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,14.0,14.0]
         coeffa = [1.2555,1.2549,1.2557,1.2552,-1.256,-1.255,0.1265,0.1245,0.1266,0.1249,0.1234,0.1253,-12.321,-12.32,-12.326,-12.314,float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan")]
         coeffb = [1.1e-03,-4.6288e-05,0.00034567,0.00066907,-0.00074203,-0.00057493,5.5604e-05,5.1386e-05,4.4484e-05,5.4683e-05,5.7427e-05,-0.0005279,0.1449,0.1517,0.1444,0.1192,float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan")]
-        polarity = [1,1,1,1,-1,-1,1,1,1,1,-1,-1,-1,-1,-1,-1,float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan")]
+        polarity = [1,1,1,1,-1,-1,1,1,1,1,1,-1,-1,-1,-1,-1,float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan")]
 
- 
+
         #Select desired channel
         i = chns.index(self.chn)
 
