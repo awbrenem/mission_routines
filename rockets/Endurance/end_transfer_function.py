@@ -25,7 +25,7 @@ from math import remainder
 #Select data channel for calibration 
 #-------------------------------------------------------
 
-ch = 'V13D'
+ch = 'VLF24D'
 #ch = 'V4SD'
 #ch = 'VLF41D'
 v = EFL(ch)
@@ -44,8 +44,6 @@ fs = v.chnspecs['fs']
 
 #-----------------------------------------------------------------------------------------
 #Load gain/phase data for selected channel. 
-#---NOTE: channels on the MEB with an identified negative polarity have had their phases flipped 
-#---in the following load routine. This needs to be done.
 #-----------------------------------------------------------------------------------------
 
 
@@ -76,11 +74,6 @@ freq_lowres = freq_lowres[np.where(freq_lowres <= nyquist)]
 #-----------------------------------------------------------------------------------------
 
 if v.type == 'DC' or v.type == 'skins':
-
-    #NOTE: this method doesn't work if there's a phase flip at low freqs!!!
-        ##--Mean value b/t 20-100 Hz - to be used to populate <=10 Hz values
-        #g_replace = np.mean([gain_lowres[i] for i in range(len(freq_lowres)) if (freq_lowres[i] > 20) & (freq_lowres[i] < 100)])
-        #p_replace = np.mean([phase_lowres[i] for i in range(len(freq_lowres)) if (freq_lowres[i] > 20) & (freq_lowres[i] < 100)])
 
     goo = np.where(freq_lowres >= 20)    
     g_replace = gain_lowres[goo[0][0]]
@@ -177,7 +170,6 @@ for i in range(2): axs[i].set_xlim(1,30000)
 axs[1].set_ylim(-4,4)
 
 print('Check modified gain/phase curves')
-fig.clear()
 plt.close(fig)
 
 
@@ -247,69 +239,12 @@ wavedatFFTc = wavedatFFT/transfer_func_unitygain
 
 
 
-"""
-freq2 = list(freq)
-v1 = np.abs(wavedatFFT)
-v2 = np.abs(wavedatFFTc)
-rat = [v1[i]/v2[i] for i in range(len(v1))]
-
-fig3,axs3 = plt.subplots(4)
-axs3[0].plot(freq2,np.abs(wavedatFFT))
-axs3[1].plot(freq2,np.abs(wavedatFFTc))
-axs3[0].set_ylim(0,3e6)
-axs3[1].set_ylim(0,3e6)
-axs3[2].plot(freq2,rat)
-axs3[2].set_yscale('linear')
-axs3[3].plot(freq2,np.abs(H))
-axs3[3].set_yscale('linear')
-for i in range(4): axs3[i].set_xlim(200,201)
-print('Quick look at calibrated vs original data')
-
-fig3.clear()
-plt.close(fig3)
-"""
-
-
 #---------------------------------------------------
 #Inverse FFT to get back to corrected waveform
 #---------------------------------------------------
 
 wf = irfft(wavedatFFT, n=len(tdat))
 wf_corr = irfft(wavedatFFTc, n=len(tdat))
-
-
-
-fig,axs = plt.subplots(3, clear=True)
-
-axs[0].plot(tdat,wf)
-axs[1].plot(tdat,wf_corr)
-
-
-#--DC signal test
-for i in range(3): axs[i].set_xlim(100,180)
-for i in range(3): axs[i].set_xlim(110,115)
-for i in range(3): axs[i].set_ylim(-1,1)
-#--Small amp test
-for i in range(3): axs[i].set_xlim(535,536.2)
-for i in range(3): axs[i].set_ylim(-0.25,0.25)
-#--Maneuver test
-for i in range(3): axs[i].set_xlim(524,525)
-for i in range(3): axs[i].set_ylim(-1,1)
-
-
-
-for i in range(3): axs[i].set_xlim(656,656.06)
-for i in range(3): axs[i].set_xlim(656.02,656.03)
-for i in range(3): axs[i].set_xlim(450,460)
-for i in range(3): axs[i].set_ylim(-0.45,0.45)
-axs[1].set_ylim(-0.25,0.25)
-axs[2].set_ylim(-0.25,0.25)
-
-
-fig.clear()
-plt.close(fig)
- 
-
 
 
 
