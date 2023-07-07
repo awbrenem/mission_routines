@@ -25,9 +25,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy import signal
 import numpy as np
-import end_load_data as end
-import end_load_gainphase as gainphase
-
 from scipy.interpolate import interp1d
 import plot_spectrogram as ps
 import filter_wave_frequency as filt
@@ -39,9 +36,8 @@ from math import remainder
 #Load corrected data
 #---------------------------------------------
 
-c1 = 'V12D'
-c2 = 'V34D'
-
+c1 = 'V24D'
+c2 = 'VLF24D'
 
 v1c = EFL(c1)
 wf1c, tdat1c = v1c.load_data_gainphase_corrected()
@@ -53,15 +49,16 @@ fs2 = v2c.chnspecs['fs']
 
 
 
+
 #---------------------------------------------
 #Load uncorrected data
 #---------------------------------------------
 
 v1 = EFL(c1)
 v2 = EFL(c2)
+
 wf1, tdat1 = v1.load_data()
 wf2, tdat2 = v2.load_data()
-
 
 
 
@@ -72,8 +69,8 @@ wf2, tdat2 = v2.load_data()
 def phase_comparison(vline_hz=0):
 
 
-    v1c.plot_gainphase()
-    v2c.plot_gainphase()
+    #v1c.plot_gainphase()
+    #v2c.plot_gainphase()
 
 
     #--Different channels have different x-axis (freq) values. Need to interpolate 
@@ -123,8 +120,6 @@ def phase_comparison(vline_hz=0):
 #--------------------------------------------------------------------
 
 def wave_plot(fl, fh, x0=0, x1=800, y0=-10, y1=10, **kwargs):
-
-
 
     wf1cbp = filt.butter_bandpass_filter(wf1c, fl, fh, fs1, order= 10)
     wf1bp = filt.butter_bandpass_filter(wf1, fl, fh, fs1, order= 10)
@@ -218,7 +213,6 @@ wave_plot(100, 300, x0=793.7, x1=793.9, y0=-0.02, y1=0.02)
 
 
 
-
 #--------------------------------------
 #Wave 3: 165.46 - 165.56 sec; ~80 Hz
 #--------------------------------------
@@ -228,16 +222,11 @@ wave_plot(100, 300, x0=793.7, x1=793.9, y0=-0.02, y1=0.02)
 #ps.plot_spectrogram(tspec2c,fspec2c,np.abs(powerc2c),vr=[-60,-30],yr=[50,2000],xr=[150,160], yscale='linear', ax=axs[1])
 
 phase_comparison(80)
-wave_plot(60, 3000, x0=165.4, x1=165.6, y0=-0.8, y1=0.8)
+wave_plot(60, 900, x0=165.4, x1=165.6, y0=-0.8, y1=0.8)
 wave_plot(60, 3000, x0=165.2, x1=165.8, y0=-0.8, y1=0.8)
 
 
 print("end")
-
-
-
-
-
 
 
 
