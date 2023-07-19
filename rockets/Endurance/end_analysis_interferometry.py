@@ -41,6 +41,8 @@ tl, gsS, gsE = end_data_loader.load_timeline()
 v12DC = EFL('V12D')
 v34DC = EFL('V34D')
 wf12DC, tdat12DC = v12DC.load_data_gainphase_corrected()
+
+
 wf34DC, tdat34DC = v34DC.load_data_gainphase_corrected()
 fsDC = v12DC.chnspecs['fs']
 
@@ -55,6 +57,7 @@ wf34, tgoo = v34.load_data_gainphase_corrected()
 wf24, tgoo = v24.load_data_gainphase_corrected()
 wf32, tgoo = v32.load_data_gainphase_corrected()
 
+
 v1 = EFL('V1SD')
 v2 = EFL('V2SD')
 v3 = EFL('V3SD')
@@ -64,6 +67,8 @@ wf1, tdats = v1.load_data_gainphase_corrected()
 wf2, tdats = v2.load_data_gainphase_corrected()
 wf3, tdats = v3.load_data_gainphase_corrected()
 wf4, tdats = v4.load_data_gainphase_corrected()
+
+
 fss = v1.chnspecs['fs']
 
 #----------------------------------------------------------------------
@@ -187,7 +192,6 @@ def plot_csd_skins(tr, xlm=[0,1000],ylm=[-180,180],nps=512,mincoh=0.5,ylmpsd=[0,
 
 
 
-
 #Cross-spectral density for VLF
 def plot_csd(tr, xlm=[0,12000],ylm=[-180,180],nps=512,mincoh=0.5):
     goot = np.where((tdat >= tr[0]) & (tdat <= tr[1]))
@@ -280,89 +284,190 @@ def plot_csd(tr, xlm=[0,12000],ylm=[-180,180],nps=512,mincoh=0.5):
             #axs[i,j].set_ylim(ylm)
 
 
+#Return slices of power, phase and coherence averaged over "navg" consecutive time bins starting at tz 
+def phase_coh_slice(tz,navg=8):
 
 
+    goo = np.where(tchunks >= tz)
+    goopow = np.where(tspec >= tz)
 
-"""
-#--wave 1 possibility (small amp)
-plt.plot(tdats[good],w1,tdats[good],w2)
-plt.xlim(397,398)
-plt.ylim(-0.001,0.001)
-plot_csd_skins([395,398])
+    powgoo = np.abs(powerc)[:,goopow[0][0]:goopow[0][navg]]
+    powavg = [0] * np.shape(powgoo)[0]
+    pgoo = phase[:,goo[0][0]:goo[0][navg]]
+    pavg = [0] * np.shape(pgoo)[0]
+    cgoo = coh[:,goo[0][0]:goo[0][navg]]
+    cavg = [0] * np.shape(cgoo)[0]
+    
 
+    for i in range(np.shape(pgoo)[0]):
+        pavg[i] = np.average(pgoo[i,:])    
+        cavg[i] = np.average(cgoo[i,:])    
 
-#--wave 2 possibility (larger amp than wave 1. Roughly 25 Hz blip)
-plt.plot(tdats[good],w1,tdats[good],w2)
-#plt.xlim(651.5,654)
-#plt.xlim(650.2,653.5)
-plt.xlim(649.2,654)
-plt.ylim(-0.005,0.005)
-plot_csd_skins([649.7,654],mincoh=0.6,xlm=[0,200],nps=1024,ylmpsd=[1e-13,1e-8])
-
-
-
-#--prior to density structures
-plt.plot(tdats[good],w1,tdats[good],w2)
-plt.xlim(390,392)
-plt.ylim(-0.001,0.001)
+    for i in range(np.shape(powgoo)[0]):
+        powavg[i] = np.average(powgoo[i,:])    
 
 
-#artificial signal 
-plt.plot(tdats[good],w1,tdats[good],w2)
-plt.xlim(399,400)
-plt.ylim(-0.01,0.01)
+    phasearr = phase[:,goo[0][0:navg]]
+    coharr = coh[:,goo[0][0:navg]]
+    powarr = np.abs(powerc)[:,goopow[0][0:navg]]
 
 
+    return pavg, phasearr, cavg, coharr, powavg, powarr
 
 
-fig,axs = plt.subplots(2)
-axs[0].plot(tdats[good],w1)
-axs[1].plot(tdats[good],w2)
-"""
+#Makes nice plot of coh/phase spectrograms and resulting slice in coherence/phase (including average)
+def plot_phase_coh(xr=[100,200],yr=[5500,7000],vr1=[-40,-25],vr2=[0.9,1],vr3=[0,140],xlm1=[5500,7000],xlm2=[5500,7000],ylm1=[0,1],ylm2=[0,110]):
+
+    try:
+        figgoo = plt.gcf()
+    except NameError:
+        print("No fig yet defined")
+    else:
+        plt.close(figgoo)
+        
+    print("------------")
+    print("WHY ARE THESE NOT GETTING UPDATED!!!????!!!!")
+    print(tz, tz2)
+    print("------------")
+
+
+    fig,axs = plt.subplots(6)
+    ps.plot_spectrogram(tspec,fspec,np.abs(powerc),vr=vr1,xr=xr,yr=yr,yscale='linear',ax=axs[0])
+    ps.plot_spectrogram(tchunks,freqs,coh,vr=vr2, zscale='linear',xr=xr,yr=yr,yscale='linear',ax=axs[1])
+    ps.plot_spectrogram(tchunks,freqs,np.abs(phase),vr=vr3, zscale='linear',xr=xr,yr=yr,yscale='linear',ax=axs[2])
+    for i in range(3): axs[i].axvline(tz)
+    for i in range(3): axs[i].axvline(tz2)
+    
+    axs[3].plot(fspec,powarr)
+    axs[3].plot(fspec,powavg,'.',color='black')
+    axs[3].set_xlim(xlm1)
+    #axs[3].set_ylim(ylm1)
+    
+    axs[4].plot(freqs,coharr)
+    axs[4].plot(freqs,cavg,'.',color='black')
+    axs[4].set_xlim(xlm1)
+    axs[4].set_ylim(ylm1)
+    
+    axs[5].plot(freqs,phasearr)
+    axs[5].plot(freqs,pavg,'.',color='black')
+    axs[5].set_xlim(xlm2)
+    axs[5].set_ylim(ylm2)
+
+    print('h')
+
+
 
 #----------------------------------------------------------------------------
-#Plot coherence and phase 
+#Bernstein at mission start (phase and coherence test)
 #----------------------------------------------------------------------------
+
+tchunk = 2  #sec
+coh, phase, tchunks, freqs = correlation_analysis.cross_spectral_density_spectrogram(wf12,wf32,tdat,fs,tchunk,coh_min=0.4,nperseg=2048)
+
+
+#Slice the phase vs freq for particular time(s)
+tz = 140
+navg = 4
+pavg, phasearr, cavg, coharr, powavg, powarr = phase_coh_slice(tz,navg)
+
+tz2 = tz + navg*tchunk
+
+tr = [120,220]
+yr = [5500,7000]
+plot_phase_coh(xr=tr,yr=yr,vr1=[-60,-20],vr2=[0.9,1],vr3=[0,140],xlm1=yr,xlm2=yr,ylm1=[0,1],ylm2=[0,110])
+
+
+#6040; 70.6
+#6524; 125.8 
+
+df = 484 * 2*np.pi    #rad/s
+dp = 55 * 3.14/180    #rad
+slope = dp/df
+d = 1.06 #separation vector in meters
+
+vp = 2*np.pi*d/slope
+# = 21,110 m/s
+ftst = 6200 #test freq in Hz
+k = (2*np.pi*ftst) / vp
+wavelength = 2*np.pi/k
+
+
+
+
+#----------------------------------------------------------------------------
+#Bernstein at mission end (phase and coherence test)
+#----------------------------------------------------------------------------
+
+ps.plot_spectrogram(tspec,fspec,np.abs(powerc),vr=[-40,-25],yr=[4000,8000],xr=[750,850], yscale='linear')
 
 
 tchunk = 2  #sec
 coh, phase, tchunks, freqs = correlation_analysis.cross_spectral_density_spectrogram(wf12,wf32,tdat,fs,tchunk,coh_min=0.5,nperseg=2048)
 
-fig,axs = plt.subplots(2)
-ps.plot_spectrogram(tchunks,freqs,coh,vr=[0.9,1], zscale='linear',xr=[120,220],yr=[5500,7000],yscale='linear',ax=axs[0])
-ps.plot_spectrogram(tchunks,freqs,np.abs(phase),vr=[0,140], zscale='linear',xr=[120,220],yr=[5500,7000],yscale='linear',ax=axs[1])
 
 
 #Slice the phase vs freq for particular time(s)
+#tz = 800
+#navg = 4
+tz = 820
+navg = 4
+pavg, phasearr, cavg, coharr, powavg, powarr = phase_coh_slice(tz,navg)
 
-tz = 150
-goo = np.where(tchunks >= tz)
+tz2 = tz + navg*tchunk
 
-navg = 8  #number of consecutive bins to average phase over
+tr = [800,840]
+yr = [4000,8000]
+plot_phase_coh(xr=tr,yr=[4000,7500],vr1=[-50,-20],vr2=[0.4,1],vr3=[-100,100],xlm1=yr,xlm2=yr,ylm1=[0,1],ylm2=[-180,180])
 
+print('h')
 
-pgoo = phase[:,goo[0][0]:goo[0][navg]]
-pavg = [0] * np.shape(pgoo)[0]
-for i in range(np.shape(pgoo)[0]):
-    pavg[i] = np.average(pgoo[i,:])    
+#----------------------------------------
+#Lower hybrid wave (phase and coherence test)
+#----------------------------------------
 
+tchunk = 1  #sec
+coh, phase, tchunks, freqs = correlation_analysis.cross_spectral_density_spectrogram(wf12,wf32,tdat,fs,tchunk,coh_min=0.3,nperseg=512)
 
-plt.plot(freqs,phase[:,goo[0][0:navg]])
-plt.plot(freqs,pavg,'.',color='black')
-plt.xlim(5000,7500)
-plt.ylim(0,180)
+#Slice the phase vs freq for particular time(s)
+tz = 645
+navg = 8
+pavg, phasearr, cavg, coharr, powavg, powarr = phase_coh_slice(tz,navg)
 
-#6040; 70.6
-#6524; 125.8 
+tz2 = tz + navg*tchunk
 
-df = 484
-dp = 55
+tr = [600,700]
+yr = [4000,12000]
+plot_phase_coh(xr=tr,yr=yr,vr1=[50,-30],vr2=[0.9,1],vr3=[0,140],xlm1=[0,12000],xlm2=[0,12000],ylm1=[0,1],ylm2=[-90,90])
 
+print('h')
 
+#------------------------------------------------------------------------------------
+#H+ fundamental  (phase and coherence test) 
+# - narrowband but I'm able to squeeze out enough info to get a slope. 
+#------------------------------------------------------------------------------------
 
-fig,axs = plt.subplots(2)
-ps.plot_spectrogram(tchunks,freqs,coh,vr=[0.7,1], zscale='linear',xr=[100,800],yr=[0,120],yscale='linear',ax=axs[0])
-ps.plot_spectrogram(tchunks,freqs,np.abs(phase),vr=[0,180], zscale='linear',xr=[100,800],yr=[0,120],yscale='linear',ax=axs[1])
+tchunk = 1  #sec
+coh, phase, tchunks, freqs = correlation_analysis.cross_spectral_density_spectrogram(wf12,wf32,tdat,fs,tchunk,coh_min=0.3,nperseg=2048)
+
+#Slice the phase vs freq for particular time(s)
+#tz = 498
+#navg = 15
+#tz = 502
+#navg = 3
+tz = 506
+navg = 3
+pavg, phasearr, cavg, coharr, powavg, powarr = phase_coh_slice(tz,navg)
+
+tz2 = tz + navg*tchunk
+
+tr = [450,550]
+yr = [4000,4500]
+plot_phase_coh(xr=tr,yr=yr,vr1=[-50,-30],vr2=[0.3,1],vr3=[0,140],xlm1=[4000,4500],xlm2=[4000,4500],ylm1=[0,1],ylm2=[0,120])
+
+#Rough slope 
+df = 4248 - 4204 
+dp = 88.5 - 53.8 
+
 
 
 
@@ -387,7 +492,7 @@ plot_wf(tr)
 
 
 #--------------------------------------
-40#Wave 1: Berstein (~120-130 sec at 5000-8000 Hz)
+#Wave 1: Berstein (~120-130 sec at 5000-8000 Hz)
 #--------------------------------------
 
 ps.plot_spectrogram(tspec,fspec,np.abs(powerc),vr=[-60,-30],yr=[4000,8000],xr=[120,130], yscale='linear')
