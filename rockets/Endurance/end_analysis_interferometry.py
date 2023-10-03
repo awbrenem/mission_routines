@@ -34,28 +34,43 @@ import end_data_loader
 tl, gsS, gsE = end_data_loader.load_timeline()
 
 
+#ephem = end_data_loader.load_ephemeris()
+
 #---------------------------------------------
 #Load gain/phase corrected data
 #---------------------------------------------
 
 v12DC = EFL('V12D')
+v13DC = EFL('V13D')
+v41DC = EFL('V41D')
 v34DC = EFL('V34D')
-wf12DC, tdat12DC = v12DC.load_data_gainphase_corrected()
+v32DC = EFL('V32D')
+v24DC = EFL('V24D')
 
 
-wf34DC, tdat34DC = v34DC.load_data_gainphase_corrected()
+wf12DC, tdatDC = v12DC.load_data_gainphase_corrected()
+wf13DC, tdatDC = v13DC.load_data_gainphase_corrected()
+wf34DC, tdatDC = v34DC.load_data_gainphase_corrected()
+wf32DC, tdatDC = v32DC.load_data_gainphase_corrected()
+wf24DC, tdatDC = v24DC.load_data_gainphase_corrected()
+wf41DC, tdatDC = v41DC.load_data_gainphase_corrected()
+
 fsDC = v12DC.chnspecs['fs']
 
 v12 = EFL('VLF12D')
+v13 = EFL('VLF13D')
 v34 = EFL('VLF34D')
 v24 = EFL('VLF24D')
 v32 = EFL('VLF32D')
+v41 = EFL('VLF41D')
 
 wf12, tdat = v12.load_data_gainphase_corrected()
 fs = v12.chnspecs['fs']
+wf13, tgoo = v13.load_data_gainphase_corrected()
 wf34, tgoo = v34.load_data_gainphase_corrected()
 wf24, tgoo = v24.load_data_gainphase_corrected()
 wf32, tgoo = v32.load_data_gainphase_corrected()
+wf41, tgoo = v41.load_data_gainphase_corrected()
 
 
 v1 = EFL('V1SD')
@@ -71,47 +86,101 @@ wf4, tdats = v4.load_data_gainphase_corrected()
 
 fss = v1.chnspecs['fs']
 
+
+
 #----------------------------------------------------------------------
 #Get spectral data for finding waves (use VLF12)
 #----------------------------------------------------------------------
 
-fspec, tspec, powerc = signal.spectrogram(wf12, fs, nperseg=1024,noverlap=512,window='hann',return_onesided=True,mode='complex')
+fspec, tspec, powerc12 = signal.spectrogram(wf12, fs, nperseg=1024,noverlap=512,window='hann',return_onesided=True,mode='complex')
+fspec, tspec, powerc13 = signal.spectrogram(wf13, fs, nperseg=1024,noverlap=512,window='hann',return_onesided=True,mode='complex')
+fspec, tspec, powerc34 = signal.spectrogram(wf34, fs, nperseg=1024,noverlap=512,window='hann',return_onesided=True,mode='complex')
+fspec, tspec, powerc32 = signal.spectrogram(wf32, fs, nperseg=1024,noverlap=512,window='hann',return_onesided=True,mode='complex')
+fspec, tspec, powerc24 = signal.spectrogram(wf24, fs, nperseg=1024,noverlap=512,window='hann',return_onesided=True,mode='complex')
+fspec, tspec, powerc41 = signal.spectrogram(wf41, fs, nperseg=1024,noverlap=512,window='hann',return_onesided=True,mode='complex')
+
+powerc = powerc12
+
+
 fspecs, tspecs, powercs = signal.spectrogram(wf1, fss, nperseg=1024,noverlap=512,window='hann',return_onesided=True,mode='complex')
 fspecs2, tspecs2, powercs2 = signal.spectrogram(wf1-wf2, fss, nperseg=1024,noverlap=512,window='hann',return_onesided=True,mode='complex')
-fspec12DC, tspec12DC, powerc12DC = signal.spectrogram(wf12DC, fsDC, nperseg=1024,noverlap=512,window='hann',return_onesided=True,mode='complex')
+
+fspecDC, tspecDC, powerc12DC = signal.spectrogram(wf12DC, fsDC, nperseg=1024,noverlap=512,window='hann',return_onesided=True,mode='complex')
+fspecDC, tspecDC, powerc34DC = signal.spectrogram(wf34DC, fsDC, nperseg=1024,noverlap=512,window='hann',return_onesided=True,mode='complex')
+fspecDC, tspecDC, powerc32DC = signal.spectrogram(wf32DC, fsDC, nperseg=1024,noverlap=512,window='hann',return_onesided=True,mode='complex')
+fspecDC, tspecDC, powerc24DC = signal.spectrogram(wf24DC, fsDC, nperseg=1024,noverlap=512,window='hann',return_onesided=True,mode='complex')
+
+fspecs, tspecs, powerc1s = signal.spectrogram(wf1, fss, nperseg=1024,noverlap=512,window='hann',return_onesided=True,mode='complex')
+fspecs, tspecs, powerc2s = signal.spectrogram(wf2, fss, nperseg=1024,noverlap=512,window='hann',return_onesided=True,mode='complex')
+fspecs, tspecs, powerc3s = signal.spectrogram(wf3, fss, nperseg=1024,noverlap=512,window='hann',return_onesided=True,mode='complex')
+fspecs, tspecs, powerc4s = signal.spectrogram(wf4, fss, nperseg=1024,noverlap=512,window='hann',return_onesided=True,mode='complex')
+
+
+#--------------------------------------------------
+#Test comparison to particle data 
+#--------------------------------------------------
+
+
+dfin, dfout = end_data_loader.load_PES()
 
 
 #----------------------------------------------------------------------
 #Compare all VLF waveforms for desired timerange
 #----------------------------------------------------------------------
 
-def plot_wf(tr):
+def plot_wf(tr, diagonals=1):
 
     goot = np.where((tdat >= tr[0]) & (tdat <= tr[1]))
     maxv = np.max([list(wf12bp[goot]), list(wf34bp[goot]), list(wf24bp[goot]), list(wf32bp[goot])])
 
 
-    fig,axs = plt.subplots(6,figsize=(8,8))
-    axs[0].plot(tdat[goot],wf12bp[goot],color='b')
-    axs[0].plot(tdat[goot],wf34bp[goot],color='g')
-    axs[0].title.set_text('VLF (12 vs 34)')
-    axs[1].plot(tdat[goot],wf12bp[goot],color='b')
-    axs[1].plot(tdat[goot],wf24bp[goot],color='r')
-    axs[1].title.set_text('VLF (12 vs 24)')
-    axs[2].plot(tdat[goot],wf12bp[goot],color='b')
-    axs[2].plot(tdat[goot],wf32bp[goot],color='c')
-    axs[2].title.set_text('VLF (12 vs 32)')
-    axs[3].plot(tdat[goot],wf34bp[goot],color='g')
-    axs[3].plot(tdat[goot],wf24bp[goot],color='r')
-    axs[3].title.set_text('VLF (34 vs 24)')
-    axs[4].plot(tdat[goot],wf34bp[goot],color='g')
-    axs[4].plot(tdat[goot],wf32bp[goot],color='c')
-    axs[4].title.set_text('VLF (34 vs 32)')
-    axs[5].plot(tdat[goot],wf24bp[goot],color='r')
-    axs[5].plot(tdat[goot],wf32bp[goot],color='c')
-    axs[5].title.set_text('VLF (24 vs 32)')
-    for i in range(6):
-        axs[i].set_ylim(-maxv, maxv)
+    if diagonals:
+
+        fig,axs = plt.subplots(6,figsize=(8,8))
+        axs[0].plot(tdat[goot],wf13bp[goot],color='b')
+        axs[0].plot(tdat[goot],wf24bp[goot],color='g')
+        axs[0].title.set_text('VLF (13 vs 24)')
+        axs[1].plot(tdat[goot],wf41bp[goot],color='b')
+        axs[1].plot(tdat[goot],wf32bp[goot],color='r')
+        axs[1].title.set_text('VLF (41 vs 32)')
+        axs[2].plot(tdat[goot],wf13bp[goot],color='b')
+        axs[2].plot(tdat[goot],wf32bp[goot],color='c')
+        axs[2].title.set_text('VLF (13 vs 32)')
+        axs[3].plot(tdat[goot],wf24bp[goot],color='g')
+        axs[3].plot(tdat[goot],wf41bp[goot],color='r')
+        axs[3].title.set_text('VLF (24 vs 41)')
+        axs[4].plot(tdat[goot],wf24bp[goot],color='g')
+        axs[4].plot(tdat[goot],wf32bp[goot],color='c')
+        axs[4].title.set_text('VLF (24 vs 32)')
+        axs[5].plot(tdat[goot],wf13bp[goot],color='r')
+        axs[5].plot(tdat[goot],wf41bp[goot],color='c')
+        axs[5].title.set_text('VLF (13 vs 41)')
+        for i in range(6):
+            axs[i].set_ylim(-maxv, maxv)
+
+    else:
+        fig,axs = plt.subplots(6,figsize=(8,8))
+        axs[0].plot(tdat[goot],wf12bp[goot],color='b')
+        axs[0].plot(tdat[goot],wf34bp[goot],color='g')
+        axs[0].title.set_text('VLF (12 vs 34)')
+        axs[1].plot(tdat[goot],wf12bp[goot],color='b')
+        axs[1].plot(tdat[goot],wf24bp[goot],color='r')
+        axs[1].title.set_text('VLF (12 vs 24)')
+        axs[2].plot(tdat[goot],wf12bp[goot],color='b')
+        axs[2].plot(tdat[goot],wf32bp[goot],color='c')
+        axs[2].title.set_text('VLF (12 vs 32)')
+        axs[3].plot(tdat[goot],wf34bp[goot],color='g')
+        axs[3].plot(tdat[goot],wf24bp[goot],color='r')
+        axs[3].title.set_text('VLF (34 vs 24)')
+        axs[4].plot(tdat[goot],wf34bp[goot],color='g')
+        axs[4].plot(tdat[goot],wf32bp[goot],color='c')
+        axs[4].title.set_text('VLF (34 vs 32)')
+        axs[5].plot(tdat[goot],wf24bp[goot],color='r')
+        axs[5].plot(tdat[goot],wf32bp[goot],color='c')
+        axs[5].title.set_text('VLF (24 vs 32)')
+        for i in range(6):
+            axs[i].set_ylim(-maxv, maxv)
+
 
 
 #----------------------------------------------------------------------
@@ -145,6 +214,7 @@ def plot_hod(tr):
 
 #Cross-spectral density for skins 
 def plot_csd_skins(tr, xlm=[0,1000],ylm=[-180,180],nps=512,mincoh=0.5,ylmpsd=[0,0]):
+
     goot = np.where((tdats >= tr[0]) & (tdats <= tr[1]))
     window = np.hanning(len(goot[0]))
     wf1z = wf1[goot]*window
@@ -193,130 +263,208 @@ def plot_csd_skins(tr, xlm=[0,1000],ylm=[-180,180],nps=512,mincoh=0.5,ylmpsd=[0,
 
 
 #Cross-spectral density for VLF
-def plot_csd(tr, xlm=[0,12000],ylm=[-180,180],nps=512,mincoh=0.5):
+def plot_csd(tr, xlm=[0,12000],ylm=[-180,180],nps=512,mincoh=0.5,diagonals=1):
     goot = np.where((tdat >= tr[0]) & (tdat <= tr[1]))
     window = np.hanning(len(goot[0]))
     wf12z = wf12[goot]*window
+    wf13z = wf13[goot]*window
     wf24z = wf24[goot]*window
     wf34z = wf34[goot]*window
     wf32z = wf32[goot]*window
+    wf41z = wf41[goot]*window
     csd1234, angle1234, f = correlation_analysis.cross_spectral_density(wf12z,wf34z,fs,nperseg=nps)
+    csd1213, angle1213, f = correlation_analysis.cross_spectral_density(wf12z,wf13z,fs,nperseg=nps)
     csd1224, angle1224, f = correlation_analysis.cross_spectral_density(wf12z,wf24z,fs,nperseg=nps)
     csd1232, angle1232, f = correlation_analysis.cross_spectral_density(wf12z,wf32z,fs,nperseg=nps)
+    csd1241, angle1241, f = correlation_analysis.cross_spectral_density(wf12z,wf41z,fs,nperseg=nps)
+
+    csd3413, angle3413, f = correlation_analysis.cross_spectral_density(wf34z,wf13z,fs,nperseg=nps)
     csd3424, angle3424, f = correlation_analysis.cross_spectral_density(wf34z,wf24z,fs,nperseg=nps)
+    csd3441, angle3441, f = correlation_analysis.cross_spectral_density(wf34z,wf41z,fs,nperseg=nps)
     csd3432, angle3432, f = correlation_analysis.cross_spectral_density(wf34z,wf32z,fs,nperseg=nps)
+
+    csd1324, angle1324, f = correlation_analysis.cross_spectral_density(wf13z,wf24z,fs,nperseg=nps)
+    csd1341, angle1341, f = correlation_analysis.cross_spectral_density(wf13z,wf41z,fs,nperseg=nps)
+    csd1332, angle1332, f = correlation_analysis.cross_spectral_density(wf13z,wf32z,fs,nperseg=nps)
+
+    csd2441, angle2441, f = correlation_analysis.cross_spectral_density(wf24z,wf41z,fs,nperseg=nps)
     csd2432, angle2432, f = correlation_analysis.cross_spectral_density(wf24z,wf32z,fs,nperseg=nps)
 
+    csd4132, angle4132, f = correlation_analysis.cross_spectral_density(wf41z,wf32z,fs,nperseg=nps)
+
+
+
     goodv1234 = np.where(csd1234 >= mincoh)
+    goodv1213 = np.where(csd1213 >= mincoh)
     goodv1224 = np.where(csd1224 >= mincoh)
     goodv1232 = np.where(csd1232 >= mincoh)
+    goodv1241 = np.where(csd1241 >= mincoh)
+    goodv3413 = np.where(csd3413 >= mincoh)
     goodv3424 = np.where(csd3424 >= mincoh)
+    goodv3441 = np.where(csd3441 >= mincoh)
     goodv3432 = np.where(csd3432 >= mincoh)
+    goodv1324 = np.where(csd1324 >= mincoh)
+    goodv1341 = np.where(csd1341 >= mincoh)
+    goodv1332 = np.where(csd1332 >= mincoh)
+    goodv2441 = np.where(csd2441 >= mincoh)
     goodv2432 = np.where(csd2432 >= mincoh)
+    goodv4132 = np.where(csd4132 >= mincoh)
 
 
-    fig, axs = plt.subplots(4,3,figsize=(12,8))
-    plt.subplots_adjust(left=0.1,
-                        bottom=0.1,
-                        right=0.9,
-                        top=0.9,
-                        wspace=0.4,
-                        hspace=0.4)
-
-    axs[0,0].plot(f, csd1234)
-    axs[0,0].plot(f[goodv1234], csd1234[goodv1234],'.')
-    axs[0,0].set_ylabel('coherency\nVLF12-VLF34')
-    axs[0,0].set_xlabel('freq(Hz)')
-    axs[1,0].plot(f, angle1234, color='r')
-    axs[1,0].plot(f[goodv1234], angle1234[goodv1234],'.')
-    axs[1,0].set_ylim(ylm)
-    axs[1,0].set_ylabel('Phase\nVLF12-VLF34')
-
-    axs[0,1].plot(f, csd1224)
-    axs[0,1].plot(f[goodv1224], csd1224[goodv1224],'.')
-    axs[0,1].set_ylabel('coherency\nVLF12-VLF24')
-    axs[0,1].set_xlabel('freq(Hz)')
-    axs[1,1].plot(f, angle1224, color='r')
-    axs[1,1].plot(f[goodv1224], angle1224[goodv1224],'.')
-    axs[1,1].set_ylim(ylm)
-    axs[1,1].set_ylabel('Phase\nVLF12-VLF24')
-
-    axs[0,2].plot(f, csd1232)
-    axs[0,2].plot(f[goodv1232], csd1232[goodv1232],'.')
-    axs[0,2].set_ylabel('coherency\nVLF12-VLF32')
-    axs[0,2].set_xlabel('freq(Hz)')
-    axs[1,2].plot(f, angle1232, color='r')
-    axs[1,2].plot(f[goodv1232], angle1232[goodv1232],'.')
-    axs[1,2].set_ylim(ylm)
-    axs[1,2].set_ylabel('Phase\nVLF12-VLF32')
-
-    axs[2,0].plot(f, csd3424)
-    axs[2,0].plot(f[goodv3424], csd3424[goodv3424],'.')
-    axs[2,0].set_ylabel('coherency\nVLF34-VLF24')
-    axs[2,0].set_xlabel('freq(Hz)')
-    axs[3,0].plot(f, angle3424, color='r')
-    axs[3,0].plot(f[goodv3424], angle3424[goodv3424],'.')
-    axs[3,0].set_ylim(ylm)
-    axs[3,0].set_ylabel('Phase\nVLF34-VLF24')
-
-    axs[2,1].plot(f, csd3432)
-    axs[2,1].plot(f[goodv3432], csd3432[goodv3432],'.')
-    axs[2,1].set_ylabel('coherency\nVLF34-VLF32')
-    axs[2,1].set_xlabel('freq(Hz)')
-    axs[3,1].plot(f, angle3432, color='r')
-    axs[3,1].plot(f[goodv3432], angle3432[goodv3432],'.')
-    axs[3,1].set_ylim(ylm)
-    axs[3,1].set_ylabel('Phase\nVLF34-VLF32')
-
-    axs[2,2].plot(f, csd2432)
-    axs[2,2].plot(f[goodv2432], csd2432[goodv2432],'.')
-    axs[2,2].set_ylabel('coherency\nVLF24-VLF32')
-    axs[2,2].set_xlabel('freq(Hz)')
-    axs[3,2].plot(f, angle2432, color='r')
-    axs[3,2].plot(f[goodv2432], angle2432[goodv2432],'.')
-    axs[3,2].set_ylim(ylm)
-    axs[3,2].set_ylabel('Phase\nVLF24-VLF32')
 
 
-    for i in range(4):
-        for j in range(3):
-            axs[i,j].set_xlim(xlm)
-            #axs[i,j].set_ylim(ylm)
+    #Plot the diagonal pairs only
+    if diagonals:
+
+        fig, axs = plt.subplots(4,3,figsize=(12,8))
+        plt.subplots_adjust(left=0.1,
+                            bottom=0.1,
+                            right=0.9,
+                            top=0.9,
+                            wspace=0.4,
+                            hspace=0.4)
+
+        axs[0,0].plot(f, csd1324)
+        axs[0,0].plot(f[goodv1324], csd1324[goodv1324],'.')
+        axs[0,0].set_ylabel('coherency\nVLF13-VLF24')
+        axs[0,0].set_xlabel('freq(Hz)')
+        axs[1,0].plot(f, angle1324, color='r')
+        axs[1,0].plot(f[goodv1324], angle1324[goodv1324],'.')
+        axs[1,0].set_ylim(ylm)
+        axs[1,0].set_ylabel('Phase\nVLF13-VLF24')
+
+        axs[0,1].plot(f, csd4132)
+        axs[0,1].plot(f[goodv4132], csd4132[goodv4132],'.')
+        axs[0,1].set_ylabel('coherency\nVLF41-VLF32')
+        axs[0,1].set_xlabel('freq(Hz)')
+        axs[1,1].plot(f, angle4132, color='r')
+        axs[1,1].plot(f[goodv4132], angle4132[goodv4132],'.')
+        axs[1,1].set_ylim(ylm)
+        axs[1,1].set_ylabel('Phase\nVLF41-VLF32')
+
+        axs[0,2].plot(f, csd1332)
+        axs[0,2].plot(f[goodv1332], csd1332[goodv1332],'.')
+        axs[0,2].set_ylabel('coherency\nVLF13-VLF32')
+        axs[0,2].set_xlabel('freq(Hz)')
+        axs[1,2].plot(f, angle1332, color='r')
+        axs[1,2].plot(f[goodv1332], angle1332[goodv1332],'.')
+        axs[1,2].set_ylim(ylm)
+        axs[1,2].set_ylabel('Phase\nVLF13-VLF32')
+
+        axs[2,0].plot(f, csd2441)
+        axs[2,0].plot(f[goodv2441], csd2441[goodv2441],'.')
+        axs[2,0].set_ylabel('coherency\nVLF24-VLF41')
+        axs[2,0].set_xlabel('freq(Hz)')
+        axs[3,0].plot(f, angle2441, color='r')
+        axs[3,0].plot(f[goodv2441], angle2441[goodv2441],'.')
+        axs[3,0].set_ylim(ylm)
+        axs[3,0].set_ylabel('Phase\nVLF24-VLF41')
+
+        axs[2,1].plot(f, csd2432)
+        axs[2,1].plot(f[goodv2432], csd2432[goodv2432],'.')
+        axs[2,1].set_ylabel('coherency\nVLF24-VLF32')
+        axs[2,1].set_xlabel('freq(Hz)')
+        axs[3,1].plot(f, angle2432, color='r')
+        axs[3,1].plot(f[goodv2432], angle2432[goodv2432],'.')
+        axs[3,1].set_ylim(ylm)
+        axs[3,1].set_ylabel('Phase\nVLF24-VLF32')
+
+        axs[2,2].plot(f, csd1341)
+        axs[2,2].plot(f[goodv1341], csd1341[goodv1341],'.')
+        axs[2,2].set_ylabel('coherency\nVLF13-VLF41')
+        axs[2,2].set_xlabel('freq(Hz)')
+        axs[3,2].plot(f, angle1341, color='r')
+        axs[3,2].plot(f[goodv1341], angle1341[goodv1341],'.')
+        axs[3,2].set_ylim(ylm)
+        axs[3,2].set_ylabel('Phase\nVLF13-VLF41')
 
 
-#Return slices of power, phase and coherence averaged over "navg" consecutive time bins starting at tz 
-def phase_coh_slice(tz,navg=8):
+        for i in range(4):
+            for j in range(3):
+                axs[i,j].set_xlim(xlm)
+                #axs[i,j].set_ylim(ylm)
 
 
-    goo = np.where(tchunks >= tz)
-    goopow = np.where(tspec >= tz)
 
-    powgoo = np.abs(powerc)[:,goopow[0][0]:goopow[0][navg]]
-    powavg = [0] * np.shape(powgoo)[0]
-    pgoo = phase[:,goo[0][0]:goo[0][navg]]
-    pavg = [0] * np.shape(pgoo)[0]
-    cgoo = coh[:,goo[0][0]:goo[0][navg]]
-    cavg = [0] * np.shape(cgoo)[0]
-    
+    #Plot original channels (w/o 13 and 41)
+    else: 
 
-    for i in range(np.shape(pgoo)[0]):
-        pavg[i] = np.average(pgoo[i,:])    
-        cavg[i] = np.average(cgoo[i,:])    
+        fig, axs = plt.subplots(4,3,figsize=(12,8))
+        plt.subplots_adjust(left=0.1,
+                            bottom=0.1,
+                            right=0.9,
+                            top=0.9,
+                            wspace=0.4,
+                            hspace=0.4)
 
-    for i in range(np.shape(powgoo)[0]):
-        powavg[i] = np.average(powgoo[i,:])    
+        axs[0,0].plot(f, csd1234)
+        axs[0,0].plot(f[goodv1234], csd1234[goodv1234],'.')
+        axs[0,0].set_ylabel('coherency\nVLF12-VLF34')
+        axs[0,0].set_xlabel('freq(Hz)')
+        axs[1,0].plot(f, angle1234, color='r')
+        axs[1,0].plot(f[goodv1234], angle1234[goodv1234],'.')
+        axs[1,0].set_ylim(ylm)
+        axs[1,0].set_ylabel('Phase\nVLF12-VLF34')
+
+        axs[0,1].plot(f, csd1224)
+        axs[0,1].plot(f[goodv1224], csd1224[goodv1224],'.')
+        axs[0,1].set_ylabel('coherency\nVLF12-VLF24')
+        axs[0,1].set_xlabel('freq(Hz)')
+        axs[1,1].plot(f, angle1224, color='r')
+        axs[1,1].plot(f[goodv1224], angle1224[goodv1224],'.')
+        axs[1,1].set_ylim(ylm)
+        axs[1,1].set_ylabel('Phase\nVLF12-VLF24')
+
+        axs[0,2].plot(f, csd1232)
+        axs[0,2].plot(f[goodv1232], csd1232[goodv1232],'.')
+        axs[0,2].set_ylabel('coherency\nVLF12-VLF32')
+        axs[0,2].set_xlabel('freq(Hz)')
+        axs[1,2].plot(f, angle1232, color='r')
+        axs[1,2].plot(f[goodv1232], angle1232[goodv1232],'.')
+        axs[1,2].set_ylim(ylm)
+        axs[1,2].set_ylabel('Phase\nVLF12-VLF32')
+
+        axs[2,0].plot(f, csd3424)
+        axs[2,0].plot(f[goodv3424], csd3424[goodv3424],'.')
+        axs[2,0].set_ylabel('coherency\nVLF34-VLF24')
+        axs[2,0].set_xlabel('freq(Hz)')
+        axs[3,0].plot(f, angle3424, color='r')
+        axs[3,0].plot(f[goodv3424], angle3424[goodv3424],'.')
+        axs[3,0].set_ylim(ylm)
+        axs[3,0].set_ylabel('Phase\nVLF34-VLF24')
+
+        axs[2,1].plot(f, csd3432)
+        axs[2,1].plot(f[goodv3432], csd3432[goodv3432],'.')
+        axs[2,1].set_ylabel('coherency\nVLF34-VLF32')
+        axs[2,1].set_xlabel('freq(Hz)')
+        axs[3,1].plot(f, angle3432, color='r')
+        axs[3,1].plot(f[goodv3432], angle3432[goodv3432],'.')
+        axs[3,1].set_ylim(ylm)
+        axs[3,1].set_ylabel('Phase\nVLF34-VLF32')
+
+        axs[2,2].plot(f, csd2432)
+        axs[2,2].plot(f[goodv2432], csd2432[goodv2432],'.')
+        axs[2,2].set_ylabel('coherency\nVLF24-VLF32')
+        axs[2,2].set_xlabel('freq(Hz)')
+        axs[3,2].plot(f, angle2432, color='r')
+        axs[3,2].plot(f[goodv2432], angle2432[goodv2432],'.')
+        axs[3,2].set_ylim(ylm)
+        axs[3,2].set_ylabel('Phase\nVLF24-VLF32')
 
 
-    phasearr = phase[:,goo[0][0:navg]]
-    coharr = coh[:,goo[0][0:navg]]
-    powarr = np.abs(powerc)[:,goopow[0][0:navg]]
+        for i in range(4):
+            for j in range(3):
+                axs[i,j].set_xlim(xlm)
+                #axs[i,j].set_ylim(ylm)
 
-
-    return pavg, phasearr, cavg, coharr, powavg, powarr
 
 
 #Makes nice plot of coh/phase spectrograms and resulting slice in coherence/phase (including average)
-def plot_phase_coh(xr=[100,200],yr=[5500,7000],vr1=[-40,-25],vr2=[0.9,1],vr3=[0,140],xlm1=[5500,7000],xlm2=[5500,7000],ylm1=[0,1],ylm2=[0,110]):
+def plot_phase_coh(parr,carr,pharr,powa,coha,pha,xrspec=[100,200],yrspec=[5500,7000],
+                   vr1=[-40,-25],vr2=[0.9,1],vr3=[0,140],
+                   xrline=[5500,7000],
+                   ylm1=[0,1],ylm2=[0,1],ylm3=[-180,180],
+                   tzp1=0,tzp2=0):
 
     try:
         figgoo = plt.gcf()
@@ -324,36 +472,31 @@ def plot_phase_coh(xr=[100,200],yr=[5500,7000],vr1=[-40,-25],vr2=[0.9,1],vr3=[0,
         print("No fig yet defined")
     else:
         plt.close(figgoo)
-        
-    print("------------")
-    print("WHY ARE THESE NOT GETTING UPDATED!!!????!!!!")
-    print(tz, tz2)
-    print("------------")
 
 
-    fig,axs = plt.subplots(6)
-    ps.plot_spectrogram(tspec,fspec,np.abs(powerc),vr=vr1,xr=xr,yr=yr,yscale='linear',ax=axs[0])
-    ps.plot_spectrogram(tchunks,freqs,coh,vr=vr2, zscale='linear',xr=xr,yr=yr,yscale='linear',ax=axs[1])
-    ps.plot_spectrogram(tchunks,freqs,np.abs(phase),vr=vr3, zscale='linear',xr=xr,yr=yr,yscale='linear',ax=axs[2])
-    for i in range(3): axs[i].axvline(tz)
-    for i in range(3): axs[i].axvline(tz2)
+    fig,axs = plt.subplots(6, gridspec_kw={'height_ratios':[1,1,1,1,1,4]})
+    ps.plot_spectrogram(tspec,fspec,np.abs(powerc),vr=vr1,xr=xrspec,yr=yrspec,yscale='linear',ax=axs[0])
+    ps.plot_spectrogram(tchunks,freqs,coh,vr=vr2, zscale='linear',xr=xrspec,yr=yrspec,yscale='linear',ax=axs[1])
+    #ps.plot_spectrogram(tchunks,freqs,np.abs(phase),vr=vr3, zscale='linear',xr=xrspec,yr=yrspec,yscale='linear',ax=axs[2])
+    ps.plot_spectrogram(tchunks,freqs,phase,vr=vr3, zscale='linear',xr=xrspec,yr=yrspec,yscale='linear',ax=axs[2])
+    for i in range(3): axs[i].axvline(tzp1)
+    for i in range(3): axs[i].axvline(tzp2)
     
-    axs[3].plot(fspec,powarr)
-    axs[3].plot(fspec,powavg,'.',color='black')
-    axs[3].set_xlim(xlm1)
-    #axs[3].set_ylim(ylm1)
+    axs[3].plot(fspec,parr)
+    axs[3].plot(fspec,powa,'.',color='black')
+    axs[3].set_xlim(xrline)
+    axs[3].set_ylim(ylm1)
     
-    axs[4].plot(freqs,coharr)
-    axs[4].plot(freqs,cavg,'.',color='black')
-    axs[4].set_xlim(xlm1)
-    axs[4].set_ylim(ylm1)
+    axs[4].plot(freqs,carr)
+    axs[4].plot(freqs,coha,'.',color='black')
+    axs[4].set_xlim(xrline)
+    axs[4].set_ylim(ylm2)
     
-    axs[5].plot(freqs,phasearr)
-    axs[5].plot(freqs,pavg,'.',color='black')
-    axs[5].set_xlim(xlm2)
-    axs[5].set_ylim(ylm2)
+    axs[5].plot(freqs,pharr)
+    axs[5].plot(freqs,pha,'.',color='black')
+    axs[5].set_xlim(xrline)
+    axs[5].set_ylim(ylm3)
 
-    print('h')
 
 
 
@@ -361,35 +504,197 @@ def plot_phase_coh(xr=[100,200],yr=[5500,7000],vr1=[-40,-25],vr2=[0.9,1],vr3=[0,
 #Bernstein at mission start (phase and coherence test)
 #----------------------------------------------------------------------------
 
-tchunk = 2  #sec
-coh, phase, tchunks, freqs = correlation_analysis.cross_spectral_density_spectrogram(wf12,wf32,tdat,fs,tchunk,coh_min=0.4,nperseg=2048)
+tchunk = 0.2  #sec
+#coh, phase, tchunks, freqs = correlation_analysis.cross_spectral_density_spectrogram(wf12,-wf24,tdat,fs,tchunk,coh_min=0.4,nperseg=2048)
+#coh, phase, tchunks, freqs = correlation_analysis.cross_spectral_density_spectrogram(wf32,-wf41,tdat,fs,tchunk,coh_min=0.,nperseg=2048)
+#coh, phase, tchunks, freqs = correlation_analysis.cross_spectral_density_spectrogram(wf12,wf32,tdat,fs,tchunk,coh_min=0.,nperseg=512)
+coh, phase, tchunks, freqs = correlation_analysis.cross_spectral_density_spectrogram(-wf41,wf32,tdat,fs,tchunk,coh_min=0.,nperseg=512)
+
+
+fig,axs = plt.subplots(4)
+ps.plot_spectrogram(tspec,fspec,np.abs(powerc12),vr=[-40,-25],yr=[5000,8000],xr=[110,220], yscale='linear',ax=axs[0])
+ps.plot_spectrogram(tspec,fspec,np.abs(powerc34),vr=[-40,-25],yr=[5000,8000],xr=[110,220], yscale='linear',ax=axs[1])
+ps.plot_spectrogram(tspec,fspec,np.abs(powerc24),vr=[-40,-25],yr=[5000,8000],xr=[110,220], yscale='linear',ax=axs[2])
+ps.plot_spectrogram(tspec,fspec,np.abs(powerc32),vr=[-40,-25],yr=[5000,8000],xr=[110,220], yscale='linear',ax=axs[3])
+
+tslice = 140
+nsec = 20
+p12avg, p12vals, tv = ps.slice_spectrogram(tslice,tspec,np.abs(powerc12),nsec)
+p34avg, p34vals, tv = ps.slice_spectrogram(tslice,tspec,np.abs(powerc34),nsec)
+p24avg, p24vals, tv = ps.slice_spectrogram(tslice,tspec,np.abs(powerc24),nsec)
+p32avg, p32vals, tv = ps.slice_spectrogram(tslice,tspec,np.abs(powerc32),nsec)
+
+
+fig,axs = plt.subplots(1)
+axs.plot(fspec,np.sqrt(p12avg),color='black')
+axs.plot(fspec,np.sqrt(p34avg),color='blue')
+axs.plot(fspec,np.sqrt(p24avg),color='red')
+axs.plot(fspec,np.sqrt(p32avg),color='orange')
+axs.set_xlim(5500,7500)
+axs.set_xlim(0,7500)
+
+
+
+goob = list(range(0,45))
+goob = goob[1:]
+thetarad = [i * (np.pi/180) for i in goob]
+l45 = 45 * (np.pi/180)
+rat = [np.cos(l45 + i)/np.cos(l45 - i) for i in thetarad]
+plt.plot(goob, rat)
+plt.yscale('linear')
+plt.ylim(0,1)
+
 
 
 #Slice the phase vs freq for particular time(s)
+#tz = 140
+#tz = 129.7
+#tz = 183
+#nsec = 8
+#tz = 160
+#nsec = 8
 tz = 140
-navg = 4
-pavg, phasearr, cavg, coharr, powavg, powarr = phase_coh_slice(tz,navg)
-
-tz2 = tz + navg*tchunk
+nsec = 2
+pavg, phasearr, tarr_phase = ps.slice_spectrogram(tz,tchunks,phase,nsec)
+cavg, coharr, tarr_coh = ps.slice_spectrogram(tz,tchunks,coh,nsec)
+powavg, powarr, tarr_pow = ps.slice_spectrogram(tz,tspec,np.abs(powerc32),nsec)
 
 tr = [120,220]
-yr = [5500,7000]
-plot_phase_coh(xr=tr,yr=yr,vr1=[-60,-20],vr2=[0.9,1],vr3=[0,140],xlm1=yr,xlm2=yr,ylm1=[0,1],ylm2=[0,110])
+#yr = [5000,7000]
+yr = [5000,9000]
+plot_phase_coh(powarr,coharr,phasearr,powavg,cavg,pavg,xrspec=tr,yrspec=yr,
+               vr1=[-60,-20],vr2=[0.9,1],vr3=[0,140],
+               xrline=yr,
+               ylm1=[0,0.002],ylm2=[0,1],ylm3=[-180,180],
+               tzp1=tz,tzp2=tz+nsec)
 
 
-#6040; 70.6
-#6524; 125.8 
+#-------------------------------------------------------
+#-------------------------------------------------------
+#UNDER CONSTRUCTION 
+#-------------------------------------------------------
+#-------------------------------------------------------
 
-df = 484 * 2*np.pi    #rad/s
-dp = 55 * 3.14/180    #rad
-slope = dp/df
+#Make plot of E-field power (z-axis) vs f (y-axis) and k-value (x-axis) [Lalti+23 MMS paper; https://doi.org/10.1029/2022JA031150]
+#Do this with nested for loop. For each freq (all times of interest) bin the freq vs k-values.  
+#k-values come from the phase as k = phase (radians) / d 
+
+
+
+
+nkbins = 100
+klim = [-2,2]
+kstep = (klim[1]-klim[0])/nkbins
+kvals = np.arange(klim[0],klim[1],kstep)   #k-values to bin\
+d = 2.26 #meters - effective length of spaced receiver
+
+nfreqs = np.shape(phasearr)[0]
+
+tdelta = tarr_phase[1] - tarr_phase[0]
+
+
+#final values will be [nfreqs,nkbins]
+pow_finv = np.empty((nfreqs,nkbins))
+pow_finv2 = np.empty((nfreqs,nkbins))
+
+
+for f in range(0,nfreqs-1,1):
+    pslice = phasearr[f,:] #phase values for a particular freq and all times
+    kslice = [(3.14/360)*i/d for i in pslice] #Change delta-phases into k-values
+
+    if np.sum(kslice != 0):
+        #for current freq slice bin the k-values for all times
+        for k in range(0,nkbins-1,1):
+
+            #If, at current frequency slice there are k-values within the current range of k, extract the corresponding power values.
+            gootimeIDX = np.where((kslice >= kvals[k]) & (kslice < kvals[k+1])) #time indices satisfying condition
+            #--Note that the power array is a different size than the phase array, so need to look over a range of values
+            powavg_goo = np.empty(len(gootimeIDX[0])) #Can be multiple times for current freq that have k-values in current range (b/c we're considering all times)
+
+            if len(gootimeIDX[0]) != 0:
+
+                #relevant freq range of (larger) power array to average over 
+                frange_goo = [freqs[f],freqs[f+1]]
+                frangeIDX = np.where((fspec >= frange_goo[0]) & (fspec <= frange_goo[1]))[0]
+                frangeIDX = [np.min(frangeIDX), np.max(frangeIDX)]
+
+
+                for t in range(0,len(gootimeIDX[0]),1):
+                    #relevant time range of (larger) power array to average over 
+                    if t < len(gootimeIDX[0])-1:
+                        trange_goo = [tarr_phase[t],tarr_phase[t+1]]
+                    else:
+                        trange_goo = [tarr_phase[t],tarr_phase[t]+tdelta]
+
+                    trangeIDX = np.where((tarr_pow >= trange_goo[0]) & (tarr_pow <= trange_goo[1]))[0]
+                    trangeIDX = [np.min(trangeIDX), np.max(trangeIDX)]
+
+                    powarrtmp = powarr[frangeIDX[0]:frangeIDX[1],trangeIDX[0]:trangeIDX[1]]
+                    powavg_goo[t] = np.mean(powarrtmp) #average over all the overlapping freq and time range of larger power array
+
+                #if np.sum(powavg_goo != 0):
+
+                if np.sum(powavg_goo > 1e-100):
+                    pow_finv[f,k] = np.mean(powavg_goo)            
+                    pow_finv2[f,k] = np.nanmax(powavg_goo)            
+                print('here')
+
+#change zero values to different number (conflicts with dB scale)
+
+print("end of nested loop")
+
+
+#Plot the results (freq vs k)
+vr = [-40,-25]
+yr = [4000,8000]
+kr = [-1,1]
+
+fig,axs = plt.subplots(2)
+ps.plot_spectrogram(tspec,fspec,np.abs(powerc12),vr=vr,yr=yr,xr=[110,220], yscale='linear',ax=axs[0],xlabel='time(s)',ylabel='f(Hz)')
+ps.plot_spectrogram(kvals,freqs,pow_finv2,vr=vr,xr=kr,yr=yr,yscale='linear',ax=axs[1],minzval=-120,xlabel='k(1/m)',ylabel='f(Hz)')
+
+#---------------------------------------------------
+#---------------------------------------------------
+#---------------------------------------------------
+
+
+
+
+
+
+
+#wf12-wf32 results for 183s
+df = (6200 - 6000)   #Hz
+dp = (72 - 44.4) * (3.14/180)    #rad
+#L = 0.446  m
+#wf12-wf42 results for 183s
+df = (6200 - 6000)   #Hz
+dp = (75.8 - 53.4) * (3.14/180)    #rad
+#L = 0.55 m
+
+
+#wf34-wf32 results for 183s
+df = (6200 - 6000)   #Hz
+dp = (-23.09 + 26.3) * (3.14/180)    #rad
+#L = 3 m  (not well determined)
+
+
+
+#wf12-wf32 results
+df = (6607 - 6064)   #Hz
+dp = (72.9 - 27.3) * (3.14/180)    #rad
+
+
+
+#phase speed in m/s
+slope = dp/df  #rad * sec
 d = 1.06 #separation vector in meters
-
 vp = 2*np.pi*d/slope
-# = 21,110 m/s
 ftst = 6200 #test freq in Hz
+#wave vector in rad/m 
 k = (2*np.pi*ftst) / vp
-wavelength = 2*np.pi/k
+#wavelength in meters
+wavelength = 2*np.pi/k  #L(6200 Hz) = 0.73 m
 
 
 
@@ -401,68 +706,165 @@ wavelength = 2*np.pi/k
 ps.plot_spectrogram(tspec,fspec,np.abs(powerc),vr=[-40,-25],yr=[4000,8000],xr=[750,850], yscale='linear')
 
 
+#First clue to short wavelength is that 12 and 34 see less power than 32 and 42
+fig,axs = plt.subplots(4)
+ps.plot_spectrogram(tspec,fspec,np.abs(powerc12),vr=[-40,-25],yr=[4000,8000],xr=[750,850], yscale='linear',ax=axs[0])
+ps.plot_spectrogram(tspec,fspec,np.abs(powerc34),vr=[-40,-25],yr=[4000,8000],xr=[750,850], yscale='linear',ax=axs[1])
+ps.plot_spectrogram(tspec,fspec,np.abs(powerc24),vr=[-40,-25],yr=[4000,8000],xr=[750,850], yscale='linear',ax=axs[2])
+ps.plot_spectrogram(tspec,fspec,np.abs(powerc32),vr=[-40,-25],yr=[4000,8000],xr=[750,850], yscale='linear',ax=axs[3])
+
+
+tslice = 790
+nsec = 20
+p12avg, p12vals = ps.slice_spectrogram(tslice,tspec,np.abs(powerc12),nsec)
+p13avg, p13vals = ps.slice_spectrogram(tslice,tspec,np.abs(powerc13),nsec)
+p34avg, p34vals = ps.slice_spectrogram(tslice,tspec,np.abs(powerc34),nsec)
+p24avg, p24vals = ps.slice_spectrogram(tslice,tspec,np.abs(powerc24),nsec)
+p32avg, p32vals = ps.slice_spectrogram(tslice,tspec,np.abs(powerc32),nsec)
+p41avg, p41vals = ps.slice_spectrogram(tslice,tspec,np.abs(powerc41),nsec)
+
+
+fig,axs = plt.subplots(1)
+axs.plot(fspec,np.sqrt(p12avg),color='black')
+axs.plot(fspec,np.sqrt(p13avg),color='purple')
+axs.plot(fspec,np.sqrt(p34avg),color='blue')
+axs.plot(fspec,np.sqrt(p24avg),color='red')
+axs.plot(fspec,np.sqrt(p32avg),color='orange')
+axs.plot(fspec,np.sqrt(p41avg),color='green')
+axs.set_xlim(1000,10000)
+
+
+
+
 tchunk = 2  #sec
-coh, phase, tchunks, freqs = correlation_analysis.cross_spectral_density_spectrogram(wf12,wf32,tdat,fs,tchunk,coh_min=0.5,nperseg=2048)
+#coh, phase, tchunks, freqs = correlation_analysis.cross_spectral_density_spectrogram(wf12,wf32,tdat,fs,tchunk,coh_min=0.5,nperseg=2048)
+coh, phase, tchunks, freqs = correlation_analysis.cross_spectral_density_spectrogram(wf13,wf32,tdat,fs,tchunk,coh_min=0.5,nperseg=2048)
 
 
 
 #Slice the phase vs freq for particular time(s)
-#tz = 800
-#navg = 4
 tz = 820
-navg = 4
-pavg, phasearr, cavg, coharr, powavg, powarr = phase_coh_slice(tz,navg)
-
-tz2 = tz + navg*tchunk
+nsec = 5
+pavg, phasearr = ps.slice_spectrogram(tz,tchunks,phase,nsec)
+cavg, coharr = ps.slice_spectrogram(tz,tchunks,coh,nsec)
+powavg, powarr = ps.slice_spectrogram(tz,tspec,np.abs(powerc13),nsec)
 
 tr = [800,840]
 yr = [4000,8000]
-plot_phase_coh(xr=tr,yr=[4000,7500],vr1=[-50,-20],vr2=[0.4,1],vr3=[-100,100],xlm1=yr,xlm2=yr,ylm1=[0,1],ylm2=[-180,180])
+plot_phase_coh(xrspec=tr,yrspec=[4000,7500],
+               vr1=[-50,-20],vr2=[0.4,1],vr3=[-100,100],
+               xrline=yr,
+               ylm1=[0,0.002],ylm2=[0,1],ylm3=[-180,180],
+               tzp1=tz,tzp2=tz+nsec)
+
 
 print('h')
+
 
 #----------------------------------------
 #Lower hybrid wave (phase and coherence test)
 #----------------------------------------
 
+fig,axs = plt.subplots(4)
+ps.plot_spectrogram(tspec,fspec,np.abs(powerc12),vr=[-40,-25],yr=[4000,12000],xr=[645,647], yscale='linear',ax=axs[0])
+ps.plot_spectrogram(tspec,fspec,np.abs(powerc34),vr=[-40,-25],yr=[4000,12000],xr=[645,647], yscale='linear',ax=axs[1])
+ps.plot_spectrogram(tspec,fspec,np.abs(powerc24),vr=[-40,-25],yr=[4000,12000],xr=[645,647], yscale='linear',ax=axs[2])
+ps.plot_spectrogram(tspec,fspec,np.abs(powerc32),vr=[-40,-25],yr=[4000,12000],xr=[645,647], yscale='linear',ax=axs[3])
+
+
+#tslice = 646.75
+#nsec = 0.2
+tslice = 645
+nsec = 2
+p12avg, p12vals = ps.slice_spectrogram(tslice,tspec,np.abs(powerc12),nsec)
+p13avg, p13vals = ps.slice_spectrogram(tslice,tspec,np.abs(powerc13),nsec)
+p34avg, p34vals = ps.slice_spectrogram(tslice,tspec,np.abs(powerc34),nsec)
+p24avg, p24vals = ps.slice_spectrogram(tslice,tspec,np.abs(powerc24),nsec)
+p32avg, p32vals = ps.slice_spectrogram(tslice,tspec,np.abs(powerc32),nsec)
+p41avg, p41vals = ps.slice_spectrogram(tslice,tspec,np.abs(powerc41),nsec)
+
+fig,axs = plt.subplots(1)
+axs.plot(fspec,np.sqrt(p12avg),color='black')
+axs.plot(fspec,np.sqrt(p13avg),color='purple')
+axs.plot(fspec,np.sqrt(p34avg),color='blue')
+axs.plot(fspec,np.sqrt(p24avg),color='red')
+axs.plot(fspec,np.sqrt(p32avg),color='orange')
+axs.plot(fspec,np.sqrt(p41avg),color='green')
+axs.set_xlim(0,12000)
+
+
+
+
 tchunk = 1  #sec
-coh, phase, tchunks, freqs = correlation_analysis.cross_spectral_density_spectrogram(wf12,wf32,tdat,fs,tchunk,coh_min=0.3,nperseg=512)
+#coh, phase, tchunks, freqs = correlation_analysis.cross_spectral_density_spectrogram(wf12,wf32,tdat,fs,tchunk,coh_min=0.3,nperseg=512)
+coh, phase, tchunks, freqs = correlation_analysis.cross_spectral_density_spectrogram(wf13,wf24,tdat,fs,tchunk,coh_min=0.3,nperseg=512)
 
 #Slice the phase vs freq for particular time(s)
-tz = 645
-navg = 8
-pavg, phasearr, cavg, coharr, powavg, powarr = phase_coh_slice(tz,navg)
+tz = 644
+nsec = 8
+#tz = 647
+#nsec = 0.3
+pavg, phasearr = ps.slice_spectrogram(tz,tchunks,phase,nsec)
+cavg, coharr = ps.slice_spectrogram(tz,tchunks,coh,nsec)
+powavg, powarr = ps.slice_spectrogram(tz,tspec,np.abs(powerc12),nsec)
 
-tz2 = tz + navg*tchunk
 
-tr = [600,700]
-yr = [4000,12000]
-plot_phase_coh(xr=tr,yr=yr,vr1=[50,-30],vr2=[0.9,1],vr3=[0,140],xlm1=[0,12000],xlm2=[0,12000],ylm1=[0,1],ylm2=[-90,90])
+tr = [630,660]
+yr = [5000,12000]
+plot_phase_coh(xrspec=tr,yrspec=yr,
+               vr1=[-50,-30],vr2=[0.9,1],vr3=[0,140],
+               xrline=[4000,12000],
+               ylm1=[0,0.002],ylm2=[0,1],ylm3=[-200,200],
+               tzp1=tz,tzp2=tz+nsec)
 
-print('h')
+
+
+#wf12-wf32 results
+df = (12000-5000)   #Hz
+dp = (9.5 - 7.1) * (3.14/180)    #rad
+
+
+#phase speed in m/s
+slope = dp/df  #rad * sec
+d = 1.06 #separation vector in meters
+vp = 2*np.pi*d/slope   #~1000 km/s
+ftst = 8000 #test freq in Hz
+#wave vector in rad/m 
+k = (2*np.pi*ftst) / vp
+#wavelength in meters
+wavelength = 2*np.pi/k  #L(8000 Hz) = 140 m
+
 
 #------------------------------------------------------------------------------------
 #H+ fundamental  (phase and coherence test) 
 # - narrowband but I'm able to squeeze out enough info to get a slope. 
 #------------------------------------------------------------------------------------
 
-tchunk = 1  #sec
-coh, phase, tchunks, freqs = correlation_analysis.cross_spectral_density_spectrogram(wf12,wf32,tdat,fs,tchunk,coh_min=0.3,nperseg=2048)
+tchunk = 0.5  #sec
+#coh, phase, tchunks, freqs = correlation_analysis.cross_spectral_density_spectrogram(wf12,wf32,tdat,fs,tchunk,coh_min=0.3,nperseg=2048)
+#coh, phase, tchunks, freqs = correlation_analysis.cross_spectral_density_spectrogram(wf12,wf32,tdat,fs,tchunk,coh_min=0.3,nperseg=1024)
+#coh, phase, tchunks, freqs = correlation_analysis.cross_spectral_density_spectrogram(wf13,wf24,tdat,fs,tchunk,coh_min=0.3,nperseg=1024)
+coh, phase, tchunks, freqs = correlation_analysis.cross_spectral_density_spectrogram(wf13,wf32,tdat,fs,tchunk,coh_min=0.3,nperseg=1024)
 
 #Slice the phase vs freq for particular time(s)
 #tz = 498
-#navg = 15
+#nsec = 15
 #tz = 502
-#navg = 3
-tz = 506
-navg = 3
-pavg, phasearr, cavg, coharr, powavg, powarr = phase_coh_slice(tz,navg)
+#nsec = 3
+tz = 505
+nsec = 6
+pavg, phasearr = ps.slice_spectrogram(tz,tchunks,phase,nsec)
+cavg, coharr = ps.slice_spectrogram(tz,tchunks,coh,nsec)
+powavg, powarr = ps.slice_spectrogram(tz,tspec,np.abs(powerc12),nsec)
 
-tz2 = tz + navg*tchunk
 
 tr = [450,550]
 yr = [4000,4500]
-plot_phase_coh(xr=tr,yr=yr,vr1=[-50,-30],vr2=[0.3,1],vr3=[0,140],xlm1=[4000,4500],xlm2=[4000,4500],ylm1=[0,1],ylm2=[0,120])
+plot_phase_coh(xrspec=tr,yrspec=yr,
+               vr1=[-50,-30],vr2=[0.3,1],vr3=[0,140],
+               xrline=[4000,4500],
+               ylm1=[0,0.002],ylm2=[0,1],ylm3=[-200,200],
+               tzp1=tz,tzp2=tz+nsec)
 
 #Rough slope 
 df = 4248 - 4204 
@@ -501,9 +903,11 @@ ps.plot_spectrogram(tspec,fspec,np.abs(powerc),vr=[-60,-30],yr=[4000,8000],xr=[1
 fmin = 4000
 fmax = 6000
 wf12bp = filt.butter_bandpass_filter(wf12, fmin, fmax, fs, order= 10)
+wf13bp = filt.butter_bandpass_filter(wf13, fmin, fmax, fs, order= 10)
 wf34bp = filt.butter_bandpass_filter(wf34, fmin, fmax, fs, order= 10)
 wf24bp = filt.butter_bandpass_filter(wf24, fmin, fmax, fs, order= 10)
 wf32bp = filt.butter_bandpass_filter(wf32, fmin, fmax, fs, order= 10)
+wf41bp = filt.butter_bandpass_filter(wf41, fmin, fmax, fs, order= 10)
 
 fspecz, tspecz, powercz = signal.spectrogram(wf12bp, fs, nperseg=4*2048,noverlap=2*2048,window='hann',return_onesided=True,mode='complex')
 ps.plot_spectrogram(tspecz,fspecz,np.abs(powercz),vr=[-60,-30],yr=[4000,8000],xr=[120,130], yscale='log')
@@ -715,6 +1119,9 @@ plt.ylim(-0.002,0.002)
 plt.plot(tdats[good],w3,tdats[good],-w4)
 plt.xlim(648.0,648.5)
 plt.ylim(-0.001,0.001)
+
+
+
 
 
 
