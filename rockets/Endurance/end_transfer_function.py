@@ -25,7 +25,8 @@ from math import remainder
 #Select data channel for calibration 
 #-------------------------------------------------------
 
-ch = 'VLF24D'
+ch = 'VLF12D'
+#ch = 'VLF32D'
 #ch = 'V4SD'
 #ch = 'VLF41D'
 v = EFL(ch)

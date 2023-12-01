@@ -13,8 +13,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy import signal
 import numpy as np
-import end_load_data as end
-import end_load_gainphase as gainphase
+#import end_load_data as end
+from end_fields_loader import Endurance_Fields_Loader as EFL
+#import end_load_gainphase as gainphase
 
 from scipy.interpolate import interp1d
 from scipy.fft import rfft, irfft
@@ -27,7 +28,7 @@ import pickle
 #Load corrected data
 #---------------------------------------------
 
-
+"""
 pathoutput = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/efield_DC/'
 fnsav = 'Endurance_Analog 1_V12D_10-10000-100_gainphase_corrected'
 wf_corr_load = pickle.load(open(pathoutput + fnsav + ".pkl", 'rb'))
@@ -41,11 +42,27 @@ wf_corr_load = pickle.load(open(pathoutput + fnsav + ".pkl", 'rb'))
 tdatc = wf_corr_load['tvals']
 wfc = wf_corr_load['wf']
 fs = np.mean([1/(tdatc[i+1]-tdatc[i]) for i in range(len(tdatc)-1)])
+"""
+
+vlf12 = EFL('VLF12D')
+v12 = EFL('V12D')
+v34 = EFL('V34D')
+
+fs = vlf12.chnspecs['fs']
+
+
+wfc, tvlf = vlf12.load_data_gainphase_corrected()
+wfDCc12, tDC = v12.load_data_gainphase_corrected()
+wfDCc34, tDC = v34.load_data_gainphase_corrected()
+
+fsv = 30000
+fsDC = 1/(tDC[1]-tDC[0])
 
 #---------------------------------------------
 #Load uncorrected data
 #---------------------------------------------
 
+"""
 wavegoo = end.efield_vlf()
 tdat = wavegoo.tvlf  #times
 wf = wavegoo.dvlf12_mvm
@@ -54,14 +71,14 @@ wavegoo = end.efield_dc()
 tdatDC = wavegoo['times']
 wfDC12 = wavegoo['dv12_mvm']
 wfDC34 = wavegoo['dv34_mvm']
-
+"""
 
 #-------------------------------
 #FFT data
 #-------------------------------
 
-fspecDC12, tspecDC12, powerDC12 = signal.spectrogram(wfDC12, fsDC, nperseg=1024,noverlap=1024/2,window='hann',return_onesided=True,mode='complex',scaling='density')
-fspecDC34, tspecDC34, powerDC34 = signal.spectrogram(wfDC34, fsDC, nperseg=1024,noverlap=1024/2,window='hann',return_onesided=True,mode='complex',scaling='density')
+#fspecDC12, tspecDC12, powerDC12 = signal.spectrogram(wfDC12, fsDC, nperseg=1024,noverlap=1024/2,window='hann',return_onesided=True,mode='complex',scaling='density')
+#fspecDC34, tspecDC34, powerDC34 = signal.spectrogram(wfDC34, fsDC, nperseg=1024,noverlap=1024/2,window='hann',return_onesided=True,mode='complex',scaling='density')
 fspecDC12, tspecDC12, powercDC12 = signal.spectrogram(wfDCc12, fsDC, nperseg=1024,noverlap=1024/2,window='hann',return_onesided=True,mode='complex',scaling='density')
 fspec, tspec, powerc = signal.spectrogram(wfc, fs, nperseg=1024,noverlap=1024/2,window='hann',return_onesided=True,mode='complex',scaling='density')
 #fspecDC, tspecDC, powercDC = signal.spectrogram(wfDCc, fsDC, nperseg=512,return_onesided=True,mode='complex')
@@ -76,8 +93,8 @@ t1 = 'VLF12 (dB=10log(V**2/Hz))'
 t2 = 'VDC12 (dB=10log(V**2/Hz))'
 
 fig, ax = plt.subplots(2)
-ps.plot_spectrogram(tspec,fspec,np.abs(powerc),vr=[-60,-20],yr=[1000,15000],xr=[0,900], yscale='linear',title=t1,ax=ax[0])
-ps.plot_spectrogram(tspecDC12,fspecDC12,np.abs(powerDC12),vr=[-60,-20],yr=[1000,15000],xr=[0,900], yscale='linear',title=t2,ax=ax[1])
+ps.plot_spectrogram(tspec,fspec,np.abs(powerc),vr=[-45,-30],yr=[1000,8000],xr=[0,900], yscale='linear',title=t1,ax=ax[0])
+ps.plot_spectrogram(tspecDC12,fspecDC12,np.abs(powercDC12),vr=[-45,-35],yr=[1000,8000],xr=[0,900], yscale='linear',title=t2,ax=ax[1])
 
 
 

@@ -26,7 +26,8 @@ class Endurance_Fields_Loader:
     VLF: 'VLF12D','VLF34D','VLF13D','VLF32D','VLF24D','VLF41D'
     HF: 'HF12','HF34'
     analog: 'V12A','V34A','VLF12A','V1SA','V2SA','V3SA','V4SA'
-
+    DC mag: 
+    
     Example usage:
 
     from end_fields_loader import Endurance_Fields_Loader
@@ -42,7 +43,6 @@ class Endurance_Fields_Loader:
 
         self.chn = chn  #Channel specification 
         self._end_channelspecs()
-        self._end_load_gainphase()
 
 
         if (self.chn == 'V12D') or (self.chn == 'V34D') or (self.chn == 'V13D') or (self.chn == 'V32D') or (self.chn == 'V24D') or (self.chn == 'V41D'): 
@@ -60,6 +60,15 @@ class Endurance_Fields_Loader:
         if (self.chn == 'V12A') or (self.chn == 'V34A') or (self.chn == 'VLF12A') or (self.chn == 'V1SA') or (self.chn == 'V2SA') or (self.chn == 'V3SA') or (self.chn == 'V4SA'):
             self.type = 'analog'
             filterpole = "nan"
+        if (self.chn == 'mag'):
+            self.type = 'mag'
+            filterpole = "nan"
+
+
+        if self.type != 'mag':
+            self._end_load_gainphase()
+
+
 
         self.chnspecs["folder"] = "efield_" + self.type
         #low pass filter pole
@@ -169,8 +178,8 @@ class Endurance_Fields_Loader:
             if self.chn == 'VLF13D': wf = vals.dvlf13_mvm * self.chnspecs["polarity"]
             if self.chn == 'VLF32D': wf = vals.dvlf32_mvm * self.chnspecs["polarity"]
             if self.chn == 'VLF24D': wf = vals.dvlf24_mvm * self.chnspecs["polarity"]
-            #NOTE: VLF41D missing from Steve's file
-            #if self.chn == 'VLF41D': wf = vals.dvlf41_mvm
+            if self.chn == 'VLF41D': wf = vals.dvlf41_mvm * self.chnspecs["polarity"]
+
 
             #Remove negative times (starts at t=-100 sec). Not doing so messes up my spectrogram plotting routines.
             good = np.squeeze(np.where(t >= 0.))
@@ -209,46 +218,17 @@ class Endurance_Fields_Loader:
 
         
 
-        if self.type == 'mag':   #NOTE: NOT YET IMPLEMENTED
+        #Return mag data (nT)
+        if self.type == 'mag':   
+            from scipy.io import readsav 
 
-            """
-            Return DC magnetometer values. 
-
-            *******************************************
-            Contents of this file:
-            ENDURANCE 47.001
-            LFDSP TM1 DC Magnetometer Channels
-            T-0: May 11, 2022  01:31:00.0 U.T.
-            Data arrays original sample rate 2kHz
-            *** Mag X, Y, Z labels may NOT correspond
-                to sensor coordinates ***
-            Column 1, time (sec) since T-0, format:f13.7
-            Column 2, Mag X (nT), format:f10.3
-            Column 3, Mag Y (nT), format:f10.3
-            Column 4, Mag Z (nT), format:f10.3
-            *******************************************
-
-            #def mag_dc():
-
-            path = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/'
             folder = 'mag'
-            fn = '47001_TM1_LFDSP_S5Mag_MagXYZS5_nominalcal_Glyn_2kHz_v1.txt'
+            fn = '47001_TM1_LFDSP_S5Mag_MagXYZS5_nominalcal.sav'
+            vals = readsav(path + folder + '/' + fn)
 
-            header = ['tsec','Bx','By','Bz']
-            x = pd.read_csv(path+folder+'/'+fn, skiprows=21, names=header, delim_whitespace=True)
-
-            bm = np.sqrt(x.Bx**2 + x.By**2 + x.Bz**2)
-            bmag = pd.DataFrame(bm,columns=['Bmag'])
-            x['Bmag'] = bmag
-
-
-            #plt.plot(x.tsec, x.Bmag)
-
-            return x
-
-            """
-
-
+            #Remove negative times (starts at t=-100 sec). Not doing so messes up my spectrogram plotting routines.
+            good = np.squeeze(np.where(vals.times >= 0.))
+            return vals.dmagxnt[good], vals.dmagynt[good], vals.dmagznt[good], vals.times[good]
 
 
 
@@ -299,9 +279,11 @@ class Endurance_Fields_Loader:
         elif self.chn == "V34A": fn = "Endurance_Analog 1_V34A_10-10000-100.txt"
         elif self.chn == "HF12": fn = "Endurance_Analog 1_HF12_1000-20000000-100.txt"
         elif self.chn == "HF34": fn = "Endurance_Analog 1_HF34_1000-20000000-100.txt"
+#        elif self.chn == "mag": fn = "placeholder.txt"
 
         self.chnspecs["gainphase_file"] = fn
         self.chnspecs["gainphase_path"] = path
+
 
         with open(path + fn) as f:
             lines = f.readlines()
@@ -476,24 +458,25 @@ class Endurance_Fields_Loader:
         fsDC = 10000
         fsVLF = 30000
         fsskins = 2000
+        fsmag = 2000
 
-        chns = ['V12D','V34D','V13D','V32D','V24D','V41D','VLF12D','VLF34D','VLF13D','VLF32D','VLF24D','VLF41D','V1SD','V2SD','V3SD','V4SD','V12A','V34A','VLF12A','V1SA','V2SA','V3SA','V4SA','HF12','HF34']
-        tm = [8000,8000,8000,8000,8000,8000,32000,32000,32000,32000,32000,32000,2000,2000,2000,2000,2000,2000,64000,2000,2000,2000,2000,10e6,10e6]
-        fs = [fsDC,fsDC,fsDC,fsDC,fsDC,fsDC,fsVLF,fsVLF,fsVLF,fsVLF,fsVLF,fsVLF,fsskins,fsskins,fsskins,fsskins,float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),10e6,10e6]
-        max_sig_pm_mV = [1251,1251,1251,1251,1251,1251,125,125,125,125,125,125,10000,10000,10000,10000,1251,1251,125,10000,10000,10000,10000,63,63]
-        boom_length = [3.212,3.212,2.271227,2.271227,2.271227,2.271227,3.212,3.212,2.271227,2.271227,2.271227,2.271227,float("nan"),float("nan"),float("nan"),float("nan"),3.0,3.0,3.0,float("nan"),float("nan"),float("nan"),float("nan"),3.212,3.212]
-        max_sig_pm_mVm = [417.0,417.0,417.0,417.0,417.0,417.0,41.7,41.7,41.7,41.7,41.7,41.7,float("nan"),float("nan"),float("nan"),float("nan"),417.0,417.0,41.7,float("nan"),float("nan"),float("nan"),float("nan"),21.0,21.0]
-        gain_desired = [2.0,2.0,2.0,2.0,2.0,2.0,19.98,19.98,19.98,19.98,19.98,19.98,0.25,0.25,0.25,0.25,2.0,2.0,19.98,0.25,0.25,0.25,0.25,39.68,39.68]
-        gaindB_desired = [6.0,6.0,6.0,6.0,6.0,6.0,26.0,26.0,26.0,26.0,26.0,26.0,-12.0,-12.0,-12.0,-12.0,6.0,6.0,26.0,-12.0,-12.0,-12.0,-12.0,32.0,32.0]
-        gain_measured = [1.991,1.992,1.991,1.992,1.990,1.992,19.763,20.080,19.747,20.016,20.259,19.952,0.203,0.203,0.203,0.203,float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan")]
-        gaindB_measured = [5.982,5.987,5.981,5.985,5.979,5.986,25.917,26.055,25.910,26.028,26.132,26.000,-13.854,-13.853,-13.857,-13.849,float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan")]
-        measured_mVm = [419,418,419,418,419,418,42,42,42,42,41,42,12321,12320,12326,12314,float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan")]
-        hpf = [float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),16,16,16,16,16,16,float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),16,float("nan"),float("nan"),float("nan"),float("nan"),3000,3000]
-        lpf = [3500,3500,3500,3500,3500,3500,14000,14000,14000,14000,14000,14000,875,875,875,875,875,875,28000,875,875,875,875,4.375e6,4.375e6]
-        bits = [18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,14.0,14.0]
-        coeffa = [1.2555,1.2549,1.2557,1.2552,-1.256,-1.255,0.1265,0.1245,0.1266,0.1249,0.1234,0.1253,-12.321,-12.32,-12.326,-12.314,float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan")]
-        coeffb = [1.1e-03,-4.6288e-05,0.00034567,0.00066907,-0.00074203,-0.00057493,5.5604e-05,5.1386e-05,4.4484e-05,5.4683e-05,5.7427e-05,-0.0005279,0.1449,0.1517,0.1444,0.1192,float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan")]
-        polarity = [1,1,1,1,-1,-1,1,1,1,1,1,-1,-1,-1,-1,-1,float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan")]
+        chns = ['V12D','V34D','V13D','V32D','V24D','V41D','VLF12D','VLF34D','VLF13D','VLF32D','VLF24D','VLF41D','V1SD','V2SD','V3SD','V4SD','V12A','V34A','VLF12A','V1SA','V2SA','V3SA','V4SA','HF12','HF34','mag']
+        tm = [8000,8000,8000,8000,8000,8000,32000,32000,32000,32000,32000,32000,2000,2000,2000,2000,2000,2000,64000,2000,2000,2000,2000,10e6,10e6,2000]
+        fs = [fsDC,fsDC,fsDC,fsDC,fsDC,fsDC,fsVLF,fsVLF,fsVLF,fsVLF,fsVLF,fsVLF,fsskins,fsskins,fsskins,fsskins,float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),10e6,10e6,fsmag]
+        max_sig_pm_mV = [1251,1251,1251,1251,1251,1251,125,125,125,125,125,125,10000,10000,10000,10000,1251,1251,125,10000,10000,10000,10000,63,63,float("nan")]
+        boom_length = [3.212,3.212,2.271227,2.271227,2.271227,2.271227,3.212,3.212,2.271227,2.271227,2.271227,2.271227,float("nan"),float("nan"),float("nan"),float("nan"),3.0,3.0,3.0,float("nan"),float("nan"),float("nan"),float("nan"),3.212,3.212,float("nan")]
+        max_sig_pm_mVm = [417.0,417.0,417.0,417.0,417.0,417.0,41.7,41.7,41.7,41.7,41.7,41.7,float("nan"),float("nan"),float("nan"),float("nan"),417.0,417.0,41.7,float("nan"),float("nan"),float("nan"),float("nan"),21.0,21.0,float("nan")]
+        gain_desired = [2.0,2.0,2.0,2.0,2.0,2.0,19.98,19.98,19.98,19.98,19.98,19.98,0.25,0.25,0.25,0.25,2.0,2.0,19.98,0.25,0.25,0.25,0.25,39.68,39.68,1.0]
+        gaindB_desired = [6.0,6.0,6.0,6.0,6.0,6.0,26.0,26.0,26.0,26.0,26.0,26.0,-12.0,-12.0,-12.0,-12.0,6.0,6.0,26.0,-12.0,-12.0,-12.0,-12.0,32.0,32.0,0.0]
+        gain_measured = [1.991,1.992,1.991,1.992,1.990,1.992,19.763,20.080,19.747,20.016,20.259,19.952,0.203,0.203,0.203,0.203,float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan")]
+        gaindB_measured = [5.982,5.987,5.981,5.985,5.979,5.986,25.917,26.055,25.910,26.028,26.132,26.000,-13.854,-13.853,-13.857,-13.849,float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan")]
+        measured_mVm = [419,418,419,418,419,418,42,42,42,42,41,42,12321,12320,12326,12314,float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan")]
+        hpf = [float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),16,16,16,16,16,16,float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),16,float("nan"),float("nan"),float("nan"),float("nan"),3000,3000,float("nan")]
+        lpf = [3500,3500,3500,3500,3500,3500,14000,14000,14000,14000,14000,14000,875,875,875,875,875,875,28000,875,875,875,875,4.375e6,4.375e6,875]
+        bits = [18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,18.0,10.0,10.0,10.0,10.0,10.0,10.0,10.0,14.0,14.0,18.0]
+        coeffa = [1.2555,1.2549,1.2557,1.2552,-1.256,-1.255,0.1265,0.1245,0.1266,0.1249,0.1234,0.1253,-12.321,-12.32,-12.326,-12.314,float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan")]
+        coeffb = [1.1e-03,-4.6288e-05,0.00034567,0.00066907,-0.00074203,-0.00057493,5.5604e-05,5.1386e-05,4.4484e-05,5.4683e-05,5.7427e-05,-0.0005279,0.1449,0.1517,0.1444,0.1192,float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan")]
+        polarity = [1,1,1,1,-1,-1,1,1,1,1,1,1,-1,-1,-1,-1,float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan"),float("nan")]
 
 
         #Select desired channel

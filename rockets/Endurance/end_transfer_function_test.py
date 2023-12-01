@@ -36,8 +36,8 @@ from math import remainder
 #Load corrected data
 #---------------------------------------------
 
-c1 = 'V24D'
-c2 = 'VLF24D'
+c1 = 'V41D'
+c2 = 'VLF41D'
 
 v1c = EFL(c1)
 wf1c, tdat1c = v1c.load_data_gainphase_corrected()
@@ -197,7 +197,8 @@ fspec2, tspec2, powerc2 = signal.spectrogram(wf2, fs2, nperseg=1024,noverlap=102
 
 
 phase_comparison(4200)
-wave_plot(3000, 4500, x0=480, x1=480.02, y0=-0.05, y1=0.05)
+#wave_plot(3000, 4500, x0=480, x1=480.02, y0=-0.05, y1=0.05)
+wave_plot(3000, 4500, x0=480, x1=480.01, y0=-0.05, y1=0.05)
 
 
 
