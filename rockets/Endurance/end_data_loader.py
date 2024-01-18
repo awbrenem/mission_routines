@@ -70,6 +70,25 @@ def load_slp(t=0):
         return df
 
 
+
+def load_slp_fixedbias():
+
+    import pandas as pd 
+    fn = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/SLP/Endurance_SLP_FixedBiasDensity_Downleg_LowAlt.txt'
+    nms = ['ToF [s]','UTC Time','Altitude [km]','Normalized Density [\m3]','ACS Binary']
+
+    df = pd.read_csv(fn,skiprows=0,header=0,names=nms,sep='\t')
+
+    """
+    #If specific time is requested...
+    if t != 0:
+        df = df[df['ToF [s]'] >= t]
+        return df.iloc[0]
+    else: 
+        return df
+    """
+    return df
+
 #----------------------------------------
 #Load timeline data of events 
 #----------------------------------------
@@ -84,8 +103,10 @@ def load_timeline():
     goodscienceS = [125, 205, 285, 365, 445, 525, 625, 705, 785, 865]
     goodscienceE = [195, 275, 355, 435, 515, 595, 695, 775, 855, 900.6]
 
+    badscienceS = [0] + goodscienceE
+    badscienceE = goodscienceS + [1000]
 
-    return df, goodscienceS, goodscienceE
+    return df, goodscienceS, goodscienceE, badscienceS, badscienceE
 
 
 
@@ -103,11 +124,45 @@ def load_timeline():
 
 def load_iri(alt=0):
     import pandas as pd
-
+    import numpy as np 
     fn = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/models/iri/IRI_run_realistic_sunspot_F10_7.txt'
     nms = ['Height(km)','Ne(m-3)','Ti(K)','Te(K)','O_ions','H_ions','He_ions','O2_ions','NO_ions','N_ions']
 
     df = pd.read_csv(fn,skiprows=40,header=0,names=nms,delim_whitespace=True)
+
+    #-----------------------------------------------
+    #associate upleg/downleg times based on Endurance data
+
+    ephem, ephem2 = load_ephemeris()
+    alts_end = ephem['Altitude']
+    alts_iri = df['Height(km)']
+    times_end = ephem['Time']
+    times_iri_upleg = np.zeros(len(df['Height(km)']))
+    times_iri_downleg = np.zeros(len(df['Height(km)']))
+
+
+    for i in range(len(alts_iri)):
+        goo = np.where(alts_end >= alts_iri[i])
+        if len(goo[0]) != 0:
+            times_iri_upleg[i] = times_end[goo[0][0]]
+
+        goo = np.where(alts_end <= alts_iri[i])
+        if len(goo[0]) != 0:
+            maxloc = np.argmax(alts_end[goo[0]])
+            times_iri_downleg[i] = times_end[goo[0][maxloc]]
+
+    #import matplotlib.pyplot as plt
+    #plt.plot(times_end, alts_end,'.')
+    #plt.plot(times_iri_upleg, alts_iri,'.')
+    #plt.plot(times_iri_downleg, alts_iri,'.')
+    #-----------------------------------------------
+
+
+    d = {'times_upleg':times_iri_upleg, 'times_downleg':times_iri_downleg}
+    dfu = pd.DataFrame(data=d)
+    df = pd.concat([dfu,df],axis=1,join='inner')
+    #plt.plot(df2['times_upleg'],df2['Height(km)'])
+
 
     #If specific alt is requested...
     if alt != 0:
@@ -124,16 +179,27 @@ def load_iri(alt=0):
 def load_ephemeris(t=0):
 
     import pandas as pd
+
     fn = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/ephemeris/Endurance_GPS_velocity_position_altitude.csv'
 
-    df = pd.read_csv(fn)
+    nms1 = ['Time','ECEF-X-VEL','ECEF-Y-VEL','ECEF-Z-VEL','Lat','Long','Altitude']
+    df = pd.read_csv(fn,names=nms1,skiprows=1)
+
+
+    fn2 = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/ephemeris/47.001_SynchronizedSolution.csv'
+    nms = ['Time','Yaw','Pitch','Roll','RollRate','AoA_T','AngleB','a11','a12','a13','a21','a22','a23','a31','a32','a33','X_Az','X_El','Y_Az','Y_El','Z_Az','Z_El','Latgd','Long','Alt']
+    df2 = pd.read_csv(fn2,names=nms,skiprows=7)
+
+
 
     #If specific time is requested...
     if t != 0:
-        df = df[df['Flight Time'] >= t]
-        return df.iloc[0]
+        df = df[df['Time'] >= t]
+        df2 = df2[df2['Time'] >= t]
+
+        return df.iloc[0], df2.iloc[0]
     else:
-        return df
+        return df, df2
 
 
 #---------------------------------------------------------
