@@ -27,7 +27,11 @@ import interferometry_routines as interf
 #Get timeline of data to separate out science collection times 
 #--------------------------------------------------------------
 
-tl, gsS, gsE = end_data_loader.load_timeline()
+tl, gsS, gsE, bsS, bsE = end_data_loader.load_timeline()
+
+
+ephem = end_data_loader.load_ephemeris()
+
 
 
 #---------------------------------------------
@@ -117,30 +121,35 @@ fspec, tspec, powerc32 = signal.spectrogram(wf32, fs, nperseg=1024,noverlap=512,
 #Calculate the fractional difference b/t different spectra to identify artificial waves
 #----------------------------------------------------------------------------------------
 
-ptmp_diff = np.abs(np.abs(powerc12) - np.abs(powerc34))
+#ptmp_diff = np.abs(np.abs(powerc12) - np.abs(powerc34))
+ptmp_diff = np.abs(powerc12) - np.abs(powerc34)
 ptmp_sum = np.abs(powerc12) + np.abs(powerc34)
 ptmp_fracdiff = ptmp_diff/ptmp_sum
+
+#version with low values removed
+ptmp_fracdiff2 = ptmp_fracdiff.copy()
+valmin = 0.1
+ptmp_fracdiff2[np.abs(ptmp_fracdiff2) < valmin] = float('nan')
+
+
 
 Nval = 6
 gtmp,cohtmp,phasetmp = correlation_analysis.interferometric_coherence_2D(powerc12,powerc34,Nval)
 
 
-yr = [4000,9000]
-#xr = [0,900]
-xr = [700,900]
-vr = [-40,-25]
+
+#yr = [10,15000]
+#xr = [100,200]
+yr = [0,10000]
+xr = [100,250]
+
 ys = 'linear'
-fig, axs = plt.subplots(4)
-ps.plot_spectrogram(tspec,fspec,np.abs(powerc12),ax=axs[0],vr=vr,yr=yr,xr=xr, yscale=ys,xlabel='time(s)',ylabel='power12\nf(Hz)')
-ps.plot_spectrogram(tspec,fspec,np.abs(powerc34),ax=axs[1],vr=vr,yr=yr,xr=xr, yscale=ys,xlabel='time(s)',ylabel='power34\nf(Hz)')
-ps.plot_spectrogram(tspec,fspec,np.abs(ptmp_fracdiff),ax=axs[2],vr=[0,1],yr=yr,xr=xr, yscale=ys,xlabel='time(s)',ylabel='frac diff\nf(Hz)',zscale='linear')
-ps.plot_spectrogram(tspec,fspec,cohtmp,ax=axs[3],vr=[0,1],yr=yr,xr=xr, yscale=ys,xlabel='time(s)',ylabel='Coherence\nf(Hz)',zscale='linear')
+cmap = 'RdYlGn'
+title = '(E12-E34)/(E12+E34)\nGreen is more power on E12\nRed is more power on E34'
 
-
-
-
-
-
+ps.plot_spectrogram(tspec,fspec,ptmp_fracdiff,vr=[-1,1],
+                    yr=yr,xr=xr, yscale=ys,xlabel='time(s)',
+                    ylabel='f(Hz)',zscale='linear',cmap=cmap,title=title + '\nvals > |' + str(valmin) + '| only')
 
 
 
