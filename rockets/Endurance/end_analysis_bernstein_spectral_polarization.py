@@ -100,18 +100,20 @@ ys = 'linear'
 cmap = 'RdYlGn'
 title = '(E12-E34)/(E12+E34)\nGreen is more power on E12\nRed is more power on E34'
 
-ps.plot_spectrogram(tspec,fspec,ptmp_fracdiff2,vr=[-0.5,0.5],
-                    yr=yr,xr=xr, yscale=ys,xlabel='time(s)',
-                    ylabel='f(Hz)',zscale='linear',cmap=cmap,title=title + '\nvals > |' + str(valmin) + '| only')
+ps.plot_spectrogram(tspec,fspec,ptmp_fracdiff2,
+                    vr=[-1,1],yr=yr,xr=xr, yscale=ys,xlabel='time(s)',
+                    ylabel='f(Hz)',zscale='linear',title=title + '\nvals > |' + str(valmin) + '| only',
+                    plot_kwargs={'cmap':'RdYlGn'})
 
 
 
 #Compare the rising <1 kHz signal on (mostly) E34 to the falling Berstein power
+
 xr = [100,220]
 fig, axs = plt.subplots(2)
 ps.plot_spectrogram(tspec,fspec,ptmp_fracdiff2,vr=[-0.5,0.5],ax=axs[0],
                     yr=[2000,-1000],xr=xr, yscale=ys,xlabel='time(s)',
-                    ylabel='f(Hz)',zscale='linear',cmap='bwr')
+                    ylabel='f(Hz)',zscale='linear',plot_kwargs={'cmap':'bwr'})
 ps.plot_spectrogram(tspec, fspec, np.abs(powerc12),vr=[-40,-30],ax=axs[1],
                     yr=[5000,8000],xr=xr, yscale=ys,xlabel='time(s)',
                     ylabel='f(Hz)',zscale='log')
@@ -124,7 +126,7 @@ xr = [100,900]
 fig, axs = plt.subplots(6)
 ps.plot_spectrogram(tspec,fspec,ptmp_fracdiff2,vr=[-1,1],ax=axs[0],
                     yr=yr,xr=xr, yscale=ys,xlabel='time(s)',
-                    ylabel='f(Hz)',zscale='linear',cmap=cmap,title=title + '\nvals > |' + str(valmin) + '| only')
+                    ylabel='f(Hz)',zscale='linear',plot_kwargs={'cmap':cmap},title=title + '\nvals > |' + str(valmin) + '| only')
 axs[1].plot(ephem2['Time'],ephem2['Yaw'])
 axs[2].plot(ephem2['Time'],ephem2['Roll'])
 axs[3].plot(ephem2['Time'],ephem2['Pitch'])

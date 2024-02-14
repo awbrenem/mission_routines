@@ -75,12 +75,12 @@ ps.plot_spectrogram(tspec,fspec,np.abs(powerc2),vr=vr,xr=xr,yr=yr,yscale=yscale,
 axs[1].get_xaxis().set_visible(False)
 ps.plot_spectrogram(tspec,fspec,ptmp_fracdiff,vr=[0,1],zscale='linear',xr=xr,yr=yr,yscale=yscale,ax=axs[2],xlabel='time(sec)',ylabel="percent diff\nfreq(Hz)")
 axs[2].get_xaxis().set_visible(False)
-ps.plot_spectrogram(tchunks2,freqs2,phasex2,vr=[-180,180],cmap='twilight_shifted',zscale='linear',xr=xr,yr=yr,yscale=yscale,ax=axs[3],xlabel='time(sec)',ylabel='phase\n('+c1s+'-'+c2s+')\nfreq(Hz)')
+ps.plot_spectrogram(tchunks2,freqs2,phasex2,vr=[-180,180],plot_kwargs={'cmap':'twilight_shifted'},zscale='linear',xr=xr,yr=yr,yscale=yscale,ax=axs[3],xlabel='time(sec)',ylabel='phase\n('+c1s+'-'+c2s+')\nfreq(Hz)')
 axs[3].get_xaxis().set_visible(False)
 ps.plot_spectrogram(tchunks2,freqs2,cohx2**2,vr=[0,1], zscale='linear',xr=xr,yr=yr,yscale=yscale,ax=axs[4],xlabel='time(sec)',ylabel='coh**2\n(coh >'+str(cohmin)+')\nfreq(Hz)')
 
 #ps.plot_spectrogram(tspec,fspec,cohx**2,vr=[0,1], zscale='linear',xr=xr,yr=yr,yscale=yscale,ax=axs[3],xlabel='time(sec)',ylabel='coh**2\nfreq(Hz)')
-#ps.plot_spectrogram(tspec,fspec,phasex,vr=[-180,180],cmap='turbo',zscale='linear',xr=xr,yr=yr,yscale=yscale,ax=axs[4],xlabel='time(sec)',ylabel='phase (c1-c2)\nfreq(Hz)')
+#ps.plot_spectrogram(tspec,fspec,phasex,vr=[-180,180],,plot_kwargs={'cmap':'turbo'},zscale='linear',xr=xr,yr=yr,yscale=yscale,ax=axs[4],xlabel='time(sec)',ylabel='phase (c1-c2)\nfreq(Hz)')
 
 
 good = np.where(tchunks2 > 820)
@@ -101,3 +101,6 @@ axs[1].set_xlim(0,8000)
 yr = [4500,8000]
 xr = [700,900]
 ps.plot_spectrogram(tspec,fspec,np.abs(powerc1),vr=vr,xr=xr,yr=yr,yscale=yscale,xlabel='time(sec)',ylabel=c1s + "\nfreq(Hz)")
+
+
+
