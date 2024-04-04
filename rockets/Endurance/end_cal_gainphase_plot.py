@@ -25,11 +25,9 @@ import matplotlib.pyplot as plt
 from math import remainder
 
 
-chn = 'HF12'
-
+chn = 'VLF12D'
 
 path = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/gain_phase_files/'
-
 
 
 #if chn == 'HF12': fn = 'Endurance_Analog 1_HF12_1000-20000000-100.txt'
@@ -61,12 +59,6 @@ if chn == 'VLF32D': fn = 'Endurance_Analog 1_VLF32D_6-30000-100.txt'
 if chn == 'VLF34D': fn = 'Endurance_Analog 1_VLF34D_6-30000-100.txt'
 if chn == 'VLF41D': fn = 'Endurance_Analog 1_VLF41D_6-30000-100.txt'
 if chn == 'VLF42D': fn = 'Endurance_Analog 1_VLF42D_6-30000-100.txt'
-
-
-
-
-
-
 
 
 
@@ -113,6 +105,26 @@ axs[0].set_ylabel('gain (dB)')
 axs[1].set_ylabel('gain (linear)')
 axs[2].set_ylabel('phase (rad)')
 axs[2].set_xlabel('frequency')
-
+for i in range(3):
+    axs[i].set_xlim(0,8000)
 print('h')
 
+
+
+
+"""
+#compare phase of VLF12 and VLF34
+prad12 = prad
+f12 = f
+prad34 = prad 
+f34 = f
+
+diff = prad12 - prad
+diff = diff * (180/3.14)
+plt.plot(f,diff)
+plt.xlim(0,10000)
+plt.ylim(-5,5)
+
+plt.plot(f,prad,f,prad12)
+plt.xlim(0,10000)
+"""
