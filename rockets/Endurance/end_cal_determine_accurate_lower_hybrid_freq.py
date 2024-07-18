@@ -20,10 +20,10 @@ from mpl_point_clicker import clicker
 
 
 #Load data for two channels of interest
-c1s = 'VLF24D'
-c2s = 'VLF13D'
-#c1s = 'VLF12D'
-#c2s = 'VLF34D'
+#c1s = 'VLF24D'
+#c2s = 'VLF13D'
+c1s = 'VLF12D'
+c2s = 'VLF34D'
 #c1s = 'VLF24D'
 #c2s = 'VLF32D'
 #c1s = 'VLF13D'
@@ -253,25 +253,21 @@ vertices2 = [[ 118.55265075, 7964.38255622],
 
 
 
-
-
-
-
 vertices = np.asarray(vertices)
 vertices2 = np.asarray(vertices2)
 
 fig,axs = plt.subplots(2)
 ps.plot_spectrogram(tchunks2,freqs2,phasex2,vr=[-180,180], zscale='linear',
                     xr=xr,yr=yr,yscale=yscale,xlabel='time(sec)',
-                    ylabel='phase',ax=axs[0])
-axs[0].plot(vertices[:,0],vertices[:,1],'*')
+                    ylabel='phase',ax=axs[0],title='end_cal_determine_accurate_lower_hybrid_freq.py')
+axs[0].plot(vertices[:,0],vertices[:,1],'*',color='magenta')
 axs[0].plot(vertices2[:,0],vertices2[:,1],'*',color='black')
 ps.plot_spectrogram(tspec,fspec,np.abs(powerc1),vr=vr,xr=xr,yr=yr,yscale=yscale,ax=axs[1],
                     xlabel='time(sec)',ylabel=c1s + "\nfreq(Hz)")
-axs[1].plot(vertices[:,0],vertices[:,1],'*')
+axs[1].plot(vertices[:,0],vertices[:,1],'*',color='magenta')
 axs[1].plot(vertices2[:,0],vertices2[:,1],'*',color='black')
 
-
+print('h')
 
 
 

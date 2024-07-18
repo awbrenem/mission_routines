@@ -74,7 +74,7 @@ def load_slp(t=0):
 def load_slp_fixedbias():
 
     import pandas as pd 
-    fn = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/SLP/Endurance_SLP_FixedBiasDensity_Downleg_LowAlt.txt'
+    fn = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/SLP/Endurance_SLP_FixedBiasDensity_Downleg_LowAlt_v2.txt'
     nms = ['ToF [s]','UTC Time','Altitude [km]','Normalized Density [\m3]','ACS Binary']
 
     df = pd.read_csv(fn,skiprows=0,header=0,names=nms,sep='\t')
@@ -108,6 +108,94 @@ def load_timeline():
 
     return df, goodscienceS, goodscienceE, badscienceS, badscienceE
 
+
+
+
+
+
+#----------------------------------------
+#Load IGRF data (single time or all) from a CSV file from 
+#https://ccmc.gsfc.nasa.gov/cgi-bin/modelweb/models/vitmo_model.cgi
+#----------------------------------------
+
+def load_igrf(alt=0):
+    import pandas as pd
+    import numpy as np 
+    fn = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/mag/igrf_31188027945.lst.txt'
+    nms = ['Height(km)','Bo','flag']
+    df = pd.read_csv(fn,skiprows=0,header=0,names=nms,delim_whitespace=True)
+
+
+    #-----------------------------------------------
+    #associate upleg/downleg times based on Endurance data
+
+    ephem, ephem2 = load_ephemeris()
+    alts_end = ephem['Altitude']
+
+    #array location of apogee on Endurance
+    maxalt_loc = np.where(alts_end == np.max(alts_end))[0][0]
+
+
+    alts_igrf = df['Height(km)']
+    times_end = ephem['Time']
+    times_igrf_upleg = np.zeros(len(df['Height(km)']))
+    times_igrf_downleg = np.zeros(len(df['Height(km)']))
+
+    au = np.asarray(alts_end[0:maxalt_loc])
+    ad = np.asarray(alts_end[maxalt_loc:])
+    tu = np.asarray(times_end[0:maxalt_loc])
+    td = np.asarray(times_end[maxalt_loc:])
+
+    for i in range(len(alts_igrf)):
+        goo = np.where(au >= alts_igrf[i])
+        if len(goo[0]) != 0:
+            times_igrf_upleg[i] = tu[goo[0][0]]
+
+        boo = np.where(ad <= alts_igrf[i])
+        if len(boo[0]) != 0:
+            maxloc = np.argmax(ad[boo[0]])
+            times_igrf_downleg[i] = td[boo[0][maxloc]]
+        else:
+            times_igrf_downleg[i] = 0 
+
+    times_igrf_downleg[347:] = 0
+
+    times_igrf_downleg = times_igrf_downleg[times_igrf_downleg != 0]
+
+
+    import matplotlib.pyplot as plt 
+    plt.plot(times_igrf_downleg)
+    #tu = sorted(times_igrf_upleg, reverse=False)
+    #td = sorted(times_igrf_downleg, reverse=True)
+
+    #plt.plot(times_igrf_upleg, )
+    #plt.plot(times_end, alts_end,'.')
+    #plt.plot(times_igrf_upleg, alts_igrf,'.')
+    #plt.plot(times_igrf_downleg, alts_igrf,'.')
+    #-----------------------------------------------
+
+    goo = np.where(times_igrf_upleg != 0)[0]
+    times_upleg = times_igrf_upleg[goo]
+    Bo_upleg = np.asarray(df['Bo'][goo])
+    #goo = np.where(times_igrf_downleg == np.min(times_igrf_downleg))[0][0]
+    goo = np.where(times_igrf_downleg != 0)[0]
+    times_downleg = times_igrf_downleg[goo]
+    Bo_downleg = np.asarray(df['Bo'][goo])
+
+
+    d = {'times_upleg':times_upleg, 'times_downleg':times_downleg,'Bo_upleg':Bo_upleg,'Bo_downleg':Bo_downleg}
+    #dfu = pd.DataFrame(data=d)
+    #df = pd.concat([dfu,df],axis=1,join='inner')
+    #plt.plot(df2['times_upleg'],df2['Height(km)'])
+
+    return d
+
+#    #If specific alt is requested...
+#    if alt != 0:
+#        df = df[df['Height(km)'] >= alt]
+#        return df.iloc[0]
+#    else: 
+#        return df
 
 
 
