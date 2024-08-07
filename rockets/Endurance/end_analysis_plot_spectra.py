@@ -15,15 +15,33 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 import filter_wave_frequency as filt
 import plasma_params_get_flhr_freq as dflh
-#import igrf
 import pyIGRF
 
-glat = 78 + (55/60)
-glon = 11 + (55/60)
-#alts = np.arange(100,1000,10)
+import scipy.io as sio
+from scipy.io import readsav
 
 
-#mag = igrf.igrf('2022-05-11', glat=glat, glon=glon, alt_km=100)
+#--------------------------------------------------------------------------------------------------
+#Read in polarization data of Bernstein waves from IDL save file
+idldat = readsav('/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/polarization_from_idl/pol_from_idl.sav')
+
+times_pow = idldat['times_pow']
+freqs_pow = idldat['freqs_pow']
+data_pow = idldat['data_pow']
+
+times_pol = idldat['times_pol']
+freqs_pol = idldat['freqs_pol']
+data_pol = idldat['data_pol']
+
+times_elip = idldat['times_elip']
+freqs_elip = idldat['freqs_elip']
+data_elip = idldat['data_elip']
+
+times_hel = idldat['times_hel']
+freqs_hel = idldat['freqs_hel']
+data_hel = idldat['data_hel']
+#--------------------------------------------------------------------------------------------------
+
 
 
 v34 = EFL('VLF34D')
@@ -39,13 +57,22 @@ ephem = end_data_loader.load_ephemeris()
 alt = ephem[0]['Altitude'] 
 
 iri = end_data_loader.load_iri()
-#igrf = end_data_loader.load_igrf()
 ig = end_data_loader.load_ig()
 slp = end_data_loader.load_slp()
 tl = end_data_loader.load_timeline()
 
 slp_times = slp['ToF [s]']
 slp_alt = slp['Alt [km]']
+
+
+#plot height spectra if IRI to see where my assumption of O+ and H+ is OK. 
+plt.plot(iri['Height(km)'], iri['O_ions'])
+plt.plot(iri['Height(km)'], iri['H_ions'])
+plt.plot(iri['Height(km)'], iri['He_ions'])
+plt.plot(iri['Height(km)'], iri['O2_ions'])
+plt.plot(iri['Height(km)'], iri['NO_ions'])
+plt.plot(iri['Height(km)'], iri['N_ions'])
+
 
 
 #Use this as the plotted time cadence
@@ -55,6 +82,8 @@ plot_times = plot_times[0::20]
 plot_alt = plot_alt[0::20]
 
 
+glat = 78 + (55/60)
+glon = 11 + (55/60)
 BoIGRF = np.asarray([pyIGRF.igrf_value(glat, glon, i, 2022)[6] for i in plot_alt])
 
 
@@ -70,26 +99,10 @@ bsend = tl[4]
 #Better to use IGRF data
 
 
-
-
-
 magv = EFL('mag')
 mag = magv.load_data()
 Bo = np.sqrt(mag[0]**2 + mag[1]**2 + mag[2]**2)
 Bot = mag[3]
-
-#BoIGRF = np.asarray([52617.5,51557.4,50522.1,49511.1,48524.0,47560.2,46619.1,45700.2,44803.1,43927.1,43071.9,42236.8,41421.4,40625.3,39847.8,39088.6,38347.3,37623.2,36916.1])
-#altIGRF = np.asarray([100.,150.,200.,250.,300.,350.,400.,450.,500.,550.,600.,650.,700.,750.,800.,850.,900.,950.,1000.])
-#Bo1IGRF = igrf['Bo_upleg']
-#Bo2IGRF = igrf['Bo_downleg']
-#times1IGRF = igrf['times_upleg']
-#times2IGRF = igrf['times_downleg']
-
-#plt.plot(times1IGRF,Bo1IGRF)
-#plt.plot(times2IGRF,Bo2IGRF)
-
-#Boz = Bo[np.where(Bot > t)]
-#Boz = Boz[0]  #nT
 
 
 
@@ -121,8 +134,10 @@ ni = slp['SLP Ni [/m3]'] / 100**3
 ni = np.asarray(ni)
 ne = ni #cm-3
 
-ne = np.interp(plot_times, slp_times, ne)
-ni = np.interp(plot_times, slp_times, ni)
+times_interp = slp_times
+
+ne = np.interp(plot_times, times_interp, ne)
+ni = np.interp(plot_times, times_interp, ni)
 
 
 nOp = fOp * ne 
@@ -141,11 +156,14 @@ nHp = fHp * ne
 #fcO = fcH / 16
 
 
-#BoIGRF = np.concatenate((Bo1IGRF, Bo2IGRF))
 fceIGRF = 28 * BoIGRF
 fcHIGRF = fceIGRF / 1836
 fcOIGRF = fcHIGRF / 16
-#timesIGRF = np.concatenate((times1IGRF, times2IGRF))
+
+
+#fceIGRF = np.interp(times_interp, plot_times,fceIGRF)
+#fcHIGRF = np.interp(times_interp, plot_times,fcHIGRF)
+#fcOIGRF = np.interp(times_interp, plot_times,fcOIGRF)
 
 
 
@@ -174,7 +192,7 @@ flh2 = dflh.flhr_IonMassFractions(ne, fceIGRF, fHp2, fOp2)
 
 #Remove data during non science collection times 
 for i in range(len(bsstart)):
-    goo = np.where((slp_times >= bsstart[i]) & (plot_times < bsend[i]))
+    goo = np.where((times_interp >= bsstart[i]) & (plot_times < bsend[i]))
     flh[goo] = "nan"
     flh2[goo] = "nan"
     fcHIGRF[goo] = "nan"
@@ -251,10 +269,6 @@ vertices = [[ 113.97920064, 7542.68022999],
        [ 697.42281415, 6926.16831987],
        [ 710.56819165, 6967.07229778],
        [ 727.17287901, 7053.99325084]]
-
-
-
-
 
 vertices2 = [[ 118.55265075, 7964.38255622],
        [ 126.59693574, 8254.90835695],
@@ -334,42 +348,50 @@ vertices = np.asarray(vertices)
 vertices2 = np.asarray(vertices2)
 
 
+#Plot SLP density spectrogram 
 
-#spectral plots 
-#vr = [-40,-25]
-vr = [-86,-60]
-yr = [4000,10000]
-ys = 'linear'
-#xr = [100,900]
-xr = [850,900]
+tdens, fdens, sdens = end_data_loader.load_slp_sonogram()
 
-#axs.plot(slp_times, flh, color='white')
-ps.plot_spectrogram(tspec,fspec,np.abs(powerc),vr=vr,xr=xr,yr=yr,yscale=ys,xlabel='time (sec)',ylabel="freq (Hz)")#,title="VLF34 power spec (dB)")
-plt.plot(slp_times, flh, color='white')
-plt.plot(slp_times, flh2, color='white')
-plt.plot(slp_times, fcH, color='white')
-plt.plot(slp_times, fcO, color='white')
-plt.plot(slp_times, 2*fcH, color='white',linestyle='--')
-plt.plot(slp_times, 3*fcH, color='white',linestyle='--')
-plt.plot(slp_times, 4*fcH, color='white',linestyle='--')
-plt.plot(slp_times, 5*fcH, color='white',linestyle='--')
-plt.plot(slp_times, 6*fcH, color='white',linestyle='--')
-plt.plot(slp_times, 7*fcH, color='white',linestyle='--')
-plt.plot(slp_times, 8*fcH, color='white',linestyle='--')
-plt.plot(slp_times, 9*fcH, color='white',linestyle='--')
-plt.show()
-
-
-vr = [-40,-25]
-yr = [20,15000]
+vr = [-40,-30]
+#yr = [0,10000]
+yr = [1000,9000]
+#xr = [100,240]
 xr = [100,900]
 ys = 'linear'
-ps.plot_spectrogram(tspec,fspec,np.abs(powerc),vr=vr,yr=yr,xr=xr,yscale=ys,xlabel='time(sec)',ylabel="power spectrum x'\nfreq(Hz)")
+#ps.plot_spectrogram(tdens,fdens,np.transpose(sdens),vr=[-20,0],zscale='linear',yr=yr,xr=xr)
+
+#,vr=vr,yr=yr,xr=xr,yscale=ys,xlabel='time(sec)',
+#                    ylabel="power spectrum x'\nfreq(Hz)")
+
+
+
+fadj = fdens - 2500
+
+ps.plot_spectrogram(tdens,fdens,np.transpose(sdens),vr=[-12,-9],zscale='linear',xr=xr)
+
+
+ps.plot_spectrogram(tdens,fadj,np.transpose(sdens),vr=[-12,-9],zscale='linear',yr=yr,xr=xr)
+#ps.plot_spectrogram(tdens,fdens-11000,np.transpose(sdens),vr=[-18,-9],zscale='linear',yr=[10000,12000])
+ps.plot_spectrogram(tspec,fspec,np.abs(powerc),vr=vr,yr=yr,xr=xr,yscale=ys,xlabel='time(sec)',
+                    ylabel="power spectrum x'\nfreq(Hz)")
+
+
+
+
+
+vr = [-40,-30]
+#yr = [0,10000]
+yr = [1000,9000]
+#xr = [100,240]
+xr = [700,900]
+ys = 'linear'
+ps.plot_spectrogram(tspec,fspec,np.abs(powerc),vr=vr,yr=yr,xr=xr,yscale=ys,xlabel='time(sec)',
+                    ylabel="power spectrum x'\nfreq(Hz)")
 #plt.plot(plot_times, flh,color='white')
-plt.plot(vertices[:,0],vertices[:,1],color='magenta',linestyle='dotted')
-plt.plot(vertices2[:,0],vertices2[:,1],color='magenta',linestyle='dotted')
+#plt.plot(vertices[:,0],vertices[:,1],color='magenta',linestyle='dotted')
+#plt.plot(vertices2[:,0],vertices2[:,1],color='magenta',linestyle='dotted')
 plt.plot(plot_times, fcHIGRF, color='white',linestyle='dotted')
-plt.plot(plot_times, fcOIGRF, color='white',linestyle='dotted')
+#plt.plot(plot_times, fcOIGRF, color='white',linestyle='dotted')
 #plt.plot(plot_times, 2*fcHIGRF, color='white',linestyle='--')
 #plt.plot(plot_times, 3*fcHIGRF, color='white',linestyle='--')
 #plt.plot(plot_times, 4*fcHIGRF, color='white',linestyle='--')
@@ -380,6 +402,8 @@ plt.plot(plot_times, 8*fcHIGRF, color='white',linestyle='dotted')
 plt.plot(plot_times, 9*fcHIGRF, color='white',linestyle='dotted')
 plt.plot(plot_times, 10*fcHIGRF, color='white',linestyle='dotted')
 
+
+plt.savefig("/Users/abrenema/Desktop/tst.pdf", dpi=350)
 
 #plt.plot(slp_times, 2*fcH, color='white',linestyle='--')
 #plt.plot(slp_times, 3*fcH, color='white',linestyle='--')
@@ -399,16 +423,51 @@ vr = [-40,-37]
 yr = [500,800]
 ys = 'linear'
 ps.plot_spectrogram(tspec,fspec,np.abs(powerc),vr=vr,yr=yr,yscale=ys,xlabel='time(sec)',ylabel="power spectrum x'\nfreq(Hz)")
-plt.plot(slp_times, flh, color='white')
-plt.plot(slp_times, fcH, color='white')
-plt.plot(slp_times, fcO, color='white')
-plt.plot(slp_times, 2*fcH, color='white',linestyle='--')
-plt.plot(slp_times, 3*fcH, color='white',linestyle='--')
-plt.plot(slp_times, 4*fcH, color='white',linestyle='--')
-plt.plot(slp_times, 5*fcH, color='white',linestyle='--')
-plt.plot(slp_times, 6*fcH, color='white',linestyle='--')
-plt.plot(slp_times, 7*fcH, color='white',linestyle='--')
-plt.plot(slp_times, 8*fcH, color='white',linestyle='--')
+plt.plot(plot_times, flh, color='white')
+plt.plot(plot_times, fcHIGRF, color='white')
+plt.plot(plot_times, fcOIGRF, color='white')
+plt.plot(plot_times, 2*fcHIGRF, color='white',linestyle='--')
+plt.plot(plot_times, 3*fcHIGRF, color='white',linestyle='--')
+plt.plot(plot_times, 4*fcHIGRF, color='white',linestyle='--')
+plt.plot(plot_times, 5*fcHIGRF, color='white',linestyle='--')
+plt.plot(plot_times, 6*fcHIGRF, color='white',linestyle='--')
+plt.plot(plot_times, 7*fcHIGRF, color='white',linestyle='--')
+plt.plot(plot_times, 8*fcHIGRF, color='white',linestyle='--')
+
+
+
+
+#xr = [100,240]
+#yr = [4000,9000]
+xr = [700,900]
+yr = [0,5000]
+fig,axs = plt.subplots(3)
+ps.plot_spectrogram(times_pow,freqs_pow,data_pow,zscale='linear',vr=[1e-15,1e-12],xr=xr,yr=yr,ax=axs[0])
+axs[0].set_xticklabels([])
+ps.plot_spectrogram(times_pol,freqs_pol,data_pol,zscale='linear',vr=[0,1],xr=xr,yr=yr,ax=axs[1])
+axs[1].set_xticklabels([])
+ps.plot_spectrogram(times_elip,freqs_elip,data_elip,zscale='linear',vr=[-1,1],xr=xr,yr=yr,ax=axs[2])
+for i in range(3): 
+      axs[i].plot(plot_times, flh, color='white')
+      axs[i].plot(plot_times, fcOIGRF, color='white')
+      for j in range(11):
+           axs[i].plot(plot_times,j*fcHIGRF,color='white',linestyle='--',linewidth=0.9)
+fig.tight_layout(pad=-0.5)
+
+plt.savefig("/Users/abrenema/Desktop/tst2.pdf", dpi=350)
+
+
+
+
+#Low alt on downleg to show the connection b/t Bernstein and two-stream
+xr = [830,900]
+yr = [1000,15000]
+ps.plot_spectrogram(times_pow,freqs_pow,data_pow,zscale='linear',vr=[1e-15,1e-13],xr=xr,yr=yr,yscale='log')
+plt.savefig("/Users/abrenema/Desktop/tst.pdf", dpi=350)
+ps.plot_spectrogram(times_pol,freqs_pol,data_pol,zscale='linear',vr=[0,1],xr=xr,yr=yr,yscale='log')
+plt.savefig("/Users/abrenema/Desktop/tst2.pdf", dpi=350)
+ps.plot_spectrogram(times_elip,freqs_elip,data_elip,zscale='linear',vr=[-0.8,0.8],xr=xr,yr=yr,yscale='log')
+plt.savefig("/Users/abrenema/Desktop/tst3.pdf", dpi=350)
 
 
 

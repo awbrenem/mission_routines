@@ -1,9 +1,8 @@
 ;Read in Endurance waveform data and run my_deg_pol.pro 
-;
+
 
 .compile /Users/abrenema/Desktop/code/Aaron/github/spectral-coherence-phaselag-analysis/aaron_chaston_polarization.pro
 rbsp_efw_init
-;timespan,'1970-01-01/00:00',1,/day
 
 
 
@@ -22,51 +21,92 @@ rbsp_efw_init
 ;rbsp_detrend,'w34_smoothed',3.
 
 
+;-----------------------------------
+;Load calibrated data from Python
+;-----------------------------------
 
 
+;NetCDF 
 path = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/efield_VLF/'
-fn = '47001_TM1_LFDSP_S5_VLF_mvm.sav'
-restore,path+fn
+fn = 'efield_vlf_calibrated.netcdf'
 
+ncid = NCDF_OPEN(path+fn)
+E12id = NCDF_VARID(ncid, 'E12')
+E34id = NCDF_VARID(ncid, 'E34')
+timeid = NCDF_VARID(ncid, 'time')
 
+;get a variable out of the data
+NCDF_VARGET, ncid, E12id, E12
+NCDF_VARGET, ncid, E34id, E34
+NCDF_VARGET, ncid, timeid, time
 
-wf12 = DVLF12_MVM
-wf34 = DVLF34_MVM
-wfz = wf34 
+;Close the netcdf file
+NCDF_CLOSE, ncid
+
+wf12 = E12
+wf34 = E34
+wfz = E34
 wfz[*] = 0.0001
+times = time
 
-times = TVLF
+;First keep polarizations consistent before/after rocket flip maneuver
+fliptime = 600
+;if ssec gt fliptime then wf34 = -1*wf34
+goo = where(times ge fliptime)
+if goo[0] ne -1 then wf34[goo] = -1*wf34[goo] 
 
-;**************
-;artificially offset the VLF12 data one point to the right to test for bad instrument timing
-
-wf12 = shift(wf12,-1)
-
-;*************
-
-
-
-
-;ssec = 140
-;esec = 150
-ssec = 800
+;Now keep only desired data (helps program to run much faster)
+ssec = 100
 esec = 900
+;ssec = 550
+;esec = 650
 goo = where((times ge ssec) and (times le esec))
-;gooDC = where((timesDC ge ssec) and (timesDC le esec))
-
 
 ;Keep polarizations consistent before/after rocket flip maneuver
-fliptime = 600
-if ssec gt fliptime then wf34 = -1*wf34
 store_data,'wf12',data={x:time_double('1970-01-01/00:00:00') + times[goo],y:wf12[goo]}
 store_data,'wf34',data={x:time_double('1970-01-01/00:00:00') + times[goo],y:wf34[goo]}
 store_data,'wfz',data={x:time_double('1970-01-01/00:00:00') + times[goo],y:wfz[goo]}
 
 
-;************
+
+;;-----------------------------------
+;;Load uncalibrated data from Steve
+;;-----------------------------------
+;
+;path = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/efield_VLF/'
+;fn = '47001_TM1_LFDSP_S5_VLF_mvm.sav'
+;restore,path+fn
+;
+;wf12 = DVLF12_MVM
+;wf34 = DVLF34_MVM
+;wfz = wf34 
+;wfz[*] = 0.0001
+;times = TVLF
+;
+;;**************
+;;artificially offset the VLF12 data one point to the right to test for bad instrument timing
+;;wf12 = shift(wf12,-1)
+;;*************
+;
+;
+;;ssec = 100
+;;esec = 240
+;ssec = 550
+;esec = 650
+;goo = where((times ge ssec) and (times le esec))
+;
+;
+;;Keep polarizations consistent before/after rocket flip maneuver
+;fliptime = 600
+;if ssec gt fliptime then wf34 = -1*wf34
+;store_data,'wf12',data={x:time_double('1970-01-01/00:00:00') + times[goo],y:wf12[goo]}
+;store_data,'wf34',data={x:time_double('1970-01-01/00:00:00') + times[goo],y:wf34[goo]}
+;store_data,'wfz',data={x:time_double('1970-01-01/00:00:00') + times[goo],y:wfz[goo]}
+;
+;----------------------------------------------------------------------------------
+
 
 sampfreq = 1/(times[1]-times[0])
-;sampfreqDC = 1/(timesDC[1]-timesDC[0])
 start = time_string(time_double('1970-01-01/00:00:00') + ssec)
 totpoints = round((esec - ssec) * sampfreq)
 ;totpointsDC = round((esec - ssec) * sampfreqDC)
@@ -78,24 +118,47 @@ corse = 1
 outps = 0
 
 
-npts = 256
+npts = 2048
 aaron_chaston_polarization,'wf12','wf34','wfz',start,totpoints,rotatefield,pol_lmt,pow_lmt,pow_lmt_typ,corse,sampfreq,outps,npts=npts
 
 
 
 
-ylim,['Power','Degree$of$Polarization','Ellipticity','Helicity'],3000,9000,0
+ylim,['Power','Degree$of$Polarization','Ellipticity','Helicity'],1000,9000,0
 zlim,'Ellipticity',-1,1
-tplot,['Power','Degree$of$Polarization','Ellipticity','Helicity']
-
-;tlimit,'1970-01-01/00:14:30','1970-01-01/00:15:00'
-
+zlim,'Power',1d-15,1d-11
+zlim,'Degree$of$Polarization',0,1
+tplot,['Power','Degree$of$Polarization','Ellipticity']
 
 
 ;Extract slices for plot 
 get_data,'Power',data=pow
 get_data,'Ellipticity',data=elip,dlim=dlime,lim=lime
 get_data,'Degree$of$Polarization',data=pol,dlim=dlimp,lim=limp
+get_data,'Helicity',data=hel
+
+;Save data to IDL save file for loading in Python
+times_pow = pow.x 
+freqs_pow = pow.v
+data_pow = pow.y
+
+times_elip = elip.x
+freqs_elip = elip.v
+data_elip = elip.y
+
+times_pol = pol.x
+freqs_pol = pol.v
+data_pol = pol.y
+
+times_hel = hel.x
+freqs_hel = hel.v
+data_hel = hel.y
+
+store_data,tnames(),/del
+
+save,/variables,filename='~/Desktop/tst.sav'
+
+
 
 
 
@@ -122,9 +185,9 @@ tplot,['Power','w12','w34','Ellipticity2','Degree$of$Polarization2']
 
 stop
 
-zlim,'Degree$of$Polarization',0.7,1
-tplot,['Power','Ellipticity','Degree$of$Polarization']
-timebar,tz
+;zlim,'Degree$of$Polarization',0.7,1
+;tplot,['Power','Ellipticity','Degree$of$Polarization']
+;timebar,tz
 
 
 
@@ -137,7 +200,7 @@ timebar,tz
 
 sr_spec = 1/(pow.x[1]-pow.x[0])
 
-tz = 790.
+tz = 805.
 tplot,['Power','Ellipticity','Degree$of$Polarization']
 timebar,tz
 
@@ -172,7 +235,7 @@ for i=0,n_elements(freqs)-1 do begin $
 !p.charsize = 3
 !p.multi = [0,0,3]
 xr = [4000,8000]
-plot,freqs,powfin,ytitle='Power',xtitle='freq (Hz)',xrange=xr,ylog=1,yrange=[1d-15,1d-11],title=title,xticklen=1,xgridstyle=1,yticklen=1,ygridstyle=1
+plot,freqs,powfin,ytitle='Power',xtitle='freq (Hz)',xrange=xr,ylog=1,yrange=[1d-15,1d-9],title=title,xticklen=1,xgridstyle=1,yticklen=1,ygridstyle=1
 plot,freqs,elipfin,ytitle='Ellipticity',xtitle='freq (Hz)',xrange=xr,yrange=[-1.1,1.1],ystyle=1,xticklen=1,xgridstyle=1,yticklen=1,ygridstyle=1
 oplot,[0,12000],[0,0],color=250
 plot,freqs,polfin,ytitle='Deg of Polarization',xtitle='freq (Hz)',xrange=xr,yrange=[0,1.1],ystyle=1,xticklen=1,xgridstyle=1,yticklen=1,ygridstyle=1

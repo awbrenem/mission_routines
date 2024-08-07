@@ -17,9 +17,12 @@ the wave phase
 
 import numpy as np
 import matplotlib.pyplot as plt
+import sys 
+sys.path.append("/Users/abrenema/Desktop/code/Aaron/github/signal_analysis/")
+import plot_hodogram_dynamic
 
 
-freq = 500.
+freq = 12000.
 
 #VLF channel sample rate
 sr = 32000. 
@@ -27,7 +30,7 @@ ntimes = 100
 t = np.asarray(range(ntimes))*(1/sr)
 
 #timeshift
-microsec = 30
+microsec = 31
 
 tshift = t + microsec*1e-6
 w = freq*2.*np.pi
@@ -44,6 +47,12 @@ plt.show()
 
 plt.plot(V1,V2)
 plt.show()
+
+
+
+plot_hodogram_dynamic.plot_hodogram_dynamic(V1, V2, npts=1, gap=1, plot_kwargs={}, pauseT=0.2)
+
+print('h')
 
 
 

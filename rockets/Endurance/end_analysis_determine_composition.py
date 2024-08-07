@@ -1,7 +1,6 @@
 #Endurance - determine ion composition by requiring that the SLP density matches 
 #the density determined from the by-eye lower hybrid line identification (from end_cal_determine_accurate_lower_hybrid_freq.py) 
 
-
 import sys 
 sys.path.append('/Users/abrenema/Desktop/code/Aaron/github/mission_routines/rockets/Endurance/')
 sys.path.append('/Users/abrenema/Desktop/code/Aaron/github/plasma-physics-general/')
@@ -20,7 +19,16 @@ import pickle
 from end_fields_loader import Endurance_Fields_Loader as EFL
 import end_data_loader
 import pyIGRF
+#import iri2016
 
+
+#iri2016.IRI(’datetime’, [alt.min, alt.max, alt.step], latitude, longitude): Compute IRI altitude profile at a set time and location (latitude/longitude)
+#vals = iri2016.IRI('2003-11-21T12', [100,1000,10], -76.77, -11.95)
+#altprof = ion.IRI('2015-12-28T12', [60,450,10], 45.5017, -73.5673)
+#vals = iri2016.altprofile('2003-11-21T12', -11.95, -76.77)
+
+#"/Users/abrenema/opt/anaconda3/lib/python3.8/site-packages/iri2016/altitude.py"
+#def main(time: str, alt_km: T.Sequence[float], glat: float, glon: float):
 
 
 
@@ -34,6 +42,7 @@ ephem = end_data_loader.load_ephemeris()
 iri = end_data_loader.load_iri()
 
 
+
 plot_times = ephem[0]['Time']
 plot_alt = ephem[0]['Altitude']
 plot_times = plot_times[0::20]
@@ -42,8 +51,6 @@ plot_alt = plot_alt[0::20]
 
 #%load_ext nb_black
 plt.rcParams['figure.figsize'] = [10, 4]
-
-
 
 
 """
@@ -81,7 +88,7 @@ tLP = tLP[goodv[0]]
 dLP = dLP[goodv[0]]
 
 
-
+#-------------------------------------------------------------------------------
 #by-eye lower hybrid values from end_cal_determine_accurate_lower_hybrid_freq.py
 #from VLF12-VLF34 phase
 vertices = [[ 113.97920064, 7542.68022999],
@@ -134,6 +141,7 @@ vertices = [[ 113.97920064, 7542.68022999],
        [ 697.42281415, 6926.16831987],
        [ 710.56819165, 6967.07229778],
        [ 727.17287901, 7053.99325084]]
+
 
 vertices2 = [[ 118.55265075, 7964.38255622],
        [ 126.59693574, 8254.90835695],
@@ -208,6 +216,7 @@ vertices2 = [[ 118.55265075, 7964.38255622],
        [ 877.93315405, 6312.97274154],
        [ 881.95529654, 5961.28361434]]
 
+
 #Use the upper bound values. These seem to be more accurate and I'm able to identify them 
 #over more of the mission.
 vertices2 = np.asarray(vertices2)
@@ -233,27 +242,6 @@ interpd = interp1d(tLP,dLP,kind='cubic', bounds_error=False)
 dLP2 = interpd(tlh)
 
 
-"""
-nO_ne = [0.999363629741,0.99658469493,0.99380576011,0.99212741951,0.9918659802400001,
-         0.99170509455,0.99188557588,0.99254355714,0.99308190544,0.99403896909,
-         0.99424883561,0.99287575938,0.99188409321,0.99096870906,0.9898244789,
-         0.9884937335,0.9877006349,0.9854799591,0.9832592832,0.9813558468,
-         0.97961103,0.9778662133,0.9758041571,0.975,0.975,
-         0.975,0.975,0.975,0.975,0.975,
-         0.975,0.975,0.9745728891,0.9737548262,0.9721187004,
-         0.9708916061,0.9703462309,0.97,0.97,0.97,
-         0.97,0.97,0.97,0.97,0.97,
-         0.97,0.97,0.97,0.97,0.9719631039,
-         0.9738747028,0.9756738547,0.9782601356,0.9798343935,0.9812962044,
-         0.9834055437,0.984445753,0.9853472677,0.9863181297,0.9871502971,
-         0.9887366245,0.9932950527,0.99624462386,0.999166437254,0.999389889615,
-         0.999523961031,0.999747413392,0.9507072473,0.841012452,0.5850579300000001,
-         0.54842998,0.5]
-nH_ne = [1-i for i in nO_ne]
-"""
-
-
-
 #--------------------------------------------------------------------
 #--------------------------------------------------------------------
 #FOR EACH VALUE OF NE1 FIND THE BEST RATIO OF O+ TO H+ THAT MINIMIZES 
@@ -261,8 +249,8 @@ nH_ne = [1-i for i in nO_ne]
 #nOv = np.arange(0.95,1,0.01)[np.newaxis]
 #nHv = np.arange(0.,0.06,0.01)[np.newaxis]
 #nf = nOv.T * nHv
-nOv = np.arange(0.90,1,0.001)
-nHv = np.arange(0.,0.1,0.001)
+nOv = np.arange(0.90,1,0.005)
+nHv = np.arange(0.,0.1,0.005)
 
 diffv = np.zeros([len(nHv),len(nOv)])
 nHfin = np.zeros(len(flh))
@@ -313,8 +301,18 @@ axs[2].set_ylim(0,300000)
 axs[0].set_ylabel('O+ fraction')
 axs[1].set_ylabel('H+ fraction')
 axs[2].set_ylabel('SLP dens(orange) vs\nreconstructed dens\nfrom by-eye LH determination')
-plt.xlim(100,900)
+axs[0].set_xlim(100,900)
+axs[1].set_xlim(100,900)
+axs[2].set_xlim(100,900)
 plt.xlabel('time (sec)')
+#axs[0].plot(iri['times_upleg'],iri['O_ions']*0.01,'.')
+#axs[1].plot(iri['times_upleg'],iri['H_ions']*0.01,'.')
+#axs[0].plot(iri['times_downleg'],iri['O_ions']*0.01,'.')
+#axs[1].plot(iri['times_downleg'],iri['H_ions']*0.01,'.')
+
+
+
+plt.savefig("/Users/abrenema/Desktop/tst.pdf", dpi=350)
 
 
 

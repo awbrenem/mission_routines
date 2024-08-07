@@ -7,6 +7,7 @@ def load_timeline()
 def load_iri(alt=0)
 def load_ephemeris(t=0)
 def load_ig
+def load_igrf
 
 """
 
@@ -31,6 +32,35 @@ def load_ig(alt=0):
         return df.iloc[0]
     else:
         return df
+
+
+
+#----------------------------------------
+#Load swept Langmuir probe density sonogram
+
+#First column is Time of Flight in Seconds.
+#All the other columns are Power-spectral-density at specific frequency
+#points. The frequency bins are written in the very first row.
+#The PSD units are log10(Density^2/Hz).
+
+#----------------------------------------
+
+def load_slp_sonogram():
+
+    import numpy as np
+    import pandas as pd
+    fn = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/SLP/Endurance_SLP_PSD.txt'
+
+    df = pd.read_csv(fn,sep='\t',index_col=0,skiprows=0,header=0)
+
+    times = [99.2635537,106.330411,111.214201,116.330558,121.214358,126.330655,131.214505,136.330751,141.214561,146.330848,151.214658,156.330944,161.214744,166.331031,171.214831,176.331118,181.214917,186.331194,191.215034,196.331281,201.215111,206.331086,211.215247,216.331162,221.215324,226.331239,231.215360,236.331305,241.215457,246.331372,251.215523,256.331438,261.215560,266.331464,271.215616,276.331551,281.215743,286.331637,291.215759,296.331664,301.215856,306.331740,311.215902,316.331827,321.215948,326.331873,331.216025,336.331919,341.216061,346.331956,351.216097,356.332022,361.216164,366.332089,371.216240,376.332155,381.216267,386.332191,391.216303,396.332218,401.216319,406.332204,411.216345,416.332220,421.216372,426.332236,431.216116,436.332353,441.216102,446.332369,451.216118,456.332385,461.216124,466.332361,471.216161,476.332397,481.216167,486.332444,491.216203,496.332440,501.216169,506.332446,511.216165,516.332442,521.216191,526.332458,531.216227,536.332454,541.216213,546.332410,551.216199,556.332396,561.216185,566.332382,571.216202,576.332096,581.216208,586.332072,591.216194,596.332048,601.216170,606.332024,611.216176,616.332030,621.216152,626.331996,631.216118,634.149013,641.216114,646.331968,651.216110,656.331994,661.216116,666.331950,671.216102,676.331986,681.215766,686.332013,691.215742,696.331667,701.215768,706.331653,711.215784,716.331669,721.215740,726.331675,731.215485,736.331691,741.215461,746.331667,751.215406,756.331653,761.215423,766.331619,771.215358,776.331233,781.215334,786.331209,791.215300,796.331144,801.215276,806.331150,811.215222,816.331096,821.215157,826.331032,831.215103,836.330978,841.215039,846.330913,891.214888]
+
+    goo = df.head()
+    ftmp = goo.keys()
+    freqs = [float(i[:-2]) for i in ftmp]
+
+    return np.asarray(times),np.asarray(freqs),df.to_numpy()
+
 
 
 #----------------------------------------
@@ -110,14 +140,24 @@ def load_timeline():
 
 
 
-
-
-
-#----------------------------------------
+"""
+----------------------------------------
 #Load IGRF data (single time or all) from a CSV file from 
 #https://ccmc.gsfc.nasa.gov/cgi-bin/modelweb/models/vitmo_model.cgi
-#----------------------------------------
 
+NOTE: MUCH BETTER TO USE pyIGRF
+
+
+import pyIGRF
+glat = 78 + (55/60)
+glon = 11 + (55/60)
+
+BoIGRF = np.asarray([pyIGRF.igrf_value(glat, glon, i, 2022)[6] for i in plot_alt])
+
+----------------------------------------
+"""
+
+"""
 def load_igrf(alt=0):
     import pandas as pd
     import numpy as np 
@@ -165,13 +205,6 @@ def load_igrf(alt=0):
 
     import matplotlib.pyplot as plt 
     plt.plot(times_igrf_downleg)
-    #tu = sorted(times_igrf_upleg, reverse=False)
-    #td = sorted(times_igrf_downleg, reverse=True)
-
-    #plt.plot(times_igrf_upleg, )
-    #plt.plot(times_end, alts_end,'.')
-    #plt.plot(times_igrf_upleg, alts_igrf,'.')
-    #plt.plot(times_igrf_downleg, alts_igrf,'.')
     #-----------------------------------------------
 
     goo = np.where(times_igrf_upleg != 0)[0]
@@ -196,9 +229,7 @@ def load_igrf(alt=0):
 #        return df.iloc[0]
 #    else: 
 #        return df
-
-
-
+"""
 
 
 #----------------------------------------
@@ -208,6 +239,18 @@ def load_igrf(alt=0):
 #--Time_type = Universal
 #--Coordinate_type = Geographic
 #--Latitude= 78.9235, Longitude= 11.909, Height= 100.
+
+
+#(0) Height, km
+#(1) Electron_density_Ne, m-3
+#(2) Ti, K
+#(3) Te, K
+#(4) O_ions, %
+#(5) H_ions, %
+#(6) He_ions, %
+#(7) O2_ions, %
+#(8) NO_ions, %
+#(9) N_ions, %
 #----------------------------------------
 
 def load_iri(alt=0):
