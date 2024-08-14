@@ -48,14 +48,12 @@ fs = v12.chnspecs['fs']
 wf12, tvals = v12.load_data_gainphase_corrected()
 wf34, tgoo = v34.load_data_gainphase_corrected()
 
-
-#########
-#Artificially shift wf12 one point to the right to test for anomalous instrument timing issue
-#wf12 = np.roll(wf12,1)
+#wf12, tvals = v12.load_data()
+#wf34, tgoo = v34.load_data()
 
 
 
-#Spectral overview
+#Spectral overview (units of mV/m**2 / Hz)
 nps = 2048
 freq12, tspec12, power12 = signal.spectrogram(wf12, fs, nperseg=nps,noverlap=nps/2,window='hann') #, return_onesided=1)
 freq34, tspec34, power34 = signal.spectrogram(wf34, fs, nperseg=nps,noverlap=nps/2,window='hann') #, return_onesided=1)
@@ -71,7 +69,7 @@ ps.plot_spectrogram(tspec12,freq12,power12,vr=[-80,-40],yr=[6000,14000],xr=[280,
 #tr = [146, 146.00015]
 #fr = [5500, 6000]
 #fr = [5900, 6100]
-tr = [160, 180]
+tr = [800, 810]
 fr = [5000, 5900]
 
 #tr = [301.5,301.65]
@@ -96,7 +94,7 @@ if len(badt) != 0: pmask[badf,:] = 0
 p12 = power12 * pmask
 
 #ps.plot_spectrogram(tspec12,freq12,p12,vr=[-100,-40], xr=tr,yr=fr, yscale='linear')
-ps.plot_spectrogram(tspec12,freq12,p12,vr=[-80,-30], xr=tr,yr=fr, yscale='log')
+ps.plot_spectrogram(tspec12,freq12,p12,vr=[-80,-35], xr=tr,yr=fr, yscale='log')
 
 
 pmask = np.full_like(power34, 1)
@@ -113,7 +111,8 @@ pmask[badf,:] = 0
 p34 = power34 * pmask
 
 #ps.plot_spectrogram(tspec34,freq34,p34,vr=[-100,-40], xr=tr,yr=fr, yscale='linear')
-ps.plot_spectrogram(tspec34,freq34,p34,vr=[-80,-30], xr=tr,yr=fr, yscale='log')
+ps.plot_spectrogram(tspec34,freq34,p34,vr=[-70,-50], xr=tr,yr=fr, yscale='log')
+plt.savefig("/Users/abrenema/Desktop/tst1.pdf", dpi=350)
 
 
 
@@ -126,25 +125,70 @@ filt34 = filter_wave_frequency.butter_bandpass_filter(wf34, fr[0],fr[1],fs,order
 
 
 
-
 #all the points to be plotted
-trz= [165.00, 165.005]
+#trz= [165.00, 165.005]
+trz= [804.00, 804.005]
+trz= [804.005, 804.01]
+#trz= [804.00, 804.03]
 #trz= [301.56, 301.58]
 goodt = np.squeeze(np.where((tvals > trz[0]) & (tvals < trz[1])))
 filt12z = filt12[goodt]
 filt34z = filt34[goodt]
 
-ptitle = 't=' + str(trz[0]) + '-' + str(trz[1]) + ' sec'
+#Units of mV/m
+plt.plot(tvals[goodt],filt12z)
+
+
+ptitle = 't=' + str(trz[0]) + '-' + str(trz[1]) + ' sec\nf='+str(fr[0]) + '-' + str(fr[1]) + 'Hz'
 num = 1
 
-plot_kwargs = {'xlim':[-0.1,0.1],
+plot_kwargs = {'xlim':[-0.05,0.05],
                'xlabel':'VLF12',
                'ylabel':'VLF34',
                'title':ptitle}
 
 
+#plot filtered waveforms
+plt.plot(tvals[goodt],filt12z,tvals[goodt],filt34z)
+plt.ylabel('Wf12(blue) and Wf34(orange)\nmV/m\n'+str(fr[0])+'-'+str(fr[1])+' Hz')
+plt.savefig("/Users/abrenema/Desktop/tst1.pdf", dpi=350)
+
+#-----------------------------------------------
+#-----------------------------------------------
+#-----------------------------------------------
+
+#Compare filtered waveform amplitudes to spectral amplitudes for sanity check. 
+#5000-5900 Hz 
+#p34 values (from signal.spectrogram) are in V**2/Hz
+
+goodfspec = np.where((freq34 >= fr[0]) & (freq34 <= fr[1]))[0]
+goodtspec = np.where(tspec34 > tr[0])[0][0]
+
+df = freq34[1] - freq34[0]
+nbins = len(goodfspec)
+
+#Select time slice and change to mV_m/sqrt(Hz)  (from mV/m**2/Hz)
+pplot = np.sqrt(p34[goodfspec,goodtspec])
+
+#plt.plot(freq34, np.sqrt(np.abs(p34[:,goodt2])))
+plt.plot(freq34[goodfspec], pplot)
+plt.xlim(5000,6000)
+plt.ylabel('mV_m / sqrt(Hz)')
+
+#integrate from 5000-5900 Hz to compare to waveform 
+amplitude_tmp = np.sum(pplot * np.sqrt(df))
+
+
+#def psd(wf, tvals, fs, tr, nft=None, zlog=0, ScaleByFreq=True):
+
+#-----------------------------------------------
+#-----------------------------------------------
+#-----------------------------------------------
+
+
+
 plt.plot(filt12z,filt34z)
-plt.plot(np.roll(filt12z,-1),filt34z)
+#plt.plot(np.roll(filt12z,-1),filt34z)
 
 
 hod.plot_hodogram_dynamic(filt12z, filt34z, npts=num, gap=1, plot_kwargs=plot_kwargs)#,pauseT=0.3)

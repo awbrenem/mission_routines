@@ -22,11 +22,11 @@ sys.path.append("/Users/abrenema/Desktop/code/Aaron/github/signal_analysis/")
 import plot_hodogram_dynamic
 
 
-freq = 12000.
+freq = 700.
 
 #VLF channel sample rate
 sr = 32000. 
-ntimes = 100
+ntimes = 400
 t = np.asarray(range(ntimes))*(1/sr)
 
 #timeshift

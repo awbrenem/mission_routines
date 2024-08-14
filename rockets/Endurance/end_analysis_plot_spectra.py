@@ -51,7 +51,7 @@ wf34, tdat = v34.load_data_gainphase_corrected()
 #nps = 2*4096
 nps = 4096
 fspec, tspec, powerc = signal.spectrogram(wf34, fs, nperseg=nps,noverlap=nps/2,window='hann',return_onesided=True,mode='complex')
-
+#Returns mV/m**2/Hz
 
 ephem = end_data_loader.load_ephemeris()
 alt = ephem[0]['Altitude'] 
@@ -76,8 +76,8 @@ plt.plot(iri['Height(km)'], iri['N_ions'])
 
 
 #Use this as the plotted time cadence
-plot_times = ephem[0]['Time']
-plot_alt = ephem[0]['Altitude']
+plot_times = np.asarray(ephem[0]['Time'])
+plot_alt = np.asarray(ephem[0]['Altitude'])
 plot_times = plot_times[0::20]
 plot_alt = plot_alt[0::20]
 
@@ -198,6 +198,12 @@ for i in range(len(bsstart)):
     fcHIGRF[goo] = "nan"
     fcOIGRF[goo] = "nan"
 
+
+#Create a second version of flh that has times only up to 825 sec.
+#The accuracy of my flh determination decreases after this time and the overplotted flh line on the
+#zoomed in Bernstein plots looks bad. 
+
+flh_gootimes = np.where((plot_times > 150) & (plot_times < 825))
 
 """
 #spectral plots 
@@ -348,32 +354,9 @@ vertices = np.asarray(vertices)
 vertices2 = np.asarray(vertices2)
 
 
-#Plot SLP density spectrogram 
+#Load SLP density spectrogram 
+tdens, fdensL, sdensL, fdensH, sdensH = end_data_loader.load_slp_sonogram()
 
-tdens, fdens, sdens = end_data_loader.load_slp_sonogram()
-
-vr = [-40,-30]
-#yr = [0,10000]
-yr = [1000,9000]
-#xr = [100,240]
-xr = [100,900]
-ys = 'linear'
-#ps.plot_spectrogram(tdens,fdens,np.transpose(sdens),vr=[-20,0],zscale='linear',yr=yr,xr=xr)
-
-#,vr=vr,yr=yr,xr=xr,yscale=ys,xlabel='time(sec)',
-#                    ylabel="power spectrum x'\nfreq(Hz)")
-
-
-
-fadj = fdens - 2500
-
-ps.plot_spectrogram(tdens,fdens,np.transpose(sdens),vr=[-12,-9],zscale='linear',xr=xr)
-
-
-ps.plot_spectrogram(tdens,fadj,np.transpose(sdens),vr=[-12,-9],zscale='linear',yr=yr,xr=xr)
-#ps.plot_spectrogram(tdens,fdens-11000,np.transpose(sdens),vr=[-18,-9],zscale='linear',yr=[10000,12000])
-ps.plot_spectrogram(tspec,fspec,np.abs(powerc),vr=vr,yr=yr,xr=xr,yscale=ys,xlabel='time(sec)',
-                    ylabel="power spectrum x'\nfreq(Hz)")
 
 
 
@@ -435,26 +418,36 @@ plt.plot(plot_times, 7*fcHIGRF, color='white',linestyle='--')
 plt.plot(plot_times, 8*fcHIGRF, color='white',linestyle='--')
 
 
+#10*np.log(5e-6)
 
+#Change to units of V**2_m / Hz to be consistent with previous publications
+powerc_v2m = np.abs(powerc) / (1000**2)
 
 #xr = [100,240]
 #yr = [4000,9000]
 xr = [700,900]
-yr = [0,5000]
-fig,axs = plt.subplots(3)
-ps.plot_spectrogram(times_pow,freqs_pow,data_pow,zscale='linear',vr=[1e-15,1e-12],xr=xr,yr=yr,ax=axs[0])
+#xr = [100,900]
+yr = [4000,9000]
+fig,axs = plt.subplots(4, figsize=(8,9))
+#ps.plot_spectrogram(times_pow,freqs_pow,data_pow,zscale='linear',vr=[1e-15,1e-12],xr=xr,yr=yr,ax=axs[0])
+ps.plot_spectrogram(tspec,fspec,powerc_v2m,vr=[-100,-90],yr=yr,xr=xr,yscale='linear',ylabel="power spectrum wf34'\nfreq(Hz)\nunits of log[(V/m)^2/Hz]",ax=axs[0])
+#ps.plot_spectrogram(tspec,fspec,np.abs(powerc),yr=yr,xr=xr,yscale='linear',ylabel="power spectrum wf34'\nfreq(Hz)",ax=axs[0],zscale='linear')
 axs[0].set_xticklabels([])
 ps.plot_spectrogram(times_pol,freqs_pol,data_pol,zscale='linear',vr=[0,1],xr=xr,yr=yr,ax=axs[1])
 axs[1].set_xticklabels([])
 ps.plot_spectrogram(times_elip,freqs_elip,data_elip,zscale='linear',vr=[-1,1],xr=xr,yr=yr,ax=axs[2])
-for i in range(3): 
-      axs[i].plot(plot_times, flh, color='white')
+axs[2].set_xticklabels([])
+ps.plot_spectrogram(tdens,fdensH,np.transpose(sdensH),vr=[-12,-10],zscale='linear',yr=yr,xr=xr,ylabel='Density power spectrum\nfreq(Hz)',xlabel='time(sec)',ax=axs[3])
+fig.tight_layout(pad=0)
+
+for i in range(4): 
+      axs[i].plot(plot_times[flh_gootimes[0]], flh[flh_gootimes[0]],color='white')
+      axs[i].plot(plot_times[flh_gootimes[0]], flh2[flh_gootimes[0]], color='white')
       axs[i].plot(plot_times, fcOIGRF, color='white')
       for j in range(11):
            axs[i].plot(plot_times,j*fcHIGRF,color='white',linestyle='--',linewidth=0.9)
-fig.tight_layout(pad=-0.5)
 
-plt.savefig("/Users/abrenema/Desktop/tst2.pdf", dpi=350)
+plt.savefig("/Users/abrenema/Desktop/tst1.pdf", dpi=350)
 
 
 
@@ -462,14 +455,21 @@ plt.savefig("/Users/abrenema/Desktop/tst2.pdf", dpi=350)
 #Low alt on downleg to show the connection b/t Bernstein and two-stream
 xr = [830,900]
 yr = [1000,15000]
-ps.plot_spectrogram(times_pow,freqs_pow,data_pow,zscale='linear',vr=[1e-15,1e-13],xr=xr,yr=yr,yscale='log')
+#ps.plot_spectrogram(times_pow,freqs_pow,data_pow,zscale='linear',vr=[1e-15,1e-13],xr=xr,yr=yr,yscale='log')
+ps.plot_spectrogram(tspec,fspec,np.abs(powerc),vr=[-40,-27],yscale='log',yr=yr,xr=xr,ylabel="power spectrum wf34'\nfreq(Hz)")
 plt.savefig("/Users/abrenema/Desktop/tst.pdf", dpi=350)
 ps.plot_spectrogram(times_pol,freqs_pol,data_pol,zscale='linear',vr=[0,1],xr=xr,yr=yr,yscale='log')
 plt.savefig("/Users/abrenema/Desktop/tst2.pdf", dpi=350)
 ps.plot_spectrogram(times_elip,freqs_elip,data_elip,zscale='linear',vr=[-0.8,0.8],xr=xr,yr=yr,yscale='log')
 plt.savefig("/Users/abrenema/Desktop/tst3.pdf", dpi=350)
+#ps.plot_spectrogram(tdens,fdensH,np.transpose(sdensH),vr=[-20,-5],zscale='linear',yr=[1400,15000],xr=xr,ylabel='Density power spectru  x\nfreq(Hz)',xlabel='time(sec)')
+#ps.plot_spectrogram(tdens,fdensH,np.transpose(sdensH),vr=[-12,-10],zscale='linear',yr=yr,xr=xr,ylabel='Density power spectrum\nfreq(Hz)',xlabel='time(sec)')
+#plt.savefig("/Users/abrenema/Desktop/tst4.pdf", dpi=350)
 
 
 
-
+#Look at low freq SLP density sonogram
+yr=[1,2000]
+xr=[100,240]
+ps.plot_spectrogram(tdens,fdensL,np.transpose(sdensL),vr=[-12,-5],yscale='linear',zscale='linear',yr=yr,xr=xr,ylabel='Density power spectrum\nfreq(Hz)',xlabel='time(sec)')
 
