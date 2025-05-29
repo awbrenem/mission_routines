@@ -28,7 +28,6 @@ v3s, t, = v3.load_data_gainphase_corrected()
 v4 = EFL('V4SD')
 v4s, t, = v4.load_data_gainphase_corrected()
 
-"""
 #Raw
 v1 = EFL('V1SD')
 v1s, t, = v1.load_data()
@@ -38,16 +37,17 @@ v3 = EFL('V3SD')
 v3s, t, = v3.load_data()
 v4 = EFL('V4SD')
 v4s, t, = v4.load_data()
-"""
+
 
 fs = 1/(t[1]-t[0])
 
-plt.plot(t,v1s)
-plt.ylim(-0.3,-0.225)
-plt.xlim(430,432)
-plt.plot(t,v2s)
-plt.plot(t,v3s)
-plt.plot(t,v4s)
+plt.plot(t,v1s)  #blue
+#plt.ylim(-0.3,-0.225)
+plt.ylim(-1,0.)
+plt.xlim(100,220)
+plt.plot(t,v2s) #orange
+plt.plot(t,v3s) #green
+plt.plot(t,v4s) #red
 
 
 nfft = 1024

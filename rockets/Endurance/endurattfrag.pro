@@ -8,19 +8,19 @@ if keyword_set(fil) then restore,fil else restore,path + '47001_orig_att.sav'
 
 restore,fil else restore,path + '47001_orig_att.sav'
 
-if keyword_set(rots) then begin
-  print,'rotating matrices'
-  rotate_amat,a11,a12,a13,a21,a22,a23,a31,a32,a33,rots,$
-    r11,r12,r13,r21,r22,r23,r31,r32,r33
-  a11=r11 & a12=r12 & a13=r13
-  a21=r21 & a22=r22 & a23=r23
-  a31=r31 & a32=r32 & a33=r33
-endif
+;if keyword_set(rots) then begin
+;  print,'rotating matrices'
+;  rotate_amat,a11,a12,a13,a21,a22,a23,a31,a32,a33,rots,$
+;    r11,r12,r13,r21,r22,r23,r31,r32,r33
+;  a11=r11 & a12=r12 & a13=r13
+;  a21=r21 & a22=r22 & a23=r23
+;  a31=r31 & a32=r32 & a33=r33
+;endif
 
-if keyword_set(addt) then begin
-  time=time+addt
-  print,'adding to attitude time'
-endif
+;if keyword_set(addt) then begin
+;  time=time+addt
+;  print,'adding to attitude time'
+;endif
 c11=interpol(a11,atime,t)
 c12=interpol(a12,atime,t)
 c13=interpol(a13,atime,t)

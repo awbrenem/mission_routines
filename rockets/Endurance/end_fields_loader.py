@@ -96,11 +96,18 @@ class Endurance_Fields_Loader:
 
     #---------------------------------------------------------------------------------
     #Load gain/phase calibrated files. These are produced by end_transfer_function.py.
+
+    #NOTE: Unfortunately the time values are not sampled evenly. Over the course of the mission this causes any spectrogram
+    #that is produced from the waveform data to be significantly off (e.g. 2 sec by end of mission). 
+    #This is b/c the spectrograms use a single "fs" (sample freq) value. To get around this, interpolate the times to a regular grid
+    #NOTE 2: For future rocket missions this step should be done prior to applying gain/phase calibration.
+
     #---------------------------------------------------------------------------------
 
     def load_data_gainphase_corrected(self):
 
         import pickle 
+        import numpy as np
         path = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/'
 
 
@@ -111,7 +118,6 @@ class Endurance_Fields_Loader:
         if self.type == 'VLF':
             goo = pickle.load(open(path + 'efield_VLF/' + 'Endurance_Analog 1_' + self.chn + '_6-30000-100_gainphase_corrected.pkl', 'rb'))
         
-          
         return goo['wf'], goo['tvals']
 
 
@@ -262,7 +268,7 @@ class Endurance_Fields_Loader:
         import numpy as np
         from math import remainder
 
-        path = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/gain_phase_files/'
+        path = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/gain_phase_files/'
 
         #Load gain/phase file
         if self.chn == "V1SD": fn = "Endurance_Analog 1_V1SD_10-10000-100.txt"

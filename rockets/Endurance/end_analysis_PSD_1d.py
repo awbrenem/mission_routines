@@ -1,4 +1,5 @@
 #Plot the 1D power spectral density
+#and make plot for paper
 
 import sys 
 sys.path.append('/Users/abrenema/Desktop/code/Aaron/github/mission_routines/rockets/Endurance/')
@@ -11,97 +12,24 @@ import numpy as np
 import correlation_analysis
 import plot_spectrogram as ps
 import matplotlib.pyplot as plt
-import matplotlib.ticker as mticker
-import filter_wave_frequency as filt
-import plasma_params_get_flhr_freq as dflh
 from matplotlib.ticker import MultipleLocator
 from scipy.signal import find_peaks
 import pyIGRF
-import scipy.io as sio
 from scipy.io import readsav
+import pickle
+import correlation_analysis as ca
+import filter_wave_frequency
+
+#Load by-eye lower hybrid values
+flhfile = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/lower_hybrid_id/lower_hybrid_freqs_byeye.pkl'
+verticesLOW, verticesHIG = pickle.load(open(flhfile,'rb'))
 
 
-
-
-vertices2 = [[ 118.55265075, 7964.38255622],
-       [ 126.59693574, 8254.90835695],
-       [ 134.64122073, 8530.14332606],
-       [ 145.90321972, 8514.85249444],
-       [ 156.36079021, 8438.39833636],
-       [ 162.7962182 , 8316.07168342],
-       [ 170.8405032 , 8102.00004078],
-       [ 179.68921669, 8010.25505107],
-       [ 186.92907318, 7903.21922975],
-       [ 199.79992917, 7796.18340843],
-       [ 208.64864266, 7643.27509225],
-       [ 223.12835565, 7551.53010255],
-       [ 233.58592614, 7475.07594446],
-       [ 243.23906813, 7199.84097535],
-       [ 255.30549562, 7459.78511285],
-       [ 266.56749461, 7398.62178638],
-       [ 270.58963711, 7169.25931212],
-       [ 281.8516361 , 7199.84097535],
-       [ 293.11363508, 7062.22349079],
-       [ 302.76677708, 7352.74929152],
-       [ 311.61549057, 7291.58596506],
-       [ 320.46420406, 7092.80515403],
-       [ 330.92177455, 6955.18766947],
-       [ 338.16163104, 7016.35099594],
-       [ 348.61920153, 6939.89683786],
-       [ 358.27234352, 6955.18766947],
-       [ 367.12105702, 6832.86101653],
-       [ 377.57862751, 6909.31517462],
-       [ 388.036198  , 6894.024343  ],
-       [ 399.29819699, 7138.67764888],
-       [ 404.92919648, 6848.15184815],
-       [ 409.75576748, 7092.80515403],
-       [ 425.03990896, 6955.18766947],
-       [ 434.69305095, 6848.15184815],
-       [ 453.99933494, 6832.86101653],
-       [ 468.47904792, 6817.57018492],
-       [ 474.91447592, 6786.98852168],
-       [ 499.0473309 , 6802.2793533 ],
-       [ 511.91818688, 6863.44267977],
-       [ 520.76690038, 6924.60600624],
-       [ 532.02889936, 6955.18766947],
-       [ 542.48646986, 6955.18766947],
-       [ 565.81489633, 6924.60600624],
-       [ 577.88132382, 7092.80515403],
-       [ 588.33889431, 6939.89683786],
-       [ 626.95146228, 7184.55014373],
-       [ 641.43117526, 7230.42263859],
-       [ 651.88874575, 7337.45845991],
-       [ 664.75960174, 7429.20344961],
-       [ 680.04374323, 7429.20344961],
-       [ 693.71902772, 7520.94843932],
-       [ 706.5898837 , 7444.49428123],
-       [ 725.09173919, 7475.07594446],
-       [ 736.35373818, 7475.07594446],
-       [ 746.81130867, 7612.69342902],
-       [ 763.70430715, 7673.85675549],
-       [ 775.77073464, 7811.47424005],
-       [ 786.22830513, 7903.21922975],
-       [ 797.49030412, 8086.70920916],
-       [ 807.14344611, 8224.32669371],
-       [ 819.2098736 , 8407.81667312],
-       [ 832.88515809, 8499.56166283],
-       [ 841.73387158, 8468.97999959],
-       [ 852.99587057, 8331.36251504],
-       [ 857.01801307, 8147.87253563],
-       [ 859.43129856, 7887.92839813],
-       [ 863.45344106, 7536.23927093],
-       [ 869.08444056, 7306.87679667],
-       [ 871.49772605, 7016.35099594],
-       [ 877.12872555, 6710.5343636 ],
-       [ 877.93315405, 6312.97274154],
-       [ 881.95529654, 5961.28361434]]
-
-vertices2 = np.asarray(vertices2)
 
 
 #--------------------------------------------------------------------------------------------------
 #Read in polarization data of Bernstein waves from IDL save file
-idldat = readsav('/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/polarization_from_idl/pol_from_idl.sav')
+idldat = readsav('/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/polarization_from_idl/pol_from_idl_fft=4096.sav')
 
 timesIDL = idldat['times_pow']
 freqs_pow = idldat['freqs_pow']
@@ -116,26 +44,39 @@ data_hel = idldat['data_hel']
 
 
 ephem = end_data_loader.load_ephemeris()
-alts = ephem[0]['Altitude'] 
+alts = np.asarray(ephem[0]['Altitude'])
+
+#interpolate alts to times of spectra
+alts2 = np.interp(timesIDL,np.asarray(ephem[0]['Time']),alts)
+
 times = ephem[0]['Time']
 
 
 
-v12 = EFL('VLF34D')
-fs = v12.chnspecs['fs']
+v34 = EFL('VLF34D')
+fs = v34.chnspecs['fs']
+wf34, tdat = v34.load_data_gainphase_corrected()
+
+v12 = EFL('VLF12D')
 wf12, tdat = v12.load_data_gainphase_corrected()
+
+
 #mV/m units
 
-tr = [140,145]
+#tr = [130,135]
+#tr = [130,170]
+#tr = [140,145]
 #tr = [150,155]
 #tr = [160,165]
 #tr = [160,161]
 #tr = [170,175]
-#tr = [180,185]
-#tr = [800,805]
-#tr = [830,835]
+#tr = [210,215]
+tr = [320,340]
+#tr = [710,715]
 #tr = [750,755]
-#tr = [725,730]
+#tr = [830,835]
+#tr = [810,815]
+#tr = [803,805]
 goot = np.where((tdat >= tr[0]) & (tdat <= tr[1]))
 #window = np.hanning(len(goot[0]))
 
@@ -143,9 +84,16 @@ goot = np.where((tdat >= tr[0]) & (tdat <= tr[1]))
 gooalt = np.where(times >= tr[0])[0][0]
 altz = alts[gooalt]
 
+#all altitudes during the desired time range
+gooalts = np.where((timesIDL >= tr[0]) & (timesIDL <= tr[1]))[0]
+#altv = np.asarray(alts[gooalts])
+altv = np.asarray(alts2[gooalts])
+
+
+
 #flh (by-eye) at the desired time 
-gooflh = np.where(vertices2[:,0] >= tr[0])[0][0]
-flhz = vertices2[gooflh,1]
+gooflh = np.where(verticesHIG[:,0] >= tr[0])[0][0]
+flhz = verticesHIG[gooflh,1]
 #--------------------------------------
 #Get cyclotron frequencies
 
@@ -160,14 +108,48 @@ fcO = fcH / 16
 fcHe = fcH / 4
 
 
+#find fce values for all altitudes during timerange 
+Bo_all = np.empty(len(altv))
+for i in range(len(altv)):
+       Bo_all[i] = np.asarray(pyIGRF.igrf_value(glat, glon, altv[i], 2022)[6])
+fce_all = Bo_all * 28
+fcH_all = fce_all / 1836
+
+
+#----------------------
+#----------------------
+#----------------------
+#interpolate the fcH_all array size to the number of elements of the final freq array. 
+#This will allow us to plot f/fcH instead of just f
+#freqs_pow
+#dt = tr[1] - tr[0]
+#oldtimes = np.arange(tr[0],tr[1],1/len(altv))
+
+f_fce = np.zeros((len(freqs_pow),len(gooalts)))
+for i in range(len(gooalts)):
+       f_fce[:,i] = freqs_pow / fcH_all[i]
+
+#alts2 
+
+
+
+
+#----------------------
+#----------------------
+#----------------------
+
 #--------------------------------------
+#Calculate coherence
+timechunk = 0.2
+coh, phase, tchunks, ff = ca.cross_spectral_density_spectrogram(wf34[tdat > 100],wf12[tdat > 100],tdat[tdat > 100],30000,timechunk,nperseg=512,plot=False,coh_min=0)
+
+
 
 #Load SLP density spectrogram 
 tdens, fdensL, sdensL, fdensH, sdensH = end_data_loader.load_slp_sonogram()
-
-tdens = np.asarray(tdens)
-fdensH = np.asarray(fdensH)
-sdensH = np.asarray(sdensH)
+tdens = np.squeeze(np.asarray(tdens))
+fdensH = np.squeeze(np.asarray(fdensH))
+sdensH = np.squeeze(np.asarray(sdensH))
 
 
 #nfft = 4096
@@ -176,59 +158,130 @@ nfft = 2048
 psd12, psdf = correlation_analysis.psd(wf12[goot], tdat[goot], fs, tr, nft=nfft)
 #units of mV/m**2 / sqrt(Hz)
 #Change to dB of V/m**2 / sqrt(Hz) to be more consistent with most publications
-psd12 = psd12 / 1000000
+#psd12 = psd12 / 1000000
+psd12 = np.interp(freqs_pow,psdf,psd12)
 
+
+#number of seconds to average over in slice
+nsec = tr[1]-tr[0]
+#nsec = 0
 
 #Slice through the ellipticity and deg polarization arrays
-elipA, elipARR, elipT = ps.slice_spectrogram(tr[0], timesIDL, data_elip, nsec=tr[1]-tr[0])
-planA, planARR, planT = ps.slice_spectrogram(tr[0], timesIDL, data_pol, nsec=tr[1]-tr[0])
-#slice through SLP density sonogram
-densA, densARR, densT = ps.slice_spectrogram(tr[0], tdens, np.transpose(sdensH), nsec=tr[1]-tr[0])
+elipA, elipARR, elipT = ps.slice_spectrogram(tr[0], timesIDL, data_elip, nsec=nsec)
+planA, planARR, planT = ps.slice_spectrogram(tr[0], timesIDL, data_pol, nsec=nsec)
+#f_fceA, f_fceARR, f_fceT = ps.slice_spectrogram(tr[0], timesIDL[gooalts], f_fce, nsec=nsec)
 
-#tdens, fdensL, sdensL, fdensH, sdensH = end_data_loader.load_slp_sonogram()
+#slice through SLP density sonogram and interpolate to times of the polarization data
+densA, densARR, densT = ps.slice_spectrogram(tr[0], tdens, np.transpose(sdensH), nsec=nsec)
+
+
+
+#High pass the density data to get rid of DC offset 
+#densA = filter_wave_frequency.butter_highpass_filter(densA, 1390, fdensH, order=5)
+gooloc = np.where(fdensH > 4000)[0]
+densA -= densA[gooloc[0]]
+
+
+
+
+cohA, cohARR, cohT = ps.slice_spectrogram(tr[0], tchunks, coh, nsec=nsec)
+#interpolate coherence to times of the polarization data. 
+cohA2 = np.interp(freqs_pow,ff,cohA)
+
+
+
+#Change to np arrays
+elipA = np.asarray(elipA)
+psd12 = np.asarray(psd12)
+
+#Highlight data where deg polarization > 0.7 and coherence is > 0.4
+planA = np.asarray(planA)
+
+#goo = np.where((planA < 0.7) | (cohA2 < 0.4))[0]
+goo = np.where(planA < 0.7)[0]
+psd12z = np.copy(psd12)
+psd12z[goo] = np.nan
+
+planAz = np.copy(planA)
+planAz[goo] = np.nan
+
+elipAz = np.copy(elipA)
+elipAz[goo] = np.nan
+
+cohA2z = np.copy(cohA2)
+cohA2z[goo] = np.nan
+
+
+#Remove abnormally high values near DC
+cohA2[0:20] = np.nan
+cohA2z[0:20] = np.nan
+
+psd12[0:20] = np.nan
+planA[0:20] = np.nan
+
+elipA[0:20] = np.nan
+elipAz[0:20] = np.nan
 
 
 
 fig, axs = plt.subplots(4,figsize=(6,7))
 
 axs[0].set_title('end_analysis_PSD_1d.py for t=['+str(tr[0])+ '-' + str(tr[1]) + '] sec; nfft=' + str(nfft) + '\n fcO='+str(np.floor(fcO))+'; fcHe='+str(np.floor(fcHe))+'; fcH='+str(np.floor(fcH))+' Hz')
-axs[0].plot(psdf, 10*np.log(psd12))
-#axs[0].set_yscale('log')
-#axs[0].set_ylim([5e-11, 1e-8])
-#axs[0].set_ylim([-200,-150])
+axs[0].plot(freqs_pow, 10*np.log(psd12),color='gray')
+axs[0].plot(freqs_pow, 10*np.log(psd12z),color='red')
+axs[0].set_ylim([-100,-50])
 plt.minorticks_on()
-axs[0].set_ylabel('PSD (V/m**2/Hz)')
+axs[0].set_ylabel('PSD\ndB of (mV/m)^2/Hz')
+axs[0].set_xticklabels([])
 
-axs[1].plot(freqs_pol,planA)
+#axs[1].plot(freqs_pow, cohA2, color='gray')
+#axs[1].plot(freqs_pow, cohA2z, color='red')
+#axs[1].set_ylabel('Coherence\n(VLF12, VLF34)')
+#axs[1].set_xticklabels([])
+#axs[1].set_ylim(0,1)
+
+
+axs[1].plot(freqs_pol,planA,color='gray')
+axs[1].plot(freqs_pol,planAz,color='red')
 axs[1].set_yscale('linear')
 axs[1].set_ylim([0.5,1])
 plt.minorticks_on()
 axs[1].set_ylabel('deg polarization')
+axs[1].set_xticklabels([])
 
-axs[2].plot(freqs_elip,elipA)
+axs[2].plot(freqs_elip,elipA,color='gray')
+axs[2].plot(freqs_elip,elipAz,color='red')
 axs[2].set_yscale('linear')
 axs[2].set_ylim([-0.8,0.4])
+axs[2].set_ylabel('Ellipticity')
+axs[2].set_xticklabels([])
+
+axs[2].axhline(y=0.0, color='black',linestyle='--')
+
+
+axs[3].plot(fdensH,densA,color='black')
+axs[3].set_yscale('linear')
+axs[3].set_ylim(np.nanmin(densA),np.nanmax(densA))
+axs[3].set_ylabel('SLP density\nrelative units')
+
+
 plt.minorticks_on()
-plt.ylabel('Ellipticity')
 plt.xlabel('freq (Hz)')
 
-axs[3].plot(fdensH,densA)
-axs[3].set_yscale('linear')
-axs[3].set_ylim([-15,-8])
-plt.minorticks_on()
-plt.ylabel('SLP density')
-plt.xlabel('freq (Hz)')
 
 for i in range(4):
-       axs[i].vlines(fcH*6, -100, 1, color='green')
-       axs[i].vlines(fcH*7, -100, 1, color='green')
-       axs[i].vlines(fcH*8, -100, 1, color='green')
-       axs[i].vlines(fcH*9, -100, 1, color='green')
-       axs[i].vlines(fcH*10, -100, 1, color='green')
-       axs[i].vlines(flhz, -100, 1, color='magenta')
+       axs[i].vlines(fcH*6, -400, 10, color='black',linestyle='--')
+       axs[i].vlines(fcH*7, -400, 10, color='black',linestyle='--')
+       axs[i].vlines(fcH*8, -400, 10, color='black',linestyle='--')
+       axs[i].vlines(fcH*9, -400, 10, color='black',linestyle='--')
+       axs[i].vlines(fcH*10, -400, 10, color='black',linestyle='--')
+       if tr[0] < 800:
+              axs[i].vlines(flhz, -400, 10, color='magenta',linestyle='--')
        axs[i].set_xlim(4000,10000)
        axs[i].xaxis.set_minor_locator(MultipleLocator(100))   # minor ticks every 10
 
+fig.tight_layout(pad=2)
+plt.subplots_adjust(hspace=0.1)
 
 plt.savefig("/Users/abrenema/Desktop/tst.pdf", dpi=350)
 

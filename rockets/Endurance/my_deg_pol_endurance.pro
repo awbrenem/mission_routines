@@ -22,7 +22,7 @@ rbsp_efw_init
 
 
 ;-----------------------------------
-;Load calibrated data from Python
+;Load calibrated data from Python (from save_data_as_netcdf.py)
 ;-----------------------------------
 
 
@@ -56,10 +56,13 @@ goo = where(times ge fliptime)
 if goo[0] ne -1 then wf34[goo] = -1*wf34[goo] 
 
 ;Now keep only desired data (helps program to run much faster)
-ssec = 100
-esec = 900
+ssec = 120
+esec = 170
 ;ssec = 550
 ;esec = 650
+;ssec = 100
+;esec = 900
+
 goo = where((times ge ssec) and (times le esec))
 
 ;Keep polarizations consistent before/after rocket flip maneuver
@@ -118,9 +121,10 @@ corse = 1
 outps = 0
 
 
-npts = 2048
+npts = 4096
 aaron_chaston_polarization,'wf12','wf34','wfz',start,totpoints,rotatefield,pol_lmt,pow_lmt,pow_lmt_typ,corse,sampfreq,outps,npts=npts
 
+stop
 
 
 
@@ -159,7 +163,7 @@ store_data,tnames(),/del
 save,/variables,filename='~/Desktop/tst.sav'
 
 
-
+stop
 
 
 

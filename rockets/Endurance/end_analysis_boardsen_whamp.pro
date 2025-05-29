@@ -10,7 +10,7 @@ fn = 'boardsen_run_mar26_2024.dat'
 ;98% O+ and 2% H+.
 ;ne = 246920
 ;ni = 246920
-;bmag = 47669
+;bmag = 47669 nT
 
 ;dns in M^-3;
 ;vs in km/s

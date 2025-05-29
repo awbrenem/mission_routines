@@ -1,8 +1,8 @@
 """
-See if there's any association b/t Bernstein power and near-DC power 
+Test the idea that V1 sees "extra" Bernstein power in the top band b/c it's slightly more sensitive than the other
+probes and the signal is nearly at the noise level. 
 
 
-Todo:
 
 """
 
@@ -16,6 +16,7 @@ import numpy as np
 from scipy.interpolate import interp1d
 import plot_spectrogram as ps
 import filter_wave_frequency as filt
+import pickle
 import correlation_analysis
 from end_fields_loader import Endurance_Fields_Loader as EFL
 import end_data_loader
@@ -25,29 +26,76 @@ import end_data_loader
 #Load gain/phase corrected data
 #---------------------------------------------
 
-vDC = EFL('V12D')
-wfDC, tdatDC = vDC.load_data_gainphase_corrected()
-fsDC = vDC.chnspecs['fs']
+#vDC = EFL('V12D')
+#wfDC, tdatDC = vDC.load_data_gainphase_corrected()
+#fsDC = vDC.chnspecs['fs']
 
 v12 = EFL('VLF12D')
-wf, tdat = v12.load_data_gainphase_corrected()
+wfc, tdat = v12.load_data_gainphase_corrected()
+wf, tdat = v12.load_data()
 fs = v12.chnspecs['fs']
 
 v1s = EFL('V1SD')
 v2s = EFL('V2SD')
-wf1s, tdats = v1s.load_data_gainphase_corrected()
-wf2s, tdats = v2s.load_data_gainphase_corrected()
+wf1sc, tdats = v1s.load_data_gainphase_corrected()
+wf2sc, tdats = v2s.load_data_gainphase_corrected()
+
+wf1s, tdats = v1s.load_data()
+wf2s, tdats = v2s.load_data()
 
 
-#----------------------------------------------------------------------
-#Mission timeline data
-#----------------------------------------------------------------------
 
-tl, gsS, gsE, bsS, bsE = end_data_loader.load_timeline()
+#Calibrated
+v1 = EFL('V1SD')
+v1s, t, = v1.load_data_gainphase_corrected()
+v2 = EFL('V2SD')
+v2s, t, = v2.load_data_gainphase_corrected()
+v3 = EFL('V3SD')
+v3s, t, = v3.load_data_gainphase_corrected()
+v4 = EFL('V4SD')
+v4s, t, = v4.load_data_gainphase_corrected()
+
+#Raw
+v1 = EFL('V1SD')
+v1s, t, = v1.load_data()
+v2 = EFL('V2SD')
+v2s, t, = v2.load_data()
+v3 = EFL('V3SD')
+v3s, t, = v3.load_data()
+v4 = EFL('V4SD')
+v4s, t, = v4.load_data()
+
+fs = v1.chnspecs['fs']
+
+
+
 
 
 fspec, tspec, powerc = signal.spectrogram(wf, fs, nperseg=1024,noverlap=512,window='hann',return_onesided=True,mode='complex')
-ps.plot_spectrogram(tspec,fspec,np.abs(powerc),vr=[-60,-20],yr=[4000,10000],xr=[100,850], yscale='log')
+ps.plot_spectrogram(tspec,fspec,np.abs(powerc),vr=[-30,-5],yr=[4000,10000],xr=[100,200], yscale='log')
+
+
+
+
+fspec, tspec, powerc1 = signal.spectrogram(v1s, fs, nperseg=1024,noverlap=512,window='hann',return_onesided=True,mode='complex')
+fspec, tspec, powerc2 = signal.spectrogram(v2s, fs, nperseg=1024,noverlap=512,window='hann',return_onesided=True,mode='complex')
+fspec, tspec, powerc3 = signal.spectrogram(v3s, fs, nperseg=1024,noverlap=512,window='hann',return_onesided=True,mode='complex')
+fspec, tspec, powerc4 = signal.spectrogram(v4s, fs, nperseg=1024,noverlap=512,window='hann',return_onesided=True,mode='complex')
+
+
+ps.plot_spectrogram(tspec,fspec,np.abs(powerc1),vr=[1e-7,1e-5],yr=[4000,10000],xr=[100,200], yscale='linear')
+
+
+
+fig, axs = plt.subplots(4)
+
+
+
+ps.plot_spectrogram(tspec,fspec,np.abs(powerc1),vr=[-13,5],yr=[4000,10000],xr=[100,200], yscale='linear',ax=axs[0])
+ps.plot_spectrogram(tspec,fspec,np.abs(powerc2),vr=[-13,5],yr=[4000,10000],xr=[100,200], yscale='linear',ax=axs[1])
+ps.plot_spectrogram(tspec,fspec,np.abs(powerc3),vr=[-13,5],yr=[4000,10000],xr=[100,200], yscale='linear',ax=axs[2])
+ps.plot_spectrogram(tspec,fspec,np.abs(powerc4),vr=[-10,5],yr=[4000,10000],xr=[100,200], yscale='linear',ax=axs[3])
+
 
 
 #-------------------------------------------------------------------------------------

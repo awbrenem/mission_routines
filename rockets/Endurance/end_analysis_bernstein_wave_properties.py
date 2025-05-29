@@ -9,7 +9,7 @@ Bernstein waves typically "short wavelength", defined as k*pi ~ n, where n is an
 WHAMP values for 160 sec 
 Te = 0.22 eV (SLP - also consistent with IRI)
 Tneut = 0.088 (IG)
-Ti = 0.1 (EISCAT - consistent with IRI)
+Ti = 0.1 eV (EISCAT - consistent with IRI)
 ne = 220058 cm-3
 H+frac = 0.04
 O+frac = 0.96

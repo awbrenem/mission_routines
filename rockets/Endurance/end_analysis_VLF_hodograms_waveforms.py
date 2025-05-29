@@ -24,8 +24,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy import signal
 import numpy as np
-import end_load_data as end
-import end_load_gainphase as gainphase
+#import end_load_data as end
+from end_fields_loader import Endurance_Fields_Loader as EFL
+
+#import end_data_loader as end
+#import end_load_gainphase as gainphase
 
 from scipy.interpolate import interp1d
 #from scipy.fft import rfft, irfft
@@ -46,6 +49,19 @@ import correlation_analysis
 #Endurance_Analog 1_VLF34D_6-30000-100_gainphase_corrected.pkl
 #---------------------------------------------
 
+v12 = EFL('VLF12D')
+v34 = EFL('VLF34D')
+v24 = EFL('VLF24D')
+v32 = EFL('VLF32D')
+
+fs = v12.chnspecs['fs']
+wfc12, tdat = v12.load_data_gainphase_corrected()
+wfc34, tgoo = v34.load_data_gainphase_corrected()
+wfc24, tgoo = v24.load_data_gainphase_corrected()
+wfc32, tgoo = v32.load_data_gainphase_corrected()
+
+
+"""
 pathoutput = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/efield_VLF/'
 
 fnsav = 'Endurance_Analog 1_VLF12D_6-30000-100_gainphase_corrected'
@@ -54,7 +70,6 @@ wfc12 = wf_corr_load['wf']
 
 tdat = wf_corr_load['tvals']
 fs = np.mean([1/(tdat[i+1]-tdat[i]) for i in range(len(tdat)-1)])
-
 
 fnsav = 'Endurance_Analog 1_VLF34D_6-30000-100_gainphase_corrected'
 wf_corr_load = pickle.load(open(pathoutput + fnsav + ".pkl", 'rb'))
@@ -67,7 +82,7 @@ wfc24 = wf_corr_load['wf']
 fnsav = 'Endurance_Analog 1_VLF32D_6-30000-100_gainphase_corrected'
 wf_corr_load = pickle.load(open(pathoutput + fnsav + ".pkl", 'rb'))
 wfc32 = wf_corr_load['wf']
-
+"""
 
 
 
@@ -165,16 +180,16 @@ def plot_csd(tr, xlm=[0,12000],ylm=[-180,180],nps=512,wfs=['12','34']):
 #Wave 1: Berstein (~120-130 sec at 5000-8000 Hz)
 #--------------------------------------
 
-ps.plot_spectrogram(tspec,fspec,np.abs(powerc),vr=[-60,-30],yr=[4000,8000],xr=[120,130], yscale='linear')
+ps.plot_spectrogram(tspec,fspec,np.abs(powerc),vr=[-50,-10],yr=[4000,8000],xr=[750,850], yscale='linear')
 
-
-wfc12bp = filt.butter_bandpass_filter(wfc12, 4000, 6000, fs, order= 10)
-wfc34bp = filt.butter_bandpass_filter(wfc34, 4000, 6000, fs, order= 10)
-wfc24bp = filt.butter_bandpass_filter(wfc24, 4000, 6000, fs, order= 10)
-wfc32bp = filt.butter_bandpass_filter(wfc32, 4000, 6000, fs, order= 10)
+fr = [6000,6500]
+wfc12bp = filt.butter_bandpass_filter(wfc12, fr[0],fr[1], fs, order= 10)
+wfc34bp = filt.butter_bandpass_filter(wfc34, fr[0],fr[1], fs, order= 10)
+wfc24bp = filt.butter_bandpass_filter(wfc24, fr[0],fr[1], fs, order= 10)
+wfc32bp = filt.butter_bandpass_filter(wfc32, fr[0],fr[1], fs, order= 10)
 
 fspecz, tspecz, powercz = signal.spectrogram(wfc12bp, fs, nperseg=4*2048,noverlap=2*2048,window='hann',return_onesided=True,mode='complex')
-ps.plot_spectrogram(tspecz,fspecz,np.abs(powercz),vr=[-60,-30],yr=[4000,8000],xr=[120,130], yscale='linear')
+ps.plot_spectrogram(tspecz,fspecz,np.abs(powercz),vr=[-80,-10],yr=fr,xr=[750,850], yscale='linear')
 
 
 
@@ -200,6 +215,52 @@ plot_hod(tr)
 plot_wf([123.00275,123.00375])
 plot_wf([115.00275,128.00375])
 plot_hod([123.00275,123.00375])
+
+
+
+#Snapshot 3
+tr = [130.62,130.72]  #zoomed out
+tr = [130.67718,130.68]  #zoomed in
+plot_wf(tr)
+plot_csd([tr[0]-3, tr[1]+3])
+plot_hod(tr) #Fairly circular
+
+
+
+
+
+
+tdelta = 0.005  #sec
+t0 = 130.0
+
+t0 = t0 + 0.1
+tr = [t0, t0+tdelta]
+goot = np.where((tdat >= tr[0]) & (tdat <= tr[1]))
+maxv = np.max([list(wfc12bp[goot]), list(wfc34bp[goot])])
+
+fig,axs = plt.subplots(2)
+axs[0].plot(tdat[goot],wfc12bp[goot])
+axs[0].plot(tdat[goot],wfc34bp[goot])
+axs[1].plot(-wfc34bp[goot],-wfc12bp[goot])
+plt.gca().set_aspect('equal')
+axs[1].set_ylim(-1*0.1,0.1)
+axs[1].set_xlim(-1*0.1,0.1)
+
+
+axs.set_ylim(-1*maxv,maxv)
+axs.set_xlim(-1*maxv,maxv)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -269,8 +330,8 @@ print("here")
 
 wfc12bp = filt.butter_bandpass_filter(wfc12, 60, 300, fs, order= 10)
 wfc34bp = filt.butter_bandpass_filter(wfc34, 60, 300, fs, order= 10)
-wfc24bp = filt.butter_bandpass_filter(wfc24, 60, 300, fs, order= 10)
-wfc32bp = filt.butter_bandpass_filter(wfc32, 60, 300, fs, order= 10)
+#wfc24bp = filt.butter_bandpass_filter(wfc24, 60, 300, fs, order= 10)
+#wfc32bp = filt.butter_bandpass_filter(wfc32, 60, 300, fs, order= 10)
 
 plot_wf([165.20,165.8])
 plot_hod([165.20,165.8])

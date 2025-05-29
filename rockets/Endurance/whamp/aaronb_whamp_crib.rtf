@@ -1,0 +1,135 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2761
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 Menlo-Regular;\f1\fnil\fcharset0 HelveticaNeue;\f2\fnil\fcharset0 Monaco;
+}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red25\green25\blue25;\red0\green0\blue127;
+\red255\green0\blue0;}
+{\*\expandedcolortbl;;\csgray\c0;\cssrgb\c12941\c12941\c12941;\csgenericrgb\c0\c0\c49804;
+\csgenericrgb\c100000\c0\c0;}
+\margl1440\margr1440\vieww23320\viewh18000\viewkind0
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f0\fs32 \cf2 \CocoaLigature0 To use Scott Boardsen\'92s plotting code:\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs28 \cf3 \expnd0\expndtw0\kerning0
+\CocoaLigature1 The plotting code, you can comment out the cold plasma part.
+\fs20 \
+
+\fs28 \'a0\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs22 \cf0 \kerning1\expnd0\expndtw0 \
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs28 \cf3 \expnd0\expndtw0\kerning0
+\
+\pard\pardeftab720\partightenfactor0
+
+\f2 \cf0 \kerning1\expnd0\expndtw0 .compile /Users/abrenema/Desktop/code/Aaron/github/mission_routines/rockets/Endurance/whamp/sab_pos\
+\pard\pardeftab720\partightenfactor0
+\cf0 .compile /Users/abrenema/Desktop/code/Aaron/github/mission_routines/rockets/Endurance/whamp/whamp_plot_new\
+.compile /Users/abrenema/Desktop/code/Aaron/github/mission_routines/rockets/Endurance/whamp/whamp_field\
+\pard\pardeftab720\partightenfactor0
+
+\f1 \cf3 \expnd0\expndtw0\kerning0
+\
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs22 \cf4 \kerning1\expnd0\expndtw0 restore\cf0 , \cf5 '/Users/abrenema/Desktop/code/Aaron/github/mission_routines/rockets/Endurance/whamp/whamp_w_nT4.77e+04_FRQr-3.00-10.00fcp__WNA-089__beta_7.87e-08_3.85e-06_8.74e-06_.sv'\cf0 ,/v
+\f0\fs28 \cf2 \CocoaLigature0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f1 \cf3 \expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\pard\pardeftab720\partightenfactor0
+
+\f0 \cf3 sol = outs2\cf0 \
+\cf3 apt = whamp_plot_new(sol, plasma)\cf0 \
+\pard\pardeftab720\partightenfactor0
+
+\f1 \cf3 \'a0\
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs32 \cf2 \kerning1\expnd0\expndtw0 \CocoaLigature0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+\
+\
+\
+\
+\
+\
+\
+\
+IDL> restore, 'whamp_w_nT4.77e+04_FRQr-3.00-10.00fcp__WNA-089__beta_7.87e-08_3.85e-06_8.74e-06_.sv',/v\
+% RESTORE: Portable (XDR) SAVE/RESTORE file.\
+% RESTORE: Save file written by sboardse@gs674-boardmba-198120187032.ndc.nasa.gov, Tue May  6 12:24:51 2025.\
+% RESTORE: IDL version 9.1.0 (darwin, arm64).\
+% RESTORE: Restored variable: OUTS2.\
+% RESTORE: Restored variable: PLASMA.\
+\
+IDL> help, plasma\
+** Structure <41906148>, 6 tags, length=616, data length=612, refs=1:\
+   DENE            DOUBLE           246920.00\
+   DENI            DOUBLE           246920.00\
+   BMAG            FLOAT           47669.0\
+   SPECIES         STRUCT    -> <Anonymous> Array[6]\
+   LABEL           STRING    'DENe=2.47e+05cm!u-3!n B!d0!n=4.77e+04 nT  0.0200 H+, 0.980 O+, 1.00 e-,'\
+   LABELS          STRING    Array[6]\
+\
+IDL> help, plasma.species[0]\
+** Structure <41905f98>, 9 tags, length=80, data length=80, refs=2:\
+   NAME            STRING    'H+'\
+   AMU             DOUBLE           1.0000000\
+   ZCHARGE         DOUBLE           1.0000000\
+   FRAC            DOUBLE         0.019999999\
+   TEMPPAR         DOUBLE       9.0000001e-05\
+   AA              DOUBLE           1.0000000\
+   BB              DOUBLE          0.50000000\
+   DD              DOUBLE           1.0000000\
+   VD              DOUBLE           0.0000000\
+\
+IDL> help,outs2\
+OUTS2           STRUCT    = -> <Anonymous> Array[122]\
+IDL> help,outs2,/str\
+** Structure <4100ac08>, 33 tags, length=2064, data length=2064, refs=1:\
+   DABS            DOUBLE           420.62536\
+   DDXX            DOUBLE       9.0743299e-13\
+   ICON            LONG                 1   ; 1 means solution converged.\
+   IERR            LONG                 0\
+   IRK             LONG                 0\
+   ITER            LONG                 4\
+   FRQ             DCOMPLEX  (       2176.2980,   1.5850638e-08)  ; frequency in Hz\
+   FCP             DOUBLE           726.73683    ; proton cyclotron frequency\
+   WC1             DOUBLE           4566.2222    ; angular proton cyclotron frequency\
+   C               DOUBLE       2.9979250e+08    ; velocity of clight in m/s\
+   VREF            DOUBLE           4152.3768    ; thermal velocity of of first species\
+   CINDEX          DOUBLE           512.51573   ; index of refraction  (c*k/w)\
+   WNA             DOUBLE           89.950000   ; wave normal angle in degrees\
+   X               DCOMPLEX  (       2.9946163,   2.1810698e-11)   ;  w/wcp or f/fcp\
+   Z               DOUBLE       1.8551187e-05   ; parallel kvector  k*vref/wc1\
+   P               DOUBLE         0.021258089   ; perpendicular kvector  k*vref/wc1\
+   D               DCOMPLEX  (      -420.62500,     -0.55204393)\
+   DX              DCOMPLEX  (   1.5478886e+14,       371747.85)\
+   DZ              DCOMPLEX  (  -2.3842903e+16,  -2.4284574e+08)\
+   DP              DCOMPLEX  (  -1.9843652e+16,      -47933230.)\
+   EFL             DCOMPLEX  Array[3]  ; set to 1 mV/M\
+   BFL             DCOMPLEX  Array[3]  \
+   VG              DOUBLE    Array[2]\
+   XX1             DCOMPLEX  (       2.9946163,   2.1807132e-11)\
+   PP1             DOUBLE         0.021258089\
+   ZZ1             DOUBLE       1.8551187e-05\
+   AMU             DOUBLE    Array[6]\
+   DN0             DOUBLE    Array[6]\
+   DNS             DCOMPLEX  Array[6]  ; wave perturbation density referenced to 1mV/M E-field\
+   VS              DCOMPLEX  Array[3, 6] ; wave perturbation velocity referenced to 1mV/M E-field\
+   JS              DCOMPLEX  Array[3, 6] ; current density contribution from each species\
+   XES             DCOMPLEX  Array[6, 6] ; susceptiblity tensor\
+   EDIE            DCOMPLEX  Array[6, 4] ; diectrict tensor\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\qj\partightenfactor0
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+\
+\
+}

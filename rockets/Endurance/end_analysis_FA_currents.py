@@ -13,8 +13,10 @@ import matplotlib.pyplot as plt
 #import plasma_params_get_flhr_freq
 #import plasma_params_get_flhr_freq as dflh
 from scipy import signal
+from statsmodels.tsa.tsatools import detrend
 
-
+def moving_average(x, w):
+    return np.convolve(x, np.ones(w), 'valid') / w
 
 
 #------------------
@@ -23,13 +25,32 @@ from scipy import signal
 magv = EFL('mag')
 mag = magv.load_data()
 Bo = np.sqrt(mag[0]**2 + mag[1]**2 + mag[2]**2)
+
+#perp Bo
+Bop = np.sqrt(mag[1]**2 + mag[2]**2)
 Bot = mag[3]
 
-plt.plot(Bot,mag[1],Bot,mag[2])
-plt.plot(Bot,Bo)
+#plt.plot(Bot,mag[1],Bot,mag[2])
+#plt.plot(Bot,Bo)
 
-Bo_det = signal.detrend(Bo,type='constant')
-plt.plot(Bot,Bo_det)
+sr = 1/(Bot[1]-Bot[0])
+
+
+
+sz = 1   #seconds to smooth over
+#sz = 0.1
+sznum = int(np.floor(sz*sr))
+rolling_mean = moving_average(Bop,sznum)
+
+Bop2 = Bop[0:-(sznum-1)]
+Bot2 = Bot[0:-(sznum-1)]
+Bo_det = Bop2 - rolling_mean
+
+
+
+plt.plot(Bot2,Bo_det)
+#plt.xlim(400,420)
+plt.ylim(-50,50)
 plt.show()
 
 

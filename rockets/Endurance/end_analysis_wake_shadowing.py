@@ -11,8 +11,11 @@ Focussing wake: -eVsc > mvi^2/2 > kTi
 ExB drift velocity:
 vi = 800 - 1000 m/s (upleg/downleg during Bernstein waves). Mostly zonal on upleg and half zonal half meridional on downleg
 
-Rocket velocity:
-Vrocket ~ 3500 m/s 
+Rocket velocity at 170 sec (rough):
+Vrocket [WNU] = [390, -120, 2500] 
+Rocket velocity at 800 sec (rough):
+Vrocket [WNU] = [380, -130, -3000] 
+
 
 Temperature:
 Upleg: 
@@ -81,20 +84,50 @@ plt.xlim(100,900)
 
 Epot = np.abs(skinpot)
 
+Vpot = np.sqrt(kB*(Epot*11600)/mp) / 1000
+
+
 
 #-------------------------------------------
 #Determine flow energy based on relative velocity b/t rocket and convection
 #...for now I'm just using the rocket velocity
 #-------------------------------------------
 
-vmag_rocket = np.sqrt(ephem['ECEF-X-VEL']**2 + ephem['ECEF-Y-VEL']**2 + ephem['ECEF-Z-VEL']**2)
-plt.plot(times_ephem,vmag_rocket)
+#vmag_rocket = np.sqrt(ephem['ECEF-X-VEL']**2 + ephem['ECEF-Y-VEL']**2 + ephem['ECEF-Z-VEL']**2)
+#plt.plot(times_ephem,vmag_rocket)
+
+plt.plot(times_ephem,ephem['ECEF-X-VEL'])  #west
+plt.plot(times_ephem,ephem['ECEF-Y-VEL'])  #north
+plt.plot(times_ephem,ephem['ECEF-Z-VEL'])  #upwards
+
+
+#At 170s rocket has velocity  Vrocket_WNU = [390, -120, 2500] 
+#Most of this along Bo. The transverse velocity is 
+#vmag_rocket = np.sqrt(390**2 + 120**2)
+vmag_rocket = np.sqrt(ephem['ECEF-X-VEL']**2 + ephem['ECEF-Y-VEL']**2)
+
+#=408 m/s (west-west-south)
+
+
 
 EHflow = 0.5 * (mp) * vmag_rocket**2 / e1eV
 EOflow = 0.5 * (mp*16) * vmag_rocket**2 / e1eV
 
+#version 2 - during the upleg Bernstein waves, the convection velocity (~1000 m/s) is nearly the same direction as 
+#the rocket velocity (both mostly West but a bit south). Thus the relative velocity b/t the rocket and plasma is decreased. 
+#vmag_flow = np.zeros(len(vmag_rocket))
+#vmag_flow[:] = 1000
+vmag_flow = 1000
 
+vmag_relative = vmag_rocket - vmag_flow
+EHrelative = 0.5 * (mp) * vmag_relative**2 / e1eV
+EOrelative = 0.5 * (mp*16) * vmag_relative**2 / e1eV
 
+plt.plot(times_ephem,vmag_rocket)
+plt.plot(times_ephem,vmag_relative)
+
+plt.plot(times_ephem,EOflow)
+plt.plot(times_ephem,EOrelative)
 
 
 #----------------------------------------------------------
@@ -115,7 +148,8 @@ plt.plot(times_iri_up,Ti_iri,'.')
 plt.plot(times_iri_dn,Ti_iri,'.')
 plt.plot(times_slp,Ti_slp,'.')
 plt.plot(times_slp,Te_slp,'.')
-plt.plot(times_slp,Te_iri,'.')
+plt.plot(times_iri_up,Te_iri,'.')
+plt.plot(times_iri_dn,Te_iri,'.')
 
 
 #Ion temps not measured by SLP at lower altitudes, but EISCAT suggests 1100 K from 100-600 km on both upleg/downleg
@@ -151,6 +185,32 @@ plt.plot(times_iri_dn,Eth,'.')
 plt.ylim(0,1)
 plt.xlim(100,900)
 
+#version two using VERY rough estimate of relative velocity b/t rocket and flow 
+#***valid for upleg Bernstein times only 
+plt.plot(times_skin,Epot,'.')       #rocket charging (blue)
+plt.plot(times_ephem,EOrelative,'.') #rocket energy (orange)
+plt.plot(times_iri_up,Eth,'.') #thermal energy (red/green)
+plt.plot(times_iri_dn,Eth,'.')
+plt.ylim(0,1)
+plt.xlim(100,900)
+
+
+
+
+
+
+
+
+
+
+
+#Comparison plot relevant velocities
+plt.plot(times_ephem,vmag_rocket/1000,'.') #rocket energy (orange)
+#plt.plot(times_iri_up,VH_iri,'.') #thermal energy (red/green)
+plt.plot(times_iri_dn,VO_iri,'.')
+#plt.plot(times_skin,Vpot,'.') #velocity based on skin potential
+#plt.ylim(0,1)
+plt.xlim(100,900)
 
 
 

@@ -25,7 +25,7 @@ import matplotlib.pyplot as plt
 from math import remainder
 
 
-chn = 'VLF12D'
+chn = 'VLF34D'
 
 path = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/gain_phase_files/'
 
@@ -112,19 +112,30 @@ print('h')
 
 
 
-"""
+
 #compare phase of VLF12 and VLF34
 prad12 = prad
-f12 = f
+f12 = np.asarray(f)
 prad34 = prad 
-f34 = f
+f34 = np.asarray(f)
 
 diff = prad12 - prad
 diff = diff * (180/3.14)
-plt.plot(f,diff)
-plt.xlim(0,10000)
-plt.ylim(-5,5)
+
+fig, axs = plt.subplots(2)
+
+axs[0].plot(f12,diff)
+axs[0].set_xlim(0,10000)
+axs[0].set_ylim(-5,5)
+#axs[0].title='Phase diff (deg) b/t VLF12D and VLF34D'
+
+axs[1].plot(f12,np.degrees(prad12),f34,np.degrees(prad34))
+axs[1].set_xlim(0,10000)
+axs[1].set_ylim(-180,180)
+#axs[1].title='Phase (VLF12D=blue; VLF34D=orange)'
+
+plt.show()
 
 plt.plot(f,prad,f,prad12)
 plt.xlim(0,10000)
-"""
+print('here')

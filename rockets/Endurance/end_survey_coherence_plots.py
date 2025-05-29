@@ -104,3 +104,16 @@ ps.plot_spectrogram(tspec,fspec,np.abs(powerc1),vr=vr,xr=xr,yr=yr,yscale=yscale,
 
 
 
+
+
+fig,axs = plt.subplots(5)  #,gridspec_kw={'height_ratios':[1,1,1,1,1,1,1,1,1]})
+fig.subplots_adjust(bottom=0.1,right=0.8,left=0.2,top=0.9,hspace=0.1,wspace=0.4)
+ps.plot_spectrogram(tspec,fspec,np.abs(powerc1),vr=vr,xr=xr,yr=yr,yscale=yscale,ax=axs[0],xlabel='time(sec)',ylabel=c1s + "\nfreq(Hz)")
+axs[0].get_xaxis().set_visible(False)
+ps.plot_spectrogram(tspec,fspec,np.abs(powerc2),vr=vr,xr=xr,yr=yr,yscale=yscale,ax=axs[1],xlabel='time(sec)',ylabel=c2s + "\nfreq(Hz)")
+axs[1].get_xaxis().set_visible(False)
+ps.plot_spectrogram(tspec,fspec,ptmp_fracdiff,vr=[0,1],zscale='linear',xr=xr,yr=yr,yscale=yscale,ax=axs[2],xlabel='time(sec)',ylabel="percent diff\nfreq(Hz)")
+axs[2].get_xaxis().set_visible(False)
+ps.plot_spectrogram(tchunks2,freqs2,phasex2,vr=[-180,180],zscale='linear',xr=xr,yr=yr,yscale=yscale,ax=axs[3],xlabel='time(sec)',ylabel='phase\n('+c1s+'-'+c2s+')\nfreq(Hz)')
+axs[3].get_xaxis().set_visible(False)
+ps.plot_spectrogram(tchunks2,freqs2,cohx2**2,vr=[0,1], zscale='linear',xr=xr,yr=yr,yscale=yscale,ax=axs[4],xlabel='time(sec)',ylabel='coh**2\n(coh >'+str(cohmin)+')\nfreq(Hz)')

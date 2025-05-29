@@ -1,5 +1,5 @@
 """
-Run interferometry analysis on Bernstein waves from Endurance
+Run interferometry analysis on DC density structures from Endurance
 -2D power spec of f vs k
 -1D k vs f 
 
@@ -75,13 +75,13 @@ import filter_wave_frequency as filt
 #Use long spaced receivers
 #----------------------------------------------------------------
 ##x-hat' direction from phase analysis uses these two components
-vAstrx = 'VLF13D'
-vBstrx = 'VLF24D'  #-->42
+vAstrx = 'V13D'
+vBstrx = 'V24D'  #-->42
 polarity_xA = 1
 polarity_xB = -1
 ##y-hat' direction from phase analysis uses these two components
-vAstry = 'VLF32D'
-vBstry = 'VLF41D'  #-->14
+vAstry = 'V32D'
+vBstry = 'V41D'  #-->14
 polarity_yA = 1
 polarity_yB = -1
 ##Endurance has ~3m booms, so the effective length of the diagonals is = 3*cos(45) = 2.27
@@ -168,6 +168,8 @@ fspecy, tspecy, powercAy = signal.spectrogram(wfAy, fs, nperseg=nps,noverlap=nps
 fspecy, tspecy, powercBy = signal.spectrogram(wfBy, fs, nperseg=nps,noverlap=nps/2,window='hann',return_onesided=True,mode='complex')
 
 
+ps.plot_spectrogram(tspecx,fspecx,np.abs(powercAx),vr=[-50,0],yr=[0,1000],xr=[380,480], yscale='linear')
+
 
 #cohmin = 0.01  #Best to limit bad coherence values at the onset. Otherwise get a lot of salt/pepper noise in final result
 cohmin = 0.6  #Best to limit bad coherence values at the onset. Otherwise get a lot of salt/pepper noise in final result
@@ -181,8 +183,8 @@ kr = [-5,5]
 #tz = 840 
 #tz = 712 
 #nsec = 4
-tz = 781
-nsec = 2
+tz = 393
+nsec = 4
 #tz = 115
 #nsec = 2
 #tz = 170 
@@ -210,8 +212,8 @@ Nval = 3
 gx,cohx,phasex = correlation_analysis.interferometric_coherence_2D(powercAx,powercBx,Nval)
 gy,cohy,phasey = correlation_analysis.interferometric_coherence_2D(powercAy,powercBy,Nval)
 
-yr=[4500,8000]
-xr=[100,220]
+yr=[0,200]
+xr=[380,420]
 fig, axs = plt.subplots(3)
 ps.plot_spectrogram(tspecx,fspecx,np.abs(powercAx),ax=axs[0],vr=[-40,-20],yr=yr,xr=xr)
 ps.plot_spectrogram(tspecx,fspecx,cohx,zscale='linear',vr=[0.7,1],ax=axs[1],yr=yr,xr=xr)
@@ -248,13 +250,13 @@ fkpowspecx, kvalsx, fvalsx, pmaxvalsx = interf.inter_fvsk(np.abs(powercAxz),tspe
                                          receiver_spacing_xhat,
                                          mean_max='max',
                                          nkbins=200,
-                                         klim=[-5,5])
+                                         klim=[-1,1])
 fkpowspecy, kvalsy, fvalsy, pmaxvalsy = interf.inter_fvsk(np.abs(powercAyz),tspecyz,fspecy, 
                                          phaseyz,tspecyz,fspecy,
                                          receiver_spacing_yhat,
                                          mean_max='max',
                                          nkbins=200,
-                                         klim=[-5,5])
+                                         klim=[-1,1])
 
 #Turn k-values into wavelength
 wl1 = np.zeros(len(fvalsx))
@@ -274,9 +276,10 @@ for i in range(len(fvalsx)):
 #-------------------------------------------------------------
 
 
-tchunk = 0.1  #delta-time (sec) for each time chunk to divide up the spectra into
+tchunk = 0.5  #delta-time (sec) for each time chunk to divide up the spectra into
 nchunks = int(np.ceil((wfAx.size/fs)/tchunk)) #number of chunks in ENTIRE timerange
-nperseg = 512  #choose based on desired freq resolution 
+#nperseg = 512  #choose based on desired freq resolution 
+nperseg = 2048  #choose based on desired freq resolution 
 
 
 cohx2, phasex2, tchunks2, freqs2 = correlation_analysis.cross_spectral_density_spectrogram(wfAx,wfBx,tdatx,fs,tchunk,coh_min=cohmin,nperseg=nperseg)
@@ -328,15 +331,15 @@ goo, fracdiffy2, goo2 = ps.slice_spectrogram(tz,tspecx,fracdiffy,nsec)
 
 
 #---------------------------------------------------------------------------------------
-goodf = np.where((fspecx > 4000) & (fspecx < 9000))[0]
+goodf = np.where((fspecx > 10) & (fspecx < 200))[0]
 
 
-yr = [4000,10000]
-vr=[-45,-30]
+yr = [0,200]
+vr=[-45,-10]
 xrspec = [tz,tz+nsec]
 titlegoo = 'slice from '+ str(tz) + '-' + str(tz + nsec) + ' sec\n' #+ vAstrx + ' and ' + vBstrx
 
-plot_kwargs={'cmap':'turbo'},
+plot_kwargs={'cmap':'turbo'}
 
 
 #Plot values from Method 2
@@ -409,7 +412,7 @@ axs[6,1].set_xlabel('Hz')
 axs[7,1].plot(freqs2,Vphase,'.',color='black')
 axs[7,1].set_xlim(yr)
 axs[7,1].set_yscale('linear')
-axs[7,1].set_ylim(0,100)
+axs[7,1].set_ylim(0,2)
 axs[7,1].set_ylabel("Vphase\n(km/s)")
 axs[7,1].set_xlabel('Hz')
 

@@ -1,5 +1,5 @@
 """
-Run interferometry analysis on Bernstein waves from Endurance
+Run interferometry analysis on Hiss waves from Endurance
 -2D power spec of f vs k
 -1D k vs f 
 
@@ -62,7 +62,7 @@ import interferometry_routines as interf
 import correlation_analysis
 import plot_spectrogram as ps
 import matplotlib.pyplot as plt
-import filter_wave_frequency as filt
+#import filter_wave_frequency as filt
 
 
 #-------------------------------------------------------------
@@ -177,23 +177,12 @@ cohmin = 0.6  #Best to limit bad coherence values at the onset. Otherwise get a 
 #--Bernstein waves on upleg
 vr = [-45,-20]
 ys = 'linear'
-kr = [-5,5]
-#tz = 840 
-#tz = 712 
-#nsec = 4
-tz = 781
-nsec = 2
-#tz = 115
-#nsec = 2
-#tz = 170 
-#tz = 721.5
-#nsec = 5
-#tz = 720
-#nsec = 5
-#tz = 885
-#nsec = 5
-#tz = 381.4
-#nsec = 3
+kr = [-1,1]
+#tz = 294
+#nsec = 0.25
+tz = 867
+nsec = 0.25
+
 yr = [0,16000]
 
 
@@ -210,8 +199,8 @@ Nval = 3
 gx,cohx,phasex = correlation_analysis.interferometric_coherence_2D(powercAx,powercBx,Nval)
 gy,cohy,phasey = correlation_analysis.interferometric_coherence_2D(powercAy,powercBy,Nval)
 
-yr=[4500,8000]
-xr=[100,220]
+yr=[4500,12000]
+xr=[860,880]
 fig, axs = plt.subplots(3)
 ps.plot_spectrogram(tspecx,fspecx,np.abs(powercAx),ax=axs[0],vr=[-40,-20],yr=yr,xr=xr)
 ps.plot_spectrogram(tspecx,fspecx,cohx,zscale='linear',vr=[0.7,1],ax=axs[1],yr=yr,xr=xr)
@@ -248,13 +237,13 @@ fkpowspecx, kvalsx, fvalsx, pmaxvalsx = interf.inter_fvsk(np.abs(powercAxz),tspe
                                          receiver_spacing_xhat,
                                          mean_max='max',
                                          nkbins=200,
-                                         klim=[-5,5])
+                                         klim=[-1,1])
 fkpowspecy, kvalsy, fvalsy, pmaxvalsy = interf.inter_fvsk(np.abs(powercAyz),tspecyz,fspecy, 
                                          phaseyz,tspecyz,fspecy,
                                          receiver_spacing_yhat,
                                          mean_max='max',
                                          nkbins=200,
-                                         klim=[-5,5])
+                                         klim=[-1,1])
 
 #Turn k-values into wavelength
 wl1 = np.zeros(len(fvalsx))
@@ -274,7 +263,7 @@ for i in range(len(fvalsx)):
 #-------------------------------------------------------------
 
 
-tchunk = 0.1  #delta-time (sec) for each time chunk to divide up the spectra into
+tchunk = 0.05  #delta-time (sec) for each time chunk to divide up the spectra into
 nchunks = int(np.ceil((wfAx.size/fs)/tchunk)) #number of chunks in ENTIRE timerange
 nperseg = 512  #choose based on desired freq resolution 
 
@@ -331,7 +320,7 @@ goo, fracdiffy2, goo2 = ps.slice_spectrogram(tz,tspecx,fracdiffy,nsec)
 goodf = np.where((fspecx > 4000) & (fspecx < 9000))[0]
 
 
-yr = [4000,10000]
+yr = [5000,12000]
 vr=[-45,-30]
 xrspec = [tz,tz+nsec]
 titlegoo = 'slice from '+ str(tz) + '-' + str(tz + nsec) + ' sec\n' #+ vAstrx + ' and ' + vBstrx
@@ -402,14 +391,14 @@ axs[5,1].set_ylabel("kx'(blue)\nky'(orange)")
 axs[6,1].plot(freqs2,wl2,'.',color='black')
 axs[6,1].set_xlim(yr)
 axs[6,1].set_yscale('linear')
-axs[6,1].set_ylim(0,20)
+axs[6,1].set_ylim(0,200)
 axs[6,1].set_ylabel("wavelength\n(m)\nfrom |k|")
 axs[6,1].set_xlabel('Hz')
 
 axs[7,1].plot(freqs2,Vphase,'.',color='black')
 axs[7,1].set_xlim(yr)
 axs[7,1].set_yscale('linear')
-axs[7,1].set_ylim(0,100)
+axs[7,1].set_ylim(0,1500)
 axs[7,1].set_ylabel("Vphase\n(km/s)")
 axs[7,1].set_xlabel('Hz')
 

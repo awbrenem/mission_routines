@@ -16,7 +16,7 @@ fn = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/ephemeris/
 nms = ['Time','Yaw','Pitch','Roll','RollRate','AoA_T','AngleB','a11','a12','a13','a21','a22','a23','a31','a32','a33','X_Az','X_El','Y_Az','Y_El','Z_Az','Z_El','Latgd','Long','Alt']
 dat = pd.read_csv(fn,skiprows=7,header=0,names=nms)
 
-
+#Remove some bad trailing values
 last = 43800
 times = np.asarray(dat['Time'][0:last])
 

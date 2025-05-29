@@ -35,6 +35,7 @@ nfft = 2048
 #tr = [200,400]
 #tr = [130,850]
 tr = [500,505]
+#tr = [41.25,41.252]
 
 v12 = EFL('VLF12D')
 v13 = EFL('VLF13D')
@@ -85,7 +86,38 @@ psd42, psdf = correlation_analysis.psd(wf42z, tdat[goot], fs, tr, nft=nfft)
 psd14, psdf = correlation_analysis.psd(wf14z, tdat[goot], fs, tr, nft=nfft)
 psd32, psdf = correlation_analysis.psd(wf32z, tdat[goot], fs, tr, nft=nfft)
 
+amp = 0.3 mV/m
+amp2 = 0.00025 mV/m / sqrt(Hz)
+df = 14.65  #bin size
 
+amp22 = 0.00025 * df**2
+
+#dt = 501.00077 - 501.000921
+#6600 Hz
+#amp = 0.1  mV/m
+#psd amp = 2 uV/m 
+
+
+#1.5e-7 mV/m / sqrt(Hz)
+
+df = 14.6 
+
+plt.plot(tdat[goot],wf12[goot])
+plt.xlim(501,501.01)
+
+#dt = 41.250177 - 41.250310
+#amp = 13 uV/m
+#@7500 Hz
+
+
+plt.plot(psdf,psd12)
+plt.ylim(-0.001,0.001)
+
+v = plt.magnitude_spectrum(wf12z, Fs=fs, scale='dB')
+Pxx, freqs = plt.psd(wf12z, Fs=fs, scale_by_freq=False)
+
+mvm = 10**(-60/20)
+uvm = 1000*mvm
 
 
 

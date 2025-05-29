@@ -48,6 +48,18 @@ fs = v12.chnspecs['fs']
 wf12, tvals = v12.load_data_gainphase_corrected()
 wf34, tgoo = v34.load_data_gainphase_corrected()
 
+
+#*******************
+#*******************
+#*******************
+#Test flipping sign
+
+#wf12 = -1*wf12
+
+#*******************
+#*******************
+#*******************
+
 #wf12, tvals = v12.load_data()
 #wf34, tgoo = v34.load_data()
 
@@ -67,10 +79,13 @@ ps.plot_spectrogram(tspec12,freq12,power12,vr=[-80,-40],yr=[6000,14000],xr=[280,
 
 #tr = [400, 405]
 #tr = [146, 146.00015]
+#tr = [146, 148]
 #fr = [5500, 6000]
 #fr = [5900, 6100]
-tr = [800, 810]
-fr = [5000, 5900]
+tr = [168,172]
+fr = [5000, 5900] #harmonic 1
+#fr = [5900, 6160] #harmonic 2
+#fr = [6160, 6500] #harmonic 3
 
 #tr = [301.5,301.65]
 #fr = [6000,14000]
@@ -127,16 +142,32 @@ filt34 = filter_wave_frequency.butter_bandpass_filter(wf34, fr[0],fr[1],fs,order
 
 #all the points to be plotted
 #trz= [165.00, 165.005]
-trz= [804.00, 804.005]
-trz= [804.005, 804.01]
+#trz= [804.00, 804.005]
+#trz= [804.005, 804.01]
 #trz= [804.00, 804.03]
+#trz  = [170.0,170.03]
+trz  = [180.0,180.002]
 #trz= [301.56, 301.58]
+#trz = [146, 146.01]
+
 goodt = np.squeeze(np.where((tvals > trz[0]) & (tvals < trz[1])))
 filt12z = filt12[goodt]
 filt34z = filt34[goodt]
 
 #Units of mV/m
-plt.plot(tvals[goodt],filt12z)
+#plt.plot(tvals[goodt],filt12z)
+fig, ax = plt.subplots()
+maxv = np.nanmax([filt12z,filt34z])
+ax.plot(filt12z,filt34z)
+#ax.set_xlim(-1*maxv,maxv)
+#ax.set_ylim(-1*maxv,maxv)
+ax.set_xlim(-0.04,0.04)
+ax.set_ylim(-0.04,0.04)
+ax.set_aspect('equal')
+
+
+
+
 
 
 ptitle = 't=' + str(trz[0]) + '-' + str(trz[1]) + ' sec\nf='+str(fr[0]) + '-' + str(fr[1]) + 'Hz'

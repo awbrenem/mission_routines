@@ -22,29 +22,38 @@ from copy import deepcopy
 #-------------------------------------------------------------
 #-------------------------------------------------------------
 #Load a pickle file with the data or create new file with this program (takes a while)
-load_pickle = True
+#load_pickle = True
 
-leg = 'upleg'
-#leg = 'downleg'
+#leg = 'upleg'
+leg = 'downleg'
 
 #Define a minimum threshold power for consideration
 if leg == 'upleg':
-    #powthres = 1.3e-12 #upleg
-    powthres = 1e-13 #upleg
+    #powthres = 1.5e-13
+    powthres = 3.6e-14
+    tr = [115,220]   #timerange for plotting
+    fr = [5400,7500] #freq range for plotting
+    er = [-0.8,0.3]  #ellipticity range for plotting
+    fcolorrange = [5500,7400] #for squeezing the colorbar
 if leg == 'downleg':
-    powthres = 1e-12  #downleg
-
+    #powthres = 1.5e-12
+    powthres = 2e-13
+    tr = [710,850]
+    fr = [5000,7500]
+    er = [-0.8,0.6]
+    fcolorrange = [5000,7400] #for squeezing the colorbar
+    #tr = [650,900]
 
 #-------------------------------------------------------------
 #-------------------------------------------------------------
 
 
 
-#if loading a pickle file, then load this file
-if leg == 'upleg':
-    picklefile = 'pol_slice_values_upleg.pkl'
-if leg == 'downleg':
-    picklefile = 'pol_slice_values_downleg.pkl'
+##if loading a pickle file, then load this file
+#if leg == 'upleg':
+#    picklefile = 'pol_slice_values_upleg.pkl'
+#if leg == 'downleg':
+#    picklefile = 'pol_slice_values_downleg.pkl'
 
 #load the by-eye lower hybrid values
 flhfile = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/lower_hybrid_id/lower_hybrid_freqs_byeye.pkl'
@@ -74,8 +83,152 @@ freqs_hel = idldat['freqs_hel']
 data_hel = idldat['data_hel']
 
 
+#Reduce these to limited freq range (DON'T CHANGE - NOT RELATED TO THE PLOTTING)
+good = np.where((freqs_pow > fcolorrange[0]) & (freqs_pow < fcolorrange[1]))[0]
+data_pow = data_pow[good,:]
+data_pol = data_pol[good,:]
+data_elip = data_elip[good,:]
+data_hel = data_hel[good,:]
+freqs_pow = freqs_pow[good]
 
 #--------------------------------------------------------------------------------------------------
+
+data_pow2 = np.copy(data_pow)
+data_elip2 = np.copy(data_elip)
+data_pol2 = np.copy(data_pol)
+
+#For each time, grab the distribution of wave polarization and power. 
+#goo = np.where(timesIDL > 140)
+
+
+
+for i in range(len(timesIDL)):
+    bad = np.where(data_pow[:,i] < powthres)[0]
+    data_pow2[bad,i] = np.nan
+    data_elip2[bad,i] = np.nan
+    data_pol2[bad,i] = np.nan
+
+
+
+
+ttmp = np.zeros(np.shape(data_pow))
+for i in range(len(freqs_pow)):
+    ttmp[i,:] = timesIDL
+ctmp = np.zeros(np.shape(data_pow))
+for i in range(len(timesIDL)):
+    ctmp[:,i] = freqs_pow
+    bad = np.where(data_pow[:,i] < powthres)[0]
+    ctmp[bad,i] = np.nan
+
+
+
+goot = np.where((timesIDL > tr[0]) & (timesIDL < tr[1]))[0]
+
+
+#cmap = 'turbo'
+cmap = 'viridis'
+#cmap = 'gist_heat'
+fig,axs = plt.subplots(3,figsize=(7,9))
+for i in range(3):
+    axs[i].set_xlim(tr[0],tr[1])
+axs[0].set_ylim(fr[0],fr[1])
+axs[1].set_ylim(0.7,1)
+axs[2].set_ylim(er[0],er[1])
+scatter = axs[0].scatter(ttmp[:,goot],ctmp[:,goot],c=ctmp[:,goot], cmap=cmap,s=4, alpha=1)
+cbar = plt.colorbar(scatter)
+cbar.set_label('freq(Hz)',rotation=270,labelpad=15)
+scatter.set_alpha(0.03)
+axs[0].set_ylabel('spectrum of VLF power')
+axs[0].set_xticklabels([])
+
+scatter = axs[1].scatter(ttmp[:,goot],data_pol2[:,goot],c=ctmp[:,goot], cmap=cmap,s=4, alpha=1)
+cbar = plt.colorbar(scatter)
+cbar.set_label('freq(Hz)',rotation=270,labelpad=15)
+scatter.set_alpha(0.03)
+axs[1].set_ylabel('degree polarization')
+axs[1].set_xticklabels([])
+scatter = axs[2].scatter(ttmp[:,goot],data_elip2[:,goot],c=ctmp[:,goot], cmap=cmap,s=4, alpha=1)
+cbar = plt.colorbar(scatter)
+cbar.set_label('freq(Hz)',rotation=270,labelpad=15)
+scatter.set_alpha(0.03)
+axs[2].set_ylabel('ellipticity')
+axs[2].set_xlabel('time(sec)')
+fig.tight_layout(pad=1)
+
+
+for i in range(3): 
+    if leg == 'upleg':
+        axs[i].scatter(verticesLOW[9:,0], verticesLOW[9:,1],color='black',s=12)
+        axs[i].scatter(verticesLOW[9:,0], verticesLOW[9:,1],color='magenta',s=3)
+    if leg == 'downleg':
+        axs[i].scatter(verticesHIG[5:-13:,0], verticesHIG[5:-13:,1],color='black',s=12)
+        axs[i].scatter(verticesHIG[5:-13:,0], verticesHIG[5:-13:,1],color='magenta',s=3)
+    
+    #axs[i].plot(plot_times, fcOIGRF, color='white')
+    for j in range(11):
+        axs[i].plot(plot_times,j*fcHIGRF,color='black',linestyle='--',linewidth=0.9) 
+      
+
+
+plt.savefig("/Users/abrenema/Desktop/tst1.pdf", dpi=350)
+
+
+
+
+print('h')
+
+
+
+
+
+
+
+
+
+
+
+#for i in range(1000):
+#    ttmp[:] = timesIDL[i]
+#    dtmp = np.squeeze(data_pow2[:,i])
+#    #etmp = np.squeeze(data_elip2[:,i])
+#    axs.scatter(ttmp,,c=cval,cmap='gist_heat',s=16)
+
+
+
+
+axs[0].scatter(timesIDL[gootspec],freqsE,c=cval,s=4,cmap='gist_heat',zorder=2)
+
+
+axs[1].scatter(timesIDL[gootspec],planE,c=cval,s=4,cmap='gist_heat',zorder=2)
+
+
+
+plt.scatter(dtmp,etmp,c=cval,cmap='gist_heat',s=16)
+plt.xlim(1e-16,1e-12)
+plt.xscale('log')
+
+
+
+freqscale = deepcopy(freqsE)
+cval = freqscale
+#cval = np.log(powscale)
+
+#Plot time profile of values
+fig, axs = plt.subplots(4)
+axs[0].scatter(timesIDL[gootspec],freqsE,c=cval,s=16,cmap='gist_heat')
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ephem = end_data_loader.load_ephemeris()

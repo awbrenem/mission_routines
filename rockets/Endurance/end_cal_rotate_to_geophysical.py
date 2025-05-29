@@ -7,7 +7,7 @@ NOTE: Coefficients Henry uses come from NSROC attitude solution (47.001_Synchron
 NOTE on testing:  (see end_data_nsroc_attitude.py for comparison with direct NSROC values)
 What I know works: 
     Comparison with the NSROC azimuth of the rail wrt geographic N (end_data_nsroc_attitude.py) and my version of this is good. 
-    The same comparison but with V1 shows that V1 is always off by 20 deg. 
+    The same comparison but with V1 shows that V1 is always off by 20 deg (correct). 
     So, I know that the probe rotations into WNU coordinates are working. 
 
 What kinda works:
@@ -29,12 +29,12 @@ z-hat = rail
 
 
 The rocket probes are shifted by 22.5 deg to the rail (unusual for a rocket mission).
-For example, V1 is 22.5 deg counterclockwise to the rail. 
+For example, V1 is 22.5 deg counterclockwise to the rail (see the FIELDS DESI and E-Fields diagram). 
 
 ------------------------------------
 Useful coordinates on launcher are: 
 
-angle = 22.5 deg 
+angle = 22.5 deg
 
 #rail
     bx = 0
@@ -95,7 +95,7 @@ Latitude:    78.931500 deg
 Longitude:   11.850400 deg
 Altitude:         111.5 ft
 Elevation:        84.3 deg
-Azimuth:         222.2 deg  (angle relative to North direction in WNU coord)
+Azimuth:         222.2 deg  (clockwise angle relative to North direction in WNU coord)
 Bank:              0.0 deg
  
 
@@ -117,7 +117,7 @@ sav_fname = pjoin(path,'47001_orig_att.sav')
 dat = readsav(sav_fname)
 
 
-#angle b/t V1 and rail
+#absolute value of angle b/t V1 and rail
 angle = np.radians(22.5)
 
 #TOF of interest
@@ -137,10 +137,14 @@ signed = True
 #by = 0 
 #bz = 1
 
+#V1-V4
+bx = [0,0,0,0]
+by = [-np.sin(angle),np.cos(np.radians(90)-angle),np.cos(angle),-np.cos(angle)]
+bz = [np.cos(angle),-np.cos(angle),np.sin(angle),-np.sin(angle)]
 #V1
-bx = 0 
-by = -np.sin(angle)
-bz = np.cos(angle)
+#bx = 0 
+#by = -np.sin(angle)
+#bz = np.cos(angle)
 
 #V2
 #bx = 0
@@ -169,14 +173,21 @@ bz = np.cos(angle)
 #degv = np.degrees(np.arccos(vtmp))  #22.5 deg 
 #--------------------------------------------
 
-bw = np.zeros(len(t))
-bn = np.zeros(len(t))
-bu = np.zeros(len(t))
+bw = np.zeros((4,len(t)))
+bn = np.zeros((4,len(t)))
+bu = np.zeros((4,len(t)))
+#bw = 4*[np.zeros(len(t))]
+#bn = 4*[np.zeros(len(t))]
+#bu = 4*[np.zeros(len(t))]
 
-elev = np.zeros(len(t))
-azi_rail = np.zeros(len(t))
-azi_rail2 = np.zeros(len(t))
-azi_north = np.zeros(len(t))
+elev = np.zeros((4,len(t)))
+azi_rail = np.zeros((4,len(t)))
+azi_rail2 = np.zeros((4,len(t)))
+azi_north = np.zeros((4,len(t)))
+
+#azi_rail = 4*[np.zeros(len(t))]
+#azi_rail2 = 4*[np.zeros(len(t))]
+#azi_north = 4*[np.zeros(len(t))]
 
 atime = dat['atime']
 a11 = dat['a11']
@@ -190,8 +201,8 @@ a32 = dat['a32']
 a33 = dat['a33']
 
 
+#Each time
 for i in range(len(t)):
-
     #Interpolate coefficients to time of interest
     c11=np.interp(t[i],atime,a11)
     c12=np.interp(t[i],atime,a12)
@@ -202,10 +213,6 @@ for i in range(len(t)):
     c31=np.interp(t[i],atime,a31)
     c32=np.interp(t[i],atime,a32)
     c33=np.interp(t[i],atime,a33)
-
-    #plt.plot(atime,a11)
-    #plt.plot(t,c11,'*')
-    #plt.show()
 
     # normalize
     r = np.sqrt(c11**2 + c21**2 + c31**2)
@@ -221,38 +228,44 @@ for i in range(len(t)):
     c23 /= r 
     c33 /= r 
 
-    bw[i] = -(c11*bx+c12*by+c13*bz)
-    bn[i] = c21*bx+c22*by+c23*bz
-    bu[i] = c31*bx+c32*by+c33*bz
+    #plt.plot(atime,a11)
+    #plt.plot(t,c11,'*')
+    #plt.show()
+
+    #Each probe
+    for b in range(4):
+
+        bw[b,i] = -(c11*bx[b]+c12*by[b]+c13*bz[b])
+        bn[b,i] = c21*bx[b]+c22*by[b]+c23*bz[b]
+        bu[b,i] = c31*bx[b]+c32*by[b]+c33*bz[b]
 
 
+        vtst = [bw[b,i],bn[b,i],bu[b,i]] / np.linalg.norm([bw[b,i],bn[b,i],bu[b,i]])
 
-    vtst = [bw[i],bn[i],bu[i]] / np.linalg.norm([bw[i],bn[i],bu[i]])
-
-    #calculate elevation angle 
-    vtst2 = [bw[i],bn[i],0] 
-    vtst2 = vtst2 / np.linalg.norm(vtst2)
-    elev[i] = np.degrees(np.arccos(np.dot(vtst, vtst2)))
+        #calculate elevation angle 
+        vtst2 = [bw[b,i],bn[b,i],0] 
+        vtst2 = vtst2 / np.linalg.norm(vtst2)
+        elev[b,i] = np.degrees(np.arccos(np.dot(vtst, vtst2)))
 
 
-    #calculate signed (-180,180) azimuth angle relative to the rail
-    rail_wnu = [0.682, -0.731, 0]
-    if signed == True:
-        cosTh = np.dot(rail_wnu,vtst)
-        sinTh = np.cross(rail_wnu,vtst)
-        tmp = np.rad2deg(np.arctan2(sinTh,cosTh))
-        azi_rail[i] = tmp[2]
-    else:
-        azi_rail[i] = np.degrees(np.arccos(np.dot(vtst, rail_wnu)))
+        #calculate signed (-180,180) azimuth angle relative to the rail
+        rail_wnu = [0.682, -0.731, 0]
+        if signed == True:
+            cosTh = np.dot(rail_wnu,vtst)
+            sinTh = np.cross(rail_wnu,vtst)
+            tmp = np.rad2deg(np.arctan2(sinTh,cosTh))
+            azi_rail[b,i] = tmp[2]
+        else:
+            azi_rail[b,i] = np.degrees(np.arccos(np.dot(vtst, rail_wnu)))
 
-    #calculate signed (-180,180) azimuth angle relative to geographic North
-    if signed == True:
-        cosTh = np.dot([0,1,0],vtst)
-        sinTh = np.cross([0,1,0],vtst)
-        tmp = np.rad2deg(np.arctan2(sinTh,cosTh))
-        azi_north[i] = tmp[2]
-    else:
-        azi_north[i] = np.degrees(np.arccos(np.dot(vtst, [0,1,0])))
+        #calculate signed (-180,180) azimuth angle relative to geographic North
+        if signed == True:
+            cosTh = np.dot([0,1,0],vtst)
+            sinTh = np.cross([0,1,0],vtst)
+            tmp = np.rad2deg(np.arctan2(sinTh,cosTh))
+            azi_north[b,i] = tmp[2]
+        else:
+            azi_north[b,i] = np.degrees(np.arccos(np.dot(vtst, [0,1,0])))
 
 
 
@@ -274,12 +287,13 @@ print('h')
 #Test angle relative to some reference 
 #plt.plot(t,azi_rail)
 #plt.plot(times,azim_nose)
-plt.plot(times,azim_rail)
-plt.plot(t,azi_north)
+#plt.plot(times,azi_rail)
+for i in range(4):
+    plt.plot(t,azi_north[i,:])
 plt.ylim(-180,180)
-
-
-
+plt.ylabel('azimuth (deg clockwise)\nV1=blue;V2=Orange;V3=green;V4=red')
+plt.xlabel('time(sec)')
+plt.title('Endurance probe azumuth relative to North\nend_cal_rotate_to_geophysical.py')
 
 
 
