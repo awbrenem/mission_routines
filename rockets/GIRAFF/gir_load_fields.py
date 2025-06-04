@@ -24,12 +24,13 @@ class GIRAFF_Fields_Loader:
     Loadable channels:
     DC: 'V12D','V34D'
     skins: 'V1SD','V2SD','V3SD','V4SD'
-    VLF: 'VLF12D','VLF34D','VLF13D','VLF32D','VLF24D','VLF41D'
+    VLF: 'VLF12D','VLF34D','VLF13D','VLF32D','VLF24D','VLF41D'    --> downsampled to 50 kHz 
+    VLF_full: 'VLF12DF','VLF34DF','VLF13DF','VLF32DF','VLF24DF','VLF41DF'  --> full resolution
     HF: 'HF12','HF34'
     analog: 'V12A','V34A','VLF12A','V1SA','V2SA','V3SA','V4SA'
     mag: 'magX','magY','magZ'
-    Langmuir Probes (analog, digital): 'LPA', 'LPD'
-    
+    Langmuir Probes (analog, digital): 'LPA', 'LP1D', 'LP2D'
+
     Example usage:
 
     from gir_fields_loader import GIRAFF_Fields_Loader
@@ -57,6 +58,9 @@ class GIRAFF_Fields_Loader:
         if (self.chn == 'VLF12D') or (self.chn == 'VLF34D') or (self.chn == 'VLF13D') or (self.chn == 'VLF32D') or (self.chn == 'VLF24D') or (self.chn == 'VLF41D'): 
             self.type = 'VLF'
             filterpole = 4
+        if (self.chn == 'VLF12DF') or (self.chn == 'VLF34DF') or (self.chn == 'VLF13DF') or (self.chn == 'VLF32DF') or (self.chn == 'VLF24DF') or (self.chn == 'VLF41DF'): 
+            self.type = 'VLFF'
+            filterpole = 4
         if (self.chn == 'HF12') or (self.chn == 'HF34'):
             self.type = 'HF'
             filterpole = 2
@@ -67,10 +71,13 @@ class GIRAFF_Fields_Loader:
             self.type = 'mag'
             filterpole = "nan"
         if (self.chn == 'LPA'):
-            self.type = 'LPA'
+            self.type = 'LP'
             filterpole = "nan"
-        if (self.chn == 'LPD'):
-            self.type = 'LPD'
+        if (self.chn == 'LP1D'):
+            self.type = 'LP1D'
+            filterpole = "nan"
+        if (self.chn == 'LP2D'):
+            self.type = 'LP2D'
             filterpole = "nan"
 
 
@@ -204,23 +211,73 @@ class GIRAFF_Fields_Loader:
             return wf[good], t[good]
 
 
+
+        #VLF data downsampled to 50 kHz
         if self.type == 'VLF':
+            import pickle
 
             folder = 'efield_VLF'
             
             if self.pld == '380':
                 if self.chn == 'VLF12D': 
-                    fn = '36380_GIRAFF_TM2_LFDSP_VLF12D_mvm.sav'
+                    fn = '36380_GIRAFF_TM2_LFDSP_VLF12D_mvm_downsampled_50kHz.pkl'
                 if self.chn == 'VLF34D':
-                    fn = '36380_GIRAFF_TM2_LFDSP_VLF34D_mvm.sav'
+                    fn = '36380_GIRAFF_TM2_LFDSP_VLF34D_mvm_downsampled_50kHz.pkl'
             if self.pld == '381':
                 
                 #****WHICH FILE SHOULD I BE LOADING???
                 #if self.chn == 'VLF12D':
                 #    fn = '36381_GIRAFF_TM2_LFDSP_IT_VLF12D_mvm_FFT131072.sav'
                 if self.chn == 'VLF12D':
-                    fn = '36381_GIRAFF_TM2_LFDSP_IT_VLF12D_mvm.sav'
+                    fn = '36381_GIRAFF_TM2_LFDSP_IT_VLF12D_mvm_downsampled_50kHz.pkl'
                 if self.chn == 'VLF34D':
+                    fn = '36381_GIRAFF_TM2_LFDSP_IT_VLF34D_mvm_downsampled_50kHz.pkl'
+
+
+            #vals = readsav(path + folder + '/' + fn)
+            vals = pickle.load(open(path + folder + '/' + fn, 'rb'))
+            t = vals[0]
+
+            pol = 1
+            if self.chnspecs["polarity"] == 'Neg':
+                pol = -1
+
+            wf = vals[1] * pol
+
+            notes = vals[2]
+            print(notes)
+
+            #if self.chn == 'VLF12D': wf = vals[1] * pol
+            #if self.chn == 'VLF34D': wf = vals.dvlf34d_mvm * pol
+            #if self.chn == 'VLF13D': wf = vals.dvlf13d_mvm * pol
+            #if self.chn == 'VLF32D': wf = vals.dvlf32d_mvm * pol
+            #if self.chn == 'VLF24D': wf = vals.dvlf24d_mvm * pol
+            #if self.chn == 'VLF41D': wf = vals.dvlf41d_mvm * pol
+
+
+            #Remove negative times (starts at t=-100 sec). Not doing so messes up my spectrogram plotting routines.
+            good = np.squeeze(np.where(t >= 0.))
+            return wf[good], t[good]
+
+
+        #Full resolution VLF data
+        if self.type == 'VLFF':
+
+            folder = 'efield_VLF'
+            
+            if self.pld == '380':
+                if self.chn == 'VLF12DF': 
+                    fn = '36380_GIRAFF_TM2_LFDSP_VLF12D_mvm.sav'
+                if self.chn == 'VLF34DF':
+                    fn = '36380_GIRAFF_TM2_LFDSP_VLF34D_mvm.sav'
+            if self.pld == '381':
+                
+                #****WHICH FILE SHOULD I BE LOADING???
+                #if self.chn == 'VLF12DF':
+                #    fn = '36381_GIRAFF_TM2_LFDSP_IT_VLF12D_mvm_FFT131072.sav'
+                if self.chn == 'VLF12DF':
+                    fn = '36381_GIRAFF_TM2_LFDSP_IT_VLF12D_mvm.sav'
+                if self.chn == 'VLF34DF':
                     fn = '36381_GIRAFF_TM2_LFDSP_IT_VLF34D_mvm.sav'
 
 
@@ -231,17 +288,21 @@ class GIRAFF_Fields_Loader:
             if self.chnspecs["polarity"] == 'Neg':
                 pol = -1
 
-            if self.chn == 'VLF12D': wf = vals.dvlf12d_mvm * pol
-            if self.chn == 'VLF34D': wf = vals.dvlf34d_mvm * pol
-            if self.chn == 'VLF13D': wf = vals.dvlf13d_mvm * pol
-            if self.chn == 'VLF32D': wf = vals.dvlf32d_mvm * pol
-            if self.chn == 'VLF24D': wf = vals.dvlf24d_mvm * pol
-            if self.chn == 'VLF41D': wf = vals.dvlf41d_mvm * pol
+            if self.chn == 'VLF12DF': wf = vals.dvlf12d_mvm * pol
+            if self.chn == 'VLF34DF': wf = vals.dvlf34d_mvm * pol
+            if self.chn == 'VLF13DF': wf = vals.dvlf13d_mvm * pol
+            if self.chn == 'VLF32DF': wf = vals.dvlf32d_mvm * pol
+            if self.chn == 'VLF24DF': wf = vals.dvlf24d_mvm * pol
+            if self.chn == 'VLF41DF': wf = vals.dvlf41d_mvm * pol
 
 
             #Remove negative times (starts at t=-100 sec). Not doing so messes up my spectrogram plotting routines.
             good = np.squeeze(np.where(t >= 0.))
             return wf[good], t[good]
+
+
+
+
 
 
         if self.type == 'HF':
@@ -302,6 +363,22 @@ class GIRAFF_Fields_Loader:
             return vals.dmagxnt[good], vals.dmagynt[good], vals.dmagznt[good], vals.times[good]
 
 
+        if self.type == 'LP1D':
+            from scipy.io import readsav 
+
+            folder = 'langmuir'
+
+            if self.pld == '380':
+                fn = '36380_TM1_LP_S9_amps.sav'
+            if self.pld == '381':
+                fn = '36381_TM1_LP_S9_amps.sav'
+
+            vals = readsav(path + folder + '/' + fn)
+
+            #Remove negative times (starts at t=-100 sec). Not doing so messes up my spectrogram plotting routines.
+            good = np.squeeze(np.where(vals.tlp >= 0.))
+            return vals.dlp_amps[good], vals.tlp[good]
+
 
 
 
@@ -311,7 +388,10 @@ class GIRAFF_Fields_Loader:
     """
     NOTES: Select desired gain/phase files (from Paulo) from the calibration testing.
     From these files Paulo derives a fit (ax + b) that allows calibration from counts to volts.
-    These values (a, b) are found in the Giraff channel list document as the yellow boxes in far right column
+    These values (a, b) are found in the Giraff channel list document as the yellow boxes in far right column.
+    These files are needed for two reasons:
+    1) gir_cal_transfer_function.py
+    2) to make plots of the gain/phase vs freq from plot_gainphase (herein) 
 
     See end_gainphase_test.py for comparisons to theoretical behavior
     """
@@ -325,32 +405,73 @@ class GIRAFF_Fields_Loader:
         path = '/Users/abrenema/Desktop/Research/Rocket_missions/GIRAFF/data/gain_phase_files/'
 
         #Load gain/phase file
-        if self.chn == "V1SD": fn = "Giraff_Analog 1_V1SD_10-10000-100.txt"
-        elif self.chn == "V2SD": fn = "Giraff_Analog 1_V2SD_10-10000-100.txt"
-        elif self.chn == "V3SD": fn = "Giraff_Analog 1_V3SD_10-10000-100.txt"
-        elif self.chn == "V4SD": fn = "Giraff_Analog 1_V4SD_10-10000-100.txt"
-        elif self.chn == "V1SA": fn = "Giraff_Analog 1_V1SA_10-10000-100.txt"
-        elif self.chn == "V2SA": fn = "Giraff_Analog 1_V2SA_10-10000-100.txt"
-        elif self.chn == "V3SA": fn = "Giraff_Analog 1_V3SA_10-10000-100.txt"
-        elif self.chn == "V4SA": fn = "Giraff_Analog 1_V4SA_10-10000-100.txt"
-        elif self.chn == "V12D": fn = "Giraff_Analog 1_V12D_10-10000-100.txt"
-        elif self.chn == "V34D": fn = "Giraff_Analog 1_V34D_10-10000-100.txt"
-        elif self.chn == "V13D": fn = "Giraff_Analog 1_V13D_10-10000-100.txt"
-        elif self.chn == "V32D": fn = "Giraff_Analog 1_V32D_10-10000-100.txt"
-        elif self.chn == "V24D": fn = "Giraff_Analog 1_V24D_10-10000-100.txt"
-        elif self.chn == "V41D": fn = "Giraff_Analog 1_V41D_10-10000-100.txt"
-        elif self.chn == "VLF12D": fn = "Giraff_Analog 1_VLF12D_6-30000-100.txt"
-        elif self.chn == "VLF34D": fn = "Giraff_Analog 1_VLF34D_6-30000-100.txt"
-        elif self.chn == "VLF13D": fn = "Giraff_Analog 1_VLF13D_6-30000-100.txt"
-        elif self.chn == "VLF32D": fn = "Giraff_Analog 1_VLF32D_6-30000-100.txt"
-        elif self.chn == "VLF24D": fn = "Giraff_Analog 1_VLF24D_6-30000-100.txt"
-        elif self.chn == "VLF41D": fn = "Giraff_Analog 1_VLF41D_6-30000-100.txt"
-        elif self.chn == "VLF12A": fn = "Giraff_Analog 1_VLF12A_6-100000-100.txt"
-        elif self.chn == "V12A": fn = "Giraff_Analog 1_V12A_10-10000-100.txt"
-        elif self.chn == "V34A": fn = "Giraff_Analog 1_V34A_10-10000-100.txt"
-        elif self.chn == "HF12": fn = "Giraff_Analog 1_HF12_1000-20000000-100.txt"
-        elif self.chn == "HF34": fn = "Giraff_Analog 1_HF34_1000-20000000-100.txt"
-#        elif self.chn == "mag": fn = "placeholder.txt"
+
+        if self.pld == '380':
+            #if   self.chn == "V1SD": fn = 'Giraff_Analog 1_V1SD_10-1000000-50.txt'
+            if   self.chn == "V1SD": fn = 'GIRAFF_Analog 1_V1SD-2_10-1000000-50.txt'
+            #elif self.chn == "V2SD": fn = 'Giraff_Analog 1_V2SD_10-1000000-50.txt'
+            elif self.chn == "V2SD": fn = 'GIRAFF_Analog 1_V2SD-2_10-1000000-50.txt'
+            #elif self.chn == "V3SD": fn = 'Giraff_Analog 1_V3SD_10-1000000-50.txt'
+            elif self.chn == "V3SD": fn = 'GIRAFF_Analog 1_V3SD-2_10-1000000-50.txt'
+            #elif self.chn == "V4SD": fn = 'Giraff_Analog 1_V4SD_10-1000000-50.txt'
+            elif self.chn == "V4SD": fn = 'GIRAFF_Analog 1_V4SD-2_10-1000000-50.txt'
+            elif self.chn == "V1SA": fn = 'Giraff_Analog 1_V1SA_10-10000-50.txt'
+            elif self.chn == "V2SA": fn = 'Giraff_Analog 1_V2SA_10-10000-50.txt'
+            elif self.chn == "V3SA": fn = 'Giraff_Analog 1_V3SA_10-10000-50.txt'
+            elif self.chn == "V4SA": fn = 'Giraff_Analog 1_V4SA_10-10000-50.txt'
+            elif self.chn == "V12D": fn = 'Giraff_Analog 1_V12D_10-100000-50.txt'
+            elif self.chn == "V34D": fn = 'Giraff_Analog 1_V34D_10-100000-50.txt'
+            elif self.chn == "V13D": fn = 'Giraff_Analog 1_VLF13D_10-1000000-50.txt'
+            elif self.chn == "VLF12D": fn = 'Giraff_Analog 1_VLF12D_10-10000000-50.txt'
+            elif self.chn == "VLF34D": fn = 'Giraff_Analog 1_VLF34D_10-10000000-50.txt'
+            elif self.chn == "VLF13D": fn = 'Giraff_Analog 1_VLF13D_10-1000000-50.txt'
+            elif self.chn == "VLF32D": fn = 'Giraff_Analog 1_VLF32D_10-1000000-50.txt'
+            elif self.chn == "VLF24D": fn = 'Giraff_Analog 1_VLF24D_10-1000000-50.txt'
+            elif self.chn == "VLF41D": fn = 'Giraff_Analog 1_VLF41D_10-1000000-50.txt'
+            elif self.chn == "VLF12A": fn = 'Giraff_Analog 1_VLF12A_10-1000000-50.txt'
+            elif self.chn == "V12A": fn = 'Giraff_Analog 1_V12A_10-10000-50.txt'
+            elif self.chn == "V34A": fn = 'Giraff_Analog 1_V34A_10-10000-50.txt'
+            elif self.chn == "HF12": fn = 'GIRAFF_Analog 1_HF12_10-30000000-50.txt'
+            elif self.chn == "HF34": fn = 'GIRAFF_Analog 1_HF34_10-30000000-50.txt'
+            elif self.chn == "magX": fn = 'GIRAFF_BM SN1 .380_MAG X_10-10000-50.txt'
+            elif self.chn == "magY": fn = 'GIRAFF_BM SN1 .380_MAG Y_10-10000-50.txt'
+            elif self.chn == "magZ": fn = 'GIRAFF_BM SN1 .380_MAG Z_10-10000-50.txt'
+            elif self.chn == "LP1D": fn = 'Giraff_BM SN1 .380_LP1 U44_10-100000-50.txt'
+            elif self.chn == "LP2D": fn = 'Giraff_BM SN1 .380_LP2 U42_10-100000-50.txt'
+
+        if self.pld == '381':
+            #if   self.chn == "V1SD": fn = 'Giraff_Analog 2_V1SD_10-1000000-50.txt'
+            if   self.chn == "V1SD": fn = 'GIRAFF_Analog 2_V1SD-2_10-1000000-50.txt'
+            #elif self.chn == "V2SD": fn = 'Giraff_Analog 2_V2SD_10-1000000-50.txt'
+            elif self.chn == "V2SD": fn = 'GIRAFF_Analog 2_V2SD-2_10-1000000-50.txt'
+            #elif self.chn == "V3SD": fn = 'Giraff_Analog 2_V3SD_10-1000000-50.txt'
+            elif self.chn == "V3SD": fn = 'GIRAFF_Analog 2_V3SD-2_10-1000000-50.txt'
+            #elif self.chn == "V4SD": fn = 'Giraff_Analog 2_V4SD_10-1000000-50.txt'
+            elif self.chn == "V4SD": fn = 'GIRAFF_Analog 2_V4SD-2_10-1000000-50.txt'
+            elif self.chn == "V1SA": fn = 'Giraff_Analog 2_V1SA_10-10000-50.txt'
+            elif self.chn == "V2SA": fn = 'Giraff_Analog 2_V2SA_10-10000-50.txt'
+            elif self.chn == "V3SA": fn = 'Giraff_Analog 2_V3SA_10-10000-50.txt'
+            elif self.chn == "V4SA": fn = 'Giraff_Analog 2_V4SA_10-10000-50.txt'
+            elif self.chn == "V12D": fn = 'Giraff_Analog 2_V12D_10-100000-50.txt'
+            elif self.chn == "V34D": fn = 'Giraff_Analog 2_V34D_10-100000-50.txt'
+            elif self.chn == "V13D": fn = 'Giraff_Analog 2_VLF13D_10-1000000-50.txt'
+            elif self.chn == "VLF12D": fn = 'Giraff_Analog 2_VLF12D_10-10000000-50.txt'
+            elif self.chn == "VLF34D": fn = 'Giraff_Analog 2_VLF34D_10-10000000-50.txt'
+            elif self.chn == "VLF13D": fn = 'Giraff_Analog 2_VLF13D_10-1000000-50.txt'
+            elif self.chn == "VLF32D": fn = 'Giraff_Analog 2_VLF32D_10-1000000-50.txt'
+            elif self.chn == "VLF24D": fn = 'Giraff_Analog 2_VLF24D_10-1000000-50.txt'
+            elif self.chn == "VLF41D": fn = 'Giraff_Analog 2_VLF41D_10-1000000-50.txt'
+            elif self.chn == "VLF12A": fn = 'Giraff_Analog 2_VLF12A_10-1000000-50.txt'
+            elif self.chn == "V12A": fn = 'Giraff_Analog 2_V12A_10-10000-50.txt'
+            elif self.chn == "V34A": fn = 'Giraff_Analog 2_V34A_10-10000-50.txt'
+            elif self.chn == "HF12": fn = 'GIRAFF_Analog 2_HF12_10-30000000-50.txt'
+            elif self.chn == "HF34": fn = 'GIRAFF_Analog 2_HF34_10-30000000-50.txt'
+            elif self.chn == "magX": fn = 'GIRAFF_BM SN2 .381_MAG X_10-10000-50.txt'
+            elif self.chn == "magY": fn = 'GIRAFF_BM SN2 .381_MAG Y_10-10000-50.txt'
+            elif self.chn == "magZ": fn = 'GIRAFF_BM SN2 .381_MAG Z_10-10000-50.txt'
+            elif self.chn == "LP1D": fn = 'Giraff_BM SN2 .381_LP1 U44_10-100000-50.txt'
+            elif self.chn == "LP2D": fn = 'Giraff_BM SN2 .381_LP2 U42_10-100000-50.txt'
+
 
         self.chnspecs["gainphase_file"] = fn
         self.chnspecs["gainphase_path"] = path
@@ -539,7 +660,7 @@ class GIRAFF_Fields_Loader:
 
 
         #Select desired dictionary from list of dictionaries
-        good = np.where(chn_names == 'V34D')[0]
+        good = np.where(chn_names == self.chn)[0]
         self.chnspecs = chn_dat380[good[0]]
 
         """
@@ -576,21 +697,26 @@ if __name__ == '__main__':
     hf12 = GIRAFF_Fields_Loader('381','HF12')
     vlf12 = GIRAFF_Fields_Loader('381','VLF12D')
     v1a = GIRAFF_Fields_Loader('381','V1SA')
-
+    lp1d = GIRAFF_Fields_Loader('381','LP1D')
  
+
     v12.chnspecs
+
+
+
+    #Load Steve's save files
+    lp1ddat = lp1d.load_data()
+    v12dat = v12.load_data()
+    v1dat = v1.load_data()
+    vlf12dat = vlf12.load_data()
+    v1adat = v1a.load_data()
+    hf12dat = hf12.load_data()
 
 
     v12.plot_gainphase()
     v12.freq_gainphase
     #x1 = self.freq_gainphase[index3dB]
 
-    #Load Steve's save files
-    v12dat = v12.load_data()
-    v1dat = v1.load_data()
-    vlf12dat = vlf12.load_data()
-    v1adat = v1a.load_data()
-    hf12dat = hf12.load_data()
 
 
     #Load Aaron's gain/phase corrected files
