@@ -25,7 +25,7 @@ class GIRAFF_Fields_Loader:
     DC: 'V12D','V34D'
     skins: 'V1SD','V2SD','V3SD','V4SD'
     VLF: 'VLF12D','VLF34D','VLF13D','VLF32D','VLF24D','VLF41D'    --> downsampled to 50 kHz 
-    VLF_full: 'VLF12DF','VLF34DF','VLF13DF','VLF32DF','VLF24DF','VLF41DF'  --> full resolution
+    VLFF: 'VLF12DF','VLF34DF','VLF13DF','VLF32DF','VLF24DF','VLF41DF'  --> full resolution
     HF: 'HF12','HF34'
     analog: 'V12A','V34A','VLF12A','V1SA','V2SA','V3SA','V4SA'
     mag: 'magX','magY','magZ'
@@ -81,9 +81,8 @@ class GIRAFF_Fields_Loader:
             filterpole = "nan"
 
 
-        #**********NEED TO FINISH THIS ROUTINE*************
-        #if self.type != 'mag':
-        #    self._gir_load_gainphase()
+        if self.type != 'mag':
+            self._gir_load_gainphase()
 
 
 
@@ -118,21 +117,25 @@ class GIRAFF_Fields_Loader:
 
 
         if self.type == 'DC':
-            if self.type == '380':
-                goo = pickle.load(open(path + 'efield_DC/' + 'Giraff_Analog 1_' + self.chn + '_10-10000-100_gainphase_corrected.pkl', 'rb'))
-            if self.type == '381':
-                goo = pickle.load(open(path + 'efield_DC/' + 'Giraff_Analog 1_' + self.chn + '_10-10000-100_gainphase_corrected.pkl', 'rb'))
+            if self.pld == '380':
+                goo = pickle.load(open(path + 'efield_DC/' + 'Giraff_380_Analog 1_' + self.chn + '_0-100000Hz_50steps_gainphase_corrected.pkl', 'rb'))
+            if self.pld == '381':
+                goo = pickle.load(open(path + 'efield_DC/' + 'Giraff_381_Analog 2_' + self.chn + '_0-100000Hz_50steps_gainphase_corrected.pkl', 'rb'))
         if self.type == 'skins':
-            if self.type == '380':
-                goo = pickle.load(open(path + 'efield_skins/' + 'Giraff_Analog 1_' + self.chn + '_10-10000-100_gainphase_corrected.pkl', 'rb'))
-            if self.type == '381':
-                goo = pickle.load(open(path + 'efield_skins/' + 'Giraff_Analog 1_' + self.chn + '_10-10000-100_gainphase_corrected.pkl', 'rb'))
-
+            if self.pld == '380':
+                goo = pickle.load(open(path + 'efield_skins/' + 'Giraff_380_Analog 1_' + self.chn + '_10-10000Hz_100steps_gainphase_corrected.pkl', 'rb'))
+            if self.pld == '381':
+                goo = pickle.load(open(path + 'efield_skins/' + 'Giraff_381_Analog 2_' + self.chn + '_10-10000Hz_100steps_gainphase_corrected.pkl', 'rb'))
         if self.type == 'VLF':
-            if self.type == '380':
-                goo = pickle.load(open(path + 'efield_VLF/' + 'Giraff_Analog 1_' + self.chn + '_6-30000-100_gainphase_corrected.pkl', 'rb'))
-            if self.type == '381':
-                goo = pickle.load(open(path + 'efield_skins/' + 'Giraff_Analog 1_' + self.chn + '_10-10000-100_gainphase_corrected.pkl', 'rb'))
+            if self.pld == '380':
+                goo = pickle.load(open(path + 'efield_VLF/' + 'Giraff_380_Analog 1_' + self.chn + '_100-100000Hz_50steps_gainphase_corrected.pkl', 'rb'))
+            if self.pld == '381':
+                goo = pickle.load(open(path + 'efield_VLF/' + 'Giraff_381_Analog 2_' + self.chn + '_100-100000Hz_50steps_gainphase_corrected.pkl', 'rb'))
+        if self.type == 'VLFF':
+            if self.pld == '380':
+                goo = pickle.load(open(path + 'efield_VLF/' + 'Giraff_380_Analog 1_' + self.chn + '_100-1000000Hz_50steps_gainphase_corrected.pkl', 'rb'))
+            if self.pld == '381':
+                goo = pickle.load(open(path + 'efield_VLF/' + 'Giraff_381_Analog 2_' + self.chn + '_100-1000000Hz_50steps_gainphase_corrected.pkl', 'rb'))
         
         return goo['wf'], goo['tvals']
 
@@ -246,13 +249,6 @@ class GIRAFF_Fields_Loader:
 
             notes = vals[2]
             print(notes)
-
-            #if self.chn == 'VLF12D': wf = vals[1] * pol
-            #if self.chn == 'VLF34D': wf = vals.dvlf34d_mvm * pol
-            #if self.chn == 'VLF13D': wf = vals.dvlf13d_mvm * pol
-            #if self.chn == 'VLF32D': wf = vals.dvlf32d_mvm * pol
-            #if self.chn == 'VLF24D': wf = vals.dvlf24d_mvm * pol
-            #if self.chn == 'VLF41D': wf = vals.dvlf41d_mvm * pol
 
 
             #Remove negative times (starts at t=-100 sec). Not doing so messes up my spectrogram plotting routines.
@@ -393,7 +389,7 @@ class GIRAFF_Fields_Loader:
     1) gir_cal_transfer_function.py
     2) to make plots of the gain/phase vs freq from plot_gainphase (herein) 
 
-    See end_gainphase_test.py for comparisons to theoretical behavior
+    See gir_gainphase_test.py for comparisons to theoretical behavior
     """
     #-------------------------------------------------------------------------------------
 
@@ -422,12 +418,12 @@ class GIRAFF_Fields_Loader:
             elif self.chn == "V12D": fn = 'Giraff_Analog 1_V12D_10-100000-50.txt'
             elif self.chn == "V34D": fn = 'Giraff_Analog 1_V34D_10-100000-50.txt'
             elif self.chn == "V13D": fn = 'Giraff_Analog 1_VLF13D_10-1000000-50.txt'
-            elif self.chn == "VLF12D": fn = 'Giraff_Analog 1_VLF12D_10-10000000-50.txt'
-            elif self.chn == "VLF34D": fn = 'Giraff_Analog 1_VLF34D_10-10000000-50.txt'
-            elif self.chn == "VLF13D": fn = 'Giraff_Analog 1_VLF13D_10-1000000-50.txt'
-            elif self.chn == "VLF32D": fn = 'Giraff_Analog 1_VLF32D_10-1000000-50.txt'
-            elif self.chn == "VLF24D": fn = 'Giraff_Analog 1_VLF24D_10-1000000-50.txt'
-            elif self.chn == "VLF41D": fn = 'Giraff_Analog 1_VLF41D_10-1000000-50.txt'
+            elif self.chn == "VLF12D" or self.chn == "VLF12DF": fn = 'Giraff_Analog 1_VLF12D_10-10000000-50.txt'
+            elif self.chn == "VLF34D" or self.chn == "VLF34DF": fn = 'Giraff_Analog 1_VLF34D_10-10000000-50.txt'
+            elif self.chn == "VLF13D" or self.chn == "VLF13DF": fn = 'Giraff_Analog 1_VLF13D_10-1000000-50.txt'
+            elif self.chn == "VLF32D" or self.chn == "VLF32DF": fn = 'Giraff_Analog 1_VLF32D_10-1000000-50.txt'
+            elif self.chn == "VLF24D" or self.chn == "VLF24DF": fn = 'Giraff_Analog 1_VLF24D_10-1000000-50.txt'
+            elif self.chn == "VLF41D" or self.chn == "VLF41DF": fn = 'Giraff_Analog 1_VLF41D_10-1000000-50.txt'
             elif self.chn == "VLF12A": fn = 'Giraff_Analog 1_VLF12A_10-1000000-50.txt'
             elif self.chn == "V12A": fn = 'Giraff_Analog 1_V12A_10-10000-50.txt'
             elif self.chn == "V34A": fn = 'Giraff_Analog 1_V34A_10-10000-50.txt'
@@ -455,12 +451,12 @@ class GIRAFF_Fields_Loader:
             elif self.chn == "V12D": fn = 'Giraff_Analog 2_V12D_10-100000-50.txt'
             elif self.chn == "V34D": fn = 'Giraff_Analog 2_V34D_10-100000-50.txt'
             elif self.chn == "V13D": fn = 'Giraff_Analog 2_VLF13D_10-1000000-50.txt'
-            elif self.chn == "VLF12D": fn = 'Giraff_Analog 2_VLF12D_10-10000000-50.txt'
-            elif self.chn == "VLF34D": fn = 'Giraff_Analog 2_VLF34D_10-10000000-50.txt'
-            elif self.chn == "VLF13D": fn = 'Giraff_Analog 2_VLF13D_10-1000000-50.txt'
-            elif self.chn == "VLF32D": fn = 'Giraff_Analog 2_VLF32D_10-1000000-50.txt'
-            elif self.chn == "VLF24D": fn = 'Giraff_Analog 2_VLF24D_10-1000000-50.txt'
-            elif self.chn == "VLF41D": fn = 'Giraff_Analog 2_VLF41D_10-1000000-50.txt'
+            elif self.chn == "VLF12D" or self.chn == "VLF12DF": fn = 'Giraff_Analog 2_VLF12D_10-10000000-50.txt'
+            elif self.chn == "VLF34D" or self.chn == "VLF34DF": fn = 'Giraff_Analog 2_VLF34D_10-10000000-50.txt'
+            elif self.chn == "VLF13D" or self.chn == "VLF13DF": fn = 'Giraff_Analog 2_VLF13D_10-1000000-50.txt'
+            elif self.chn == "VLF32D" or self.chn == "VLF32DF": fn = 'Giraff_Analog 2_VLF32D_10-1000000-50.txt'
+            elif self.chn == "VLF24D" or self.chn == "VLF24DF": fn = 'Giraff_Analog 2_VLF24D_10-1000000-50.txt'
+            elif self.chn == "VLF41D" or self.chn == "VLF41DF": fn = 'Giraff_Analog 2_VLF41D_10-1000000-50.txt'
             elif self.chn == "VLF12A": fn = 'Giraff_Analog 2_VLF12A_10-1000000-50.txt'
             elif self.chn == "V12A": fn = 'Giraff_Analog 2_V12A_10-10000-50.txt'
             elif self.chn == "V34A": fn = 'Giraff_Analog 2_V34A_10-10000-50.txt'
@@ -484,9 +480,22 @@ class GIRAFF_Fields_Loader:
         f = lines[0].split()  #freq in Hz
         p = lines[1].split()  #phase in deg
         g = lines[2].split()  #gain in dB
-        f = [float(i) for i in f]
-        p = [float(i) for i in p]
-        g = [float(i) for i in g]
+        f = np.asarray([float(i) for i in f])
+        p = np.asarray([float(i) for i in p])
+        g = np.asarray([float(i) for i in g])
+
+
+        #For loading the lower resolution "VLF" data (as opposed to "VLFF" - i.e. the full resolution data), I need to truncate
+        #these curves at 50 kHz
+        if self.chn == 'VLF12D' or self.chn == 'VLF34D' or self.chn == 'VLF13D' or self.chn == 'VLF32D' or self.chn == 'VLF24D' or self.chn == 'VLF41D':
+            goodf = np.where(f <= 50000)[0]
+            f = f[goodf]
+            p = p[goodf]
+            g = g[goodf]
+            #f = list(filter(lambda x: x <= 50000, f))
+            #p = list(filter(lambda x: x <= 50000, f))
+            #g = list(filter(lambda x: x <= 50000, f))
+
 
         #--change to radians
         prad = [np.deg2rad(i) for i in p]
@@ -571,19 +580,35 @@ class GIRAFF_Fields_Loader:
         #3dB point (expected)
         axs[0].plot(self.chnspecs["lpf"], self.chnspecs["filter_3dB_dBvalue_measured"], 'o',markersize=4)
 
-
         #idealized filter falloff
         axs[0].plot(xv,yv,linestyle='--')
 
-        axs[0].set_title('gain/phase; \n fn='+ self.chnspecs["gainphase_file"])
+        if self.chn == 'VLF12D' or self.chn == 'VLF34D' or self.chn == 'VLF13D' or self.chn == 'VLF32D' or self.chn == 'VLF24D' or self.chn == 'VLF41D':
+            axs[0].set_title('gain/phase; \n fn='+ self.chnspecs["gainphase_file"] + '\n downsampled to 50 kHz Nyquist')
+        else:
+            axs[0].set_title('gain/phase; \n fn='+ self.chnspecs["gainphase_file"])
+            
         for i in range(3):
             axs[i].set_xscale('log')
-            axs[i].set_xlim(1, 50000)
+            axs[i].set_xlim(1, 10000000)
         
         axs[0].set_yscale('linear')
         axs[0].set(ylabel='gain(dB)',xlabel='freq(kHz)')
         axs[1].set(ylabel='gain(linear)',xlabel='freq(kHz)')
         axs[2].set(ylabel='phase(deg)',xlabel='freq(kHz)')
+
+
+        #If one of the downsampled VLF channels is selected (e.g. VLF12D as opposed to VLF12DF) then 
+        #plot horizontal line at 50 kHz indicating that data has been artificially truncated at this freq
+
+        if self.chn == 'VLF12D' or self.chn == 'VLF34D' or self.chn == 'VLF13D' or self.chn == 'VLF32D' or self.chn == 'VLF24D' or self.chn == 'VLF41D':
+            ylt = axs[0].get_ylim()
+            axs[0].vlines(50000,ylt[0],ylt[1],color='red')
+            ylt = axs[1].get_ylim()
+            axs[1].vlines(50000,ylt[0],ylt[1],color='red')
+            ylt = axs[2].get_ylim()
+            axs[2].vlines(50000,ylt[0],ylt[1],color='red')
+
         plt.show()
 
 
@@ -601,7 +626,11 @@ class GIRAFF_Fields_Loader:
         c1 = self.gaindB <= threedB
         c2 = np.asarray(self.freq_gainphase) > self.chnspecs['fs']/6
         c3 = (c1 & c2)
-        index3dB = [i for i in range(len(c3)) if c3[i] == True][0]
+        if self.chn == 'VLF12D' or self.chn == 'VLF34D' or self.chn == 'VLF13D' or self.chn == 'VLF32D' or self.chn == 'VLF24D' or self.chn == 'VLF41D':   
+            #For the downsampled VLF channels the 3dB point is at a freq > the max downsampled freq. Thus, we'll set it to the last surviving freq bin. 
+            index3dB = len(c3)-1    
+        else: 
+            index3dB = [i for i in range(len(c3)) if c3[i] == True][0]
 
         #Expected 3dB point 
         #threedBfreq = self.chnspecs["lpf"]
@@ -660,7 +689,12 @@ class GIRAFF_Fields_Loader:
 
 
         #Select desired dictionary from list of dictionaries
-        good = np.where(chn_names == self.chn)[0]
+
+        if self.chn == 'VLF12DF' or self.chn == 'VLF34DF' or self.chn == 'VLF13DF' or self.chn == 'VLF32DF' or self.chn == 'VLF24DF' or self.chn == 'VLF41DF':
+            chntmp = self.chn[:-1]
+        else:
+            chntmp = self.chn
+        good = np.where(chn_names == chntmp)[0]
         self.chnspecs = chn_dat380[good[0]]
 
         """

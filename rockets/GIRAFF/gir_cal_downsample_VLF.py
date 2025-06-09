@@ -85,7 +85,6 @@ plt.plot(times,wf)
 
 nfft=16384
 fspec, tspec, powerc, fs = fftspec.fft_spectrum_piecewise(tv2, wf2, fs_thres=0.1, nfft=nfft, noverlap=2)
-fspec = fspec[:,0]
 
 vr=[-80,-50]
 xr = [100,550]

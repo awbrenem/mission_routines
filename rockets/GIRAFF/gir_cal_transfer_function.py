@@ -13,35 +13,38 @@ From Bode (gain/phase) plot:
 import sys 
 sys.path.append('/Users/abrenema/Desktop/code/Aaron/github/mission_routines/rockets/GIRAFF/')
 sys.path.append('/Users/abrenema/Desktop/code/Aaron/github/signal_analysis/')
-from gir_fields_loader import GIRAFF_Fields_Loader as GFL
+from gir_load_fields import GIRAFF_Fields_Loader as GFL
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.interpolate import interp1d
 from scipy.fft import rfft, irfft
 from math import remainder
+import pickle
 
 
 #-------------------------------------------------------
 #Select data channel for calibration 
 #-------------------------------------------------------
 
-pld = '380'
-
-ch = 'VLF12D'
-#ch = 'VLF32D'
+pld = '381'
+#ch = 'V34D'
+ch = 'VLF34D'
 #ch = 'V4SD'
 #ch = 'VLF41D'
-v = GFL(ch)
+v = GFL(pld, ch)
 
-v.plot_gainphase(pld)
+v.plot_gainphase()
 
-vdat = v.load_data(pld)
+vdat = v.load_data()
 wavedat = vdat[0]
 tdat = vdat[1]
 
 
 #sample rate
 fs = v.chnspecs['fs']
+
+#FOR VLF CHANNELS ONLY: Max freq of the downsampled VLF channels (e.g. VLF12D vs VLF12DF)
+fmax_vlf_downsampled = 50000
 
 
 
@@ -54,18 +57,21 @@ phase_lowres = np.asarray(v.phase)
 gain_lowres = np.asarray(v.gain)
 freq_lowres = np.asarray(v.freq_gainphase)
 
+#For the normal VLF data loaded, I've desampled to 500 kHz (otherwise too much data to load)
+
+
 nyquist = fs/2
 
 
 #-----------------------------------------------------------------------------------------
-#Chop off calibration values above the Nyquist freq of data.
+#Chop off calibration values above 7/8 of the Nyquist freq of data.
 #Not doing this can mess up the interpolations below...
 #-----------------------------------------------------------------------------------------
 
-good = np.where(freq_lowres <= nyquist)
-phase_lowres = phase_lowres[np.where(freq_lowres <= nyquist)]
-gain_lowres = gain_lowres[np.where(freq_lowres <= nyquist)]
-freq_lowres = freq_lowres[np.where(freq_lowres <= nyquist)]
+good = np.where(freq_lowres <= nyquist * (7/8))
+phase_lowres = phase_lowres[np.where(freq_lowres <= nyquist * (7/8))]
+gain_lowres = gain_lowres[np.where(freq_lowres <= nyquist * (7/8))]
+freq_lowres = freq_lowres[np.where(freq_lowres <= nyquist * (7/8))]
 
 
 
@@ -90,17 +96,21 @@ if v.type == 'DC' or v.type == 'skins':
 
 
     fmin_trust = 0  #used later
+    fmax_trust = (7/8)*v.chnspecs['fs'] / 2
 
 if v.type == 'VLF':
 
-    #--Change any gain values < 1 to 1 so that low freqs are not amplified.     
+    #--Change any gain values < 1 to 1 so that low freqs are not amplified. We will just consider these values to be outside
+    # of the VLF channel range. Not doing so tends to produce large power at very low and high freqs.     
     gain_lowres[np.where(gain_lowres < 1)] = 1
 
 
 
     #--Replace VLF cal test gain/phase values < fmin_trust (Hz) b/c I don't trust these. 
     #--The signal/noise ratio is very high in the cal tests, and these gain/phase values can be all over the place. 
-    fmin_trust = 30
+    fmin_trust = 2*v.chnspecs['hpf']
+    fmax_trust = fmax_vlf_downsampled    #For the normal VLF file to load I downsample the data to freqs <= 50k. 
+
     #--define replacement values 
     whgoo = np.where(freq_lowres <= fmin_trust)
     g_replace = gain_lowres[whgoo[0][-1]]
@@ -117,7 +127,7 @@ if v.type == 'VLF':
 
 
 #-------------------------------------------------------------
-#FFT Endurance waveform data to apply transfer function
+#FFT GIRAFF waveform data to apply transfer function
 #-------------------------------------------------------------
 
 
@@ -153,23 +163,23 @@ phase_hires_unwrapped = interp2(freq_hires)
 phase_hires = np.asarray([remainder(phase_hires_unwrapped[i], 2*np.pi) for i in range(len(phase_hires_unwrapped))])
 
 
-plt.plot(freq_lowres, phase_lowres, freq_hires,phase_hires_unwrapped, freq_hires, phase_hires)
+plt.plot(freq_lowres, phase_lowres, '*', freq_hires,phase_hires_unwrapped, freq_hires, phase_hires)
 plt.axvline(x=nyquist, color='r', linestyle='--')
 plt.xscale('log')
-plt.xlim(1,50000)
+plt.xlim(1,1000000)
 plt.ylim(-4,4)
-print('check wrapping')
+print('check angle wrapping')
 plt.close()
 
 
 
 fig, axs = plt.subplots(2)
-axs[0].plot(freq_lowres, gain_lowres, freq_hires, gain_hires)
-axs[1].plot(freq_lowres, phase_lowres, freq_hires, phase_hires)
+axs[0].plot(freq_lowres, gain_lowres, '*', freq_hires, gain_hires)
+axs[1].plot(freq_lowres, phase_lowres,'*', freq_hires, phase_hires)
 axs[0].axvline(nyquist, color='r', linestyle='--')
 axs[1].axvline(nyquist, color='r', linestyle='--')
 for i in range(2): axs[i].set_xscale('log')
-for i in range(2): axs[i].set_xlim(1,30000)
+for i in range(2): axs[i].set_xlim(1,1000000)
 axs[1].set_ylim(-4,4)
 
 print('Check modified gain/phase curves')
@@ -188,7 +198,8 @@ plt.close(fig)
 #---------------------------------------------------
 
 transfer_func = gain_hires * np.exp(1j*phase_hires)
-maxv = np.nanmax(gain_hires)
+goodf = np.where((freq_hires > fmin_trust) & (freq_hires < fmax_trust))[0]
+maxv = np.nanmax(gain_hires[goodf])
 transfer_func_unitygain = (gain_hires/maxv) * np.exp(1j*phase_hires)
 
 
@@ -205,10 +216,15 @@ axs2[0].plot(freq_hires,np.abs(transfer_func))
 axs2[1].plot(freq_hires,np.real(transfer_func))
 axs2[2].plot(freq_hires,np.imag(transfer_func))
 for i in range(3): axs2[i].set_xscale('log')
-for i in range(3): axs2[i].set_xlim(1,20000)
+for i in range(3): axs2[i].set_xlim(1,1000000)
 for i in range(3): 
     axs2[i].axvline(nyquist, color='r', linestyle='--')
 for i in range(3): axs2[i].set_xscale('log')
+
+#For the downsampled VLF channels, indicate that the data are truncated above 50 kHz
+if ch == 'VLF12D' or ch == 'VLF34D' or ch == 'VLF13D' or ch == 'VLF32D' or ch == 'VLF24D' or ch == 'VLF41D':
+    for i in range(3): 
+        axs2[i].axvline(fmax_vlf_downsampled, color='r')
 print('Check transfer function')
 
 
@@ -221,7 +237,7 @@ axs2[0].plot(freq_hires,np.abs(transfer_func_unitygain))
 axs2[1].plot(freq_hires,np.real(transfer_func_unitygain))
 axs2[2].plot(freq_hires,np.imag(transfer_func_unitygain))
 for i in range(3): axs2[i].set_xscale('log')
-for i in range(3): axs2[i].set_xlim(1,20000)
+for i in range(3): axs2[i].set_xlim(1,1000000)
 for i in range(3): axs2[i].set_xlabel('freq(Hz)')
 for i in range(3): 
     axs2[i].axvline(nyquist, color='r', linestyle='--')
@@ -230,6 +246,10 @@ axs2[0].set_ylabel('Magnitude |H(jw)|')
 axs2[1].set_ylabel('Re(H(jw))')
 axs2[2].set_ylabel('Phase Im(H(jw))')
 
+#For the downsampled VLF channels, indicate that the data are truncated above 50 kHz
+if ch == 'VLF12D' or ch == 'VLF34D' or ch == 'VLF13D' or ch == 'VLF32D' or ch == 'VLF24D' or ch == 'VLF41D':
+    for i in range(3): 
+        axs2[i].axvline(fmax_vlf_downsampled, color='r')
 print('Check unity gain transfer function')
 
 
@@ -255,13 +275,39 @@ wf_corr = irfft(wavedatFFTc, n=len(tdat))
 #Save corrected waveform data
 #----------------------------------------------------
 
-import pickle
-
 dict_fin = {'tvals':tdat, 'wf':wf_corr}
-pathoutput = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/' + v.chnspecs['folder'] + '/'
+pathoutput = '/Users/abrenema/Desktop/Research/Rocket_missions/GIRAFF/data/' + v.chnspecs['folder'] + '/'
 
-fnsav = v.chnspecs["gainphase_file"][:-4] + '_gainphase_corrected'
-pickle.dump(dict_fin, open(pathoutput + fnsav + '.pkl','wb'))
+
+#----------------------------
+#Set output file name   Giraff_381_Analog 2_VLF12D_100-100000-50_gainphase_corrected.pkl
+#----------------------------
+if pld == '381':
+    agoo = '2_'
+else: 
+    agoo = '1_'
+
+
+t1 = 'Giraff_'+pld+'_'+'Analog '+agoo+ch+'_'
+flow = str(int(fmin_trust)) + '-'
+
+
+goo = v.chnspecs["gainphase_file"].find('-')
+stmp = v.chnspecs["gainphase_file"][goo:]
+goo = stmp.find('-',1)
+tnsteps = stmp[goo+1:-4]+'steps'
+if ch == 'VLF12D' or ch == 'VLF34D' or ch == 'VLF13D' or ch == 'VLF32D' or ch == 'VLF24D' or ch == 'VLF41D':
+    fhigh = str(100000) + 'Hz_'
+else:
+    fhigh = stmp[1:goo] + 'Hz_'
+
+t2 = '_gainphase_corrected'
+
+
+fn = t1 + flow + fhigh + tnsteps + t2
+
+
+pickle.dump(dict_fin, open(pathoutput + fn + '.pkl','wb'))
 #wf_corr_load = pickle.load(open(pathoutput + fnsav + ".pkl", 'rb'))
 
 
