@@ -18,17 +18,19 @@ import correlation_analysis as ca
 pld = '381'
 
 #Load data for two channels of interest
-c1s = 'VLF12D'
-c2s = 'VLF34D'
-#c1s = 'V12D'
-#c2s = 'V34D'
+#c1s = 'VLF12D'
+#c2s = 'VLF34D'
+c1s = 'V12D'
+c2s = 'V34D'
 
 
 c1 = GFL(pld,c1s)
 fs = c1.chnspecs['fs']
-wf1, tdat = c1.load_data_gainphase_corrected()
+#wf1, tdat = c1.load_data_gainphase_corrected()
+wf1, tdat = c1.load_data()
 c2 = GFL(pld,c2s)
-wf2, tdat = c2.load_data_gainphase_corrected()
+#wf2, tdat = c2.load_data_gainphase_corrected()
+wf2, tdat = c2.load_data()
 
 
 
@@ -53,7 +55,7 @@ for i in range(len(tcenter_fin)):
 #cohmin = 0.01  #Best to limit bad coherence values at the onset. Otherwise get a lot of salt/pepper noise in final result
 #cohmin = 0.3 
 
-yr = [6000,8000]
+yr = [0,50000]
 yscale='linear'
 xr = [100,550]
 vr = [-80,-60]
@@ -83,7 +85,7 @@ klicker = clicker(axs[0],["event"], markers=["x"])
 vertices1 = (klicker.get_positions())['event']
 
 
-
+#36.381
 vertices = [[ 109.09934342, 6071.26805778],
 [ 112.09677419, 5782.3434992 ],
 [ 116.33123989, 6007.06260032],
@@ -182,7 +184,7 @@ vertices = [[ 109.09934342, 6071.26805778],
 vertices = np.asarray(vertices)
 
 #Save vertices as a pickle file
-flhfile = '/Users/abrenema/Desktop/Research/Rocket_missions/GIRAFF/data/lower_hybrid_id/GIRAFF_381_lower_hybrid_freqs_byeye.pkl'
+flhfile = '/Users/abrenema/Desktop/Research/Rocket_missions/GIRAFF/data/lower_hybrid_id/GIRAFF_380_lower_hybrid_freqs_byeye.pkl'
 #vertices = pickle.load(open(flhfile,'rb'))
 pickle.dump([vertices], open(flhfile,'wb'))
 

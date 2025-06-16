@@ -1,12 +1,7 @@
 # 2025-05-22 - A.W. Breneman
-#   - Loads GIRAFF E-fields data
+#   - Loads GIRAFF E-fields data (includes FIELDS mag and Langmuir probes)
 #   
 
-#**********FIX THE BELOW DATA**********
-#   T-0: May 11, 2022  01:31:00.0 U.T.
-#   Data array original sample rate 30kHz
-#   Column 1, time (sec) since T-0, format:f13.7
-#   Column 2, VLF12 (mV/m), format:f10.3
 
 
 """
@@ -28,8 +23,8 @@ class GIRAFF_Fields_Loader:
     VLFF: 'VLF12DF','VLF34DF','VLF13DF','VLF32DF','VLF24DF','VLF41DF'  --> full resolution
     HF: 'HF12','HF34'
     analog: 'V12A','V34A','VLF12A','V1SA','V2SA','V3SA','V4SA'
-    mag: 'magX','magY','magZ'
-    Langmuir Probes (analog, digital): 'LPA', 'LP1D', 'LP2D'
+    mag: 'mag',     or  'magX','magY','magZ' if you need individual gain/phase curves
+    Langmuir Probes (analog, digital): 'LPA', 'LP1D' (NOTE: LP2D used for sensor's PCB temp (Paulo email, Jun 2, 2025))
 
     Example usage:
 
@@ -67,7 +62,7 @@ class GIRAFF_Fields_Loader:
         if (self.chn == 'V12A') or (self.chn == 'V34A') or (self.chn == 'VLF12A') or (self.chn == 'V1SA') or (self.chn == 'V2SA') or (self.chn == 'V3SA') or (self.chn == 'V4SA'):
             self.type = 'analog'
             filterpole = "nan"
-        if (self.chn == 'magX') or (self.chn == 'magY') or (self.chn == 'magZ'):
+        if (self.chn == 'mag') or (self.chn == 'magX') or (self.chn == 'magY') or (self.chn == 'magZ'):
             self.type = 'mag'
             filterpole = "nan"
         if (self.chn == 'LPA'):
@@ -75,9 +70,6 @@ class GIRAFF_Fields_Loader:
             filterpole = "nan"
         if (self.chn == 'LP1D'):
             self.type = 'LP1D'
-            filterpole = "nan"
-        if (self.chn == 'LP2D'):
-            self.type = 'LP2D'
             filterpole = "nan"
 
 
@@ -433,7 +425,7 @@ class GIRAFF_Fields_Loader:
             elif self.chn == "magY": fn = 'GIRAFF_BM SN1 .380_MAG Y_10-10000-50.txt'
             elif self.chn == "magZ": fn = 'GIRAFF_BM SN1 .380_MAG Z_10-10000-50.txt'
             elif self.chn == "LP1D": fn = 'Giraff_BM SN1 .380_LP1 U44_10-100000-50.txt'
-            elif self.chn == "LP2D": fn = 'Giraff_BM SN1 .380_LP2 U42_10-100000-50.txt'
+
 
         if self.pld == '381':
             #if   self.chn == "V1SD": fn = 'Giraff_Analog 2_V1SD_10-1000000-50.txt'
@@ -466,7 +458,7 @@ class GIRAFF_Fields_Loader:
             elif self.chn == "magY": fn = 'GIRAFF_BM SN2 .381_MAG Y_10-10000-50.txt'
             elif self.chn == "magZ": fn = 'GIRAFF_BM SN2 .381_MAG Z_10-10000-50.txt'
             elif self.chn == "LP1D": fn = 'Giraff_BM SN2 .381_LP1 U44_10-100000-50.txt'
-            elif self.chn == "LP2D": fn = 'Giraff_BM SN2 .381_LP2 U42_10-100000-50.txt'
+            
 
 
         self.chnspecs["gainphase_file"] = fn

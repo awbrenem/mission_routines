@@ -638,6 +638,29 @@ def gir_cal_channel_data():
             "coeffb": None,
             "polarity": None
         },
+        {   #Catch-all mag channel containing magX, magY, magZ
+            "signal": "mag",
+            "analog_filter": "J",
+            "analog_output": "J14-1",
+            "testpoint_plus": "U31-1",
+            "testpoint_minus": "U31-7",
+            "tm": 2000,
+            "fs": 32000,
+            "max_sig_pm_mV": None,
+            "boom_length": None,
+            "max_sig_pm_mVm": "+-60uT",
+            "gain_desired": 1.000,
+            "gaindB_desired": 0.0,
+            "gain_measured": None,
+            "gaindB_measured": None,
+            "measured_mVm": None,
+            "hpf": None,
+            "lpf": 875.,
+            "bits": 18,
+            "coeffa": None,
+            "coeffb": None,
+            "polarity": None
+        },
         {
             "signal": "magX",
             "analog_filter": "J",
@@ -754,7 +777,7 @@ def gir_cal_channel_data():
             "coeffb": -4.2446e-10,
             "polarity": None
         },
-        #NEED TO VERIFY LP2D*********************
+        #LP2D - NOTE: This was NOT used as a Langmuir Probe, rather as the sensor's PCB temperature (Paulo email Jun 2, 2025)
         {
             "signal": "LP2D",
             "analog_filter": "F",
@@ -1406,6 +1429,29 @@ def gir_cal_channel_data():
             "coeffb": None,
             "polarity": None
         },
+        { #catch-all mag channel containing magX, magY, magZ
+            "signal": "mag",
+            "analog_filter": "J",
+            "analog_output": "J14-1",
+            "testpoint_plus": "U31-1",
+            "testpoint_minus": "U31-7",
+            "tm": 2000,
+            "fs": 32000,
+            "max_sig_pm_mV": None,
+            "boom_length": None,
+            "max_sig_pm_mVm": "+-60uT",
+            "gain_desired": 1.000,
+            "gaindB_desired": 0.0,
+            "gain_measured": None,
+            "gaindB_measured": None,
+            "measured_mVm": None,
+            "hpf": None,
+            "lpf": 875,
+            "bits": 18,
+            "coeffa": None,
+            "coeffb": None,
+            "polarity": None
+        },
         {
             "signal": "magX",
             "analog_filter": "J",
@@ -1522,7 +1568,7 @@ def gir_cal_channel_data():
             "coeffb": -2.2300e-08,
             "polarity": None
         },
-        #NEED TO VERIFY LP2D*********************
+        #LP2D: NOTE: This was NOT used as a Langmuir Probe, rather as the sensor's PCB temperature (Paulo email Jun 2, 2025)
         {
             "signal": "LP2D",
             "analog_filter": "F",
