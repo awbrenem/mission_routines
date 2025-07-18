@@ -296,18 +296,18 @@ class GIRAFF_Fields_Loader:
         if self.type == 'HF':
 
             """
-            Some notes on reading the arrays AFFTPOW12, AFFTPOW34:
-            
-            AFFTPOW12 corresponds to HF12, and AFFTPOW34 to HF34
-            There are 945 spectra for each channel, corresponding time stamps in ATIMESFFT
-            Frequencies are arranged low to high, so AFFTPOW12[*,0] corresponds to DC, and AFFTPOW12[*,4200] corresponds to 4 Mhz.
-            
-            Oh, and the way I define power (as per Rob) is as follows:
-            
-            AFFTPOW = 10log10(Win*FFT^2*factor)
-            
-            Where Win=window function (typically Hanning) and factor is a constant.
+            Load the HF data snippets on GIRAFF and return a sonogram
+            Sample rate = 8000000.0 
+            Units are 15 bit raw counts
+
+            Data are in arrays of size [n,t], where t is the t0 of each snippet. 
+                                    
             """ 
+
+            #import plot_spectrogram as ps
+            from scipy import signal
+
+
 
             folder = 'efield_HF'
             
@@ -322,16 +322,49 @@ class GIRAFF_Fields_Loader:
 
             vals = readsav(path + folder + '/' + fn)
 
-            t = vals.atimesfft
-            f = vals.afreq
-            if self.chn == 'HF12': wf = vals.afftpow12
-            if self.chn == 'HF34': wf = vals.afftpow34
+            t = vals.tbursts
+
+            #Data in 15 bit raw counts
+            if self.chn == 'HF12': wf = vals.hf12snippets
+            if self.chn == 'HF34': wf = vals.hf34snippets
 
             #Remove negative times (starts at t=-100 sec). Not doing so messes up my spectrogram plotting routines.
             good = np.squeeze(np.where(t >= 0.))
-            return wf[good], t[good], f[good]
+            wf = wf[good,:]
+            t = t[good]
 
-        
+
+
+            #Now FFT the data
+            nsnippets = len(t)
+
+
+            fs = 8000000
+            nps = len(wf[0])   #Do a single FFT for each snippet
+
+            #Get size of FFT'd arrays
+            fspecx, tspecx, powerx = signal.spectrogram(wf[0,:], fs, nperseg=nps,window='hann',return_onesided=True)
+            tspecS = np.zeros([len(tspecx),nsnippets])
+            powerS = np.zeros([len(fspecx),len(tspecx),nsnippets])
+            fspecF = fspecx
+
+
+            for i in range(nsnippets):
+                fspecx, tspecx, powerx = signal.spectrogram(wf[i,:], fs, nperseg=nps,window='hann',return_onesided=True)
+                tspecS[:,i] = t[i] + tspecx
+                powerS[:,:,i] = powerx
+
+
+            #Now let's reshape these to get rid of the snippet format
+            tspecF = np.ravel(tspecS,order='F')
+            powerF = np.reshape(powerS,[len(fspecF),len(tspecF)],order='F')
+
+            #ps.plot_spectrogram(tspecF,fspecF,powerF,vr=[-50,0],yr=[1e6,4e6], yscale='linear')
+
+            return powerF, tspecF, fspecF
+
+
+
 
         #Return mag data (nT)
         if self.type == 'mag':   
