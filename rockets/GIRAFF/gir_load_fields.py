@@ -258,6 +258,16 @@ class GIRAFF_Fields_Loader:
                     fn = '36380_GIRAFF_TM2_LFDSP_VLF12D_mvm.sav'
                 if self.chn == 'VLF34DF':
                     fn = '36380_GIRAFF_TM2_LFDSP_VLF34D_mvm.sav'
+                if self.chn == 'VLF41DF':
+                    fn = '36380_TM2_LFDSP_VLF41D_Interferometry_mvm.sav'
+                if self.chn == 'VLF13DF':
+                    fn = '36380_TM2_LFDSP_VLF13D_Interferometry_mvm.sav'
+                if self.chn == 'VLF24DF':
+                    fn = '36380_TM2_LFDSP_VLF24D_Interferometry_mvm.sav'
+                if self.chn == 'VLF32DF':
+                    fn = '36380_TM2_LFDSP_VLF32D_Interferometry_mvm.sav'
+
+
             if self.pld == '381':
                 
                 #****WHICH FILE SHOULD I BE LOADING???
@@ -267,21 +277,41 @@ class GIRAFF_Fields_Loader:
                     fn = '36381_GIRAFF_TM2_LFDSP_IT_VLF12D_mvm.sav'
                 if self.chn == 'VLF34DF':
                     fn = '36381_GIRAFF_TM2_LFDSP_IT_VLF34D_mvm.sav'
+                if self.chn == 'VLF41DF':
+                    fn = '36381_TM2_LFDSP_VLF41D_Interferometry_mvm.sav'
+                if self.chn == 'VLF13DF':
+                    fn = '36381_TM2_LFDSP_VLF13D_Interferometry_mvm.sav'
+                if self.chn == 'VLF24DF':
+                    fn = '36381_TM2_LFDSP_VLF24D_Interferometry_mvm.sav'
+                if self.chn == 'VLF32DF':
+                    fn = '36381_TM2_LFDSP_VLF32D_Interferometry_mvm.sav'
 
 
             vals = readsav(path + folder + '/' + fn)
 
-            t = vals.tvlf12vlf34
+            
             pol = 1
             if self.chnspecs["polarity"] == 'Neg':
                 pol = -1
 
-            if self.chn == 'VLF12DF': wf = vals.dvlf12d_mvm * pol
-            if self.chn == 'VLF34DF': wf = vals.dvlf34d_mvm * pol
-            if self.chn == 'VLF13DF': wf = vals.dvlf13d_mvm * pol
-            if self.chn == 'VLF32DF': wf = vals.dvlf32d_mvm * pol
-            if self.chn == 'VLF24DF': wf = vals.dvlf24d_mvm * pol
-            if self.chn == 'VLF41DF': wf = vals.dvlf41d_mvm * pol
+            if self.chn == 'VLF12DF': 
+                wf = vals.dvlf12d_mvm * pol
+                t = vals.tvlf12vlf34
+            if self.chn == 'VLF34DF': 
+                wf = vals.dvlf34d_mvm * pol
+                t = vals.tvlf12vlf34
+            if self.chn == 'VLF13DF': 
+                wf = vals.dvlf13_mvm * pol
+                t = vals.tdiff
+            if self.chn == 'VLF32DF': 
+                wf = vals.dvlf32_mvm * pol
+                t = vals.tdiff
+            if self.chn == 'VLF24DF': 
+                wf = vals.dvlf24_mvm * pol
+                t = vals.tdiff
+            if self.chn == 'VLF41DF': 
+                wf = vals.dvlf41_mvm * pol
+                t = vals.tdiff
 
 
             #Remove negative times (starts at t=-100 sec). Not doing so messes up my spectrogram plotting routines.

@@ -3,6 +3,8 @@
 #Not doing this means the waveform files are HUGE and difficult to use. 
 #NOTE: VLF12 and VLF34 are 800 kS/sec while the diagonals are 100 kS/sec
 
+#NOTE: This doesn't modify the signal phase. 
+
 
 import sys 
 sys.path.append('/Users/abrenema/Desktop/code/Aaron/github/mission_routines/rockets/GIRAFF/')

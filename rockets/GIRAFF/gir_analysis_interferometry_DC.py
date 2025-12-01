@@ -113,7 +113,7 @@ receiver_spacing_yhat = 2.3 #m
 
 
 
-pld = '381'
+pld = '380'
 
 #Load GIRAFF waveform
 vAx = GFL(pld,vAstrx)
@@ -152,7 +152,8 @@ fs = vAx.chnspecs['fs']
 
 #******************************
 #-->(SET)<--: size of following spectra AND of power spectra of k-value vs freq
-nps = 512 
+#nps = 512 
+nps = 2048
 #******************************
 
 fspec, tspec, powercAx, fsgoo = fftspec.fft_spectrum_piecewise(tdatx, wfAx, fs_thres=0.3, nfft=nps, noverlap=2)
@@ -185,10 +186,15 @@ ps.plot_spectrogram(tspec,fspec,np.abs(powercAx),vr=[-80,-20],yr=[100,50000],xr=
 #tz =  403  #(403.8)  403.7 - 404
 #nsec = 4
 #----VLF waves associated with possible BBELF waves
+#tz = 268
+#nsec = 2
+#fplot_bracket = [10000,40000] #Used to set ylim for spectral plots (bracket wave range of interest)
+#cohmin = 0.6  #Best to limit bad coherence values at the onset. Otherwise get a lot of salt/pepper noise in final result
+#----NPM transmitter
 tz = 268
-nsec = 2
-fplot_bracket = [10000,40000] #Used to set ylim for spectral plots (bracket wave range of interest)
-cohmin = 0.6  #Best to limit bad coherence values at the onset. Otherwise get a lot of salt/pepper noise in final result
+nsec = 4
+fplot_bracket = [15000,25000] #Used to set ylim for spectral plots (bracket wave range of interest)
+cohmin = 0.8  #Best to limit bad coherence values at the onset. Otherwise get a lot of salt/pepper noise in final result
 
 #******************************
 
@@ -226,7 +232,7 @@ tdatyz = tdaty[goodtslop]
 fspecz, tspecz, csdxz, cohxz, phasexz, fsxz, powercAxz, powercBxz =  ca.csd_spectrum_piecewise(tdatxz, wfAxz, wfBxz, nfft=nps, noverlap=8, fs_thres=0.3)
 fspecz, tspecz, csdyz, cohyz, phaseyz, fsyz, powercAyz, powercByz =  ca.csd_spectrum_piecewise(tdatyz, wfAyz, wfByz, nfft=nps, noverlap=8, fs_thres=0.3)
 
-ps.plot_spectrogram(tspecz,fspecz,np.abs(powercAxz),vr=[-80,-20],yr=[300,50000],xr=[tz-dtslop,tz+nsec+dtslop], yscale='log')
+ps.plot_spectrogram(tspecz,fspecz,np.abs(powercAxz),vr=[-80,-20],yr=[15000,25000],xr=[tz-dtslop,tz+nsec+dtslop], yscale='log')
 
 
 
@@ -313,7 +319,7 @@ for i in range(len(fvalsxz2)):
 #tchunk = 0.1
 tchunk = 0.2
 #choose based on desired freq resolution for coh and phase spectra
-nperseg = 512
+nperseg = 2048
 #******************************
 
 
