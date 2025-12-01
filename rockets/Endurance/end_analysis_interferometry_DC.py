@@ -45,8 +45,8 @@ y'-hat --> Ey' = V3V2z - V1V4z (45 deg inclined from y-hat)
 #NOTE: positive sense of phase defined as pointing towards center of potential of "wfA"
 #e.g. y-hat':  wfA = wf32; wfB = wf14
 #So, for Endurance the interferometry pairs are 
-#   vAstr = 'VLF32D' and vBstr = 'VLF41D'-->'VLF14D'
-#or vAstr = 'VLF13D' and vBstr = 'VLF24D'-->'VLF42D'
+#   vAstr = 'VLF32D' and vBstr = 'VLF14D' (from -1*'VLF41D' channel)
+#or vAstr = 'VLF13D' and vBstr = 'VLF42D' (from -1*'VLF24D' channel)
 
 
 """

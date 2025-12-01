@@ -25,7 +25,7 @@ rbsp_efw_init
 ;Load calibrated data from Python (from save_data_as_netcdf.py)
 ;-----------------------------------
 
-
+ 
 ;NetCDF 
 path = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/efield_VLF/'
 fn = 'efield_vlf_calibrated.netcdf'

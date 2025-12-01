@@ -95,7 +95,7 @@ class Endurance_Fields_Loader:
 
 
     #---------------------------------------------------------------------------------
-    #Load gain/phase calibrated files. These are produced by end_transfer_function.py.
+    #Load gain/phase calibrated files. These are produced by end_cal_transfer_function.py.
 
     #NOTE: Unfortunately the time values are not sampled evenly. Over the course of the mission this causes any spectrogram
     #that is produced from the waveform data to be significantly off (e.g. 2 sec by end of mission). 

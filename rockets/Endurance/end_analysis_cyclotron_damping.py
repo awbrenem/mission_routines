@@ -1,6 +1,10 @@
 #Estimate the cyclotron/Landau damping energy for Bernstein waves based on the Doppler-shifted cyclotron resonance condition. 
 #Makes nice contour plots of Ez vs f and the perpendicular wavelength. 
 
+#Consider cyclotron resonance w/ various ions
+#and Landau damping with ions and electrons 
+
+
 
 
 
@@ -33,19 +37,20 @@ F, LAMBDA = np.meshgrid(f_vals, lambda_perp_vals)
 
 
 mp = 1.27e-27   #proton mass (kg)
+#mp = 9.1e-31   #electron mass (kg)
 m_ion = 1  #multiplicative factor for ion mass (e.g., 1 for protons, 16 for O+)
 e1eV = 1.6e-19  #Joules/eV 
 
 
 theta_kb = 89.95   #[-->increasing increases Ez]
-#theta_kb = 89   #[-->increasing increases Ez]
+#theta_kb = 89.53   #[-->increasing increases Ez]
 #lambda_perp = 2  #meters  (0.5-2m predicted from WHAMP)  [-->increasing increases Ez]
 #f = 7500. #wave freq
 fc = 754. #proton cyclotron freq
 
-max_energy = 1e6  #eV (max energy for cyclotron damping color scale to plot - this energy represents the maximum color)
+max_energy = 1e2  #eV (max energy for cyclotron damping color scale to plot - this energy represents the maximum color)
 
-harmonics = [6, 7, 8, 9]
+harmonics = [0, 7, 8, 9]
 fig, axes = plt.subplots(2, 2, figsize=(12, 9), constrained_layout=True)
 axes = axes.flatten()
 
@@ -66,9 +71,9 @@ for idx, n in enumerate(harmonics):
     )
     # Add contour lines for 100 eV and 500 eV
     cs = axes[idx].contour(
-        F, LAMBDA, Ez, levels=[100, 1000, 10000], colors=['white', 'black', 'black'], linewidths=1.5
+        F, LAMBDA, Ez, levels=[20, 100, 1000, 10000], colors=['white', 'white', 'black', 'black'], linewidths=1.5
     )
-    axes[idx].clabel(cs, fmt={100: '100 eV', 1000: '1000 eV', 10000:'10 keV'}, colors=['white', 'black', 'black', 'black'], fontsize=10)
+    axes[idx].clabel(cs, fmt={20: '20 eV', 100: '100 eV', 1000: '1000 eV', 10000:'10 keV'}, colors=['white', 'black', 'black', 'black'], fontsize=10)
 
     axes[idx].set_xlabel('f (Hz)')
     axes[idx].set_ylabel('lambda_perp (m)')

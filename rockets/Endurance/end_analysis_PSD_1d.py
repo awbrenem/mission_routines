@@ -71,12 +71,14 @@ wf12, tdat = v12.load_data_gainphase_corrected()
 #tr = [160,161]
 #tr = [170,175]
 #tr = [210,215]
-tr = [320,340]
+#tr = [320,340]
 #tr = [710,715]
 #tr = [750,755]
 #tr = [830,835]
 #tr = [810,815]
 #tr = [803,805]
+tr = [840,842]
+
 goot = np.where((tdat >= tr[0]) & (tdat <= tr[1]))
 #window = np.hanning(len(goot[0]))
 

@@ -2,7 +2,6 @@
 
 
 path = '/Users/abrenema/Desktop/Research/Rocket_missions/Endurance/data/WHAMP/'
-
 fn = 'boardsen_run_mar26_2024.dat'
 
 ;Cold plasma test run:
@@ -70,6 +69,19 @@ IDL> help,sol.r[findex],/st
    VS              DCOMPLEX  Array[3, 3]
    JS              DCOMPLEX  Array[3, 3]
 
+
+   dns in M^-3;
+   vs in km/s,
+   EFL in mV/M;
+   |BFL| is 1 nT;
+   vs[ic,ipar]  velocity of species S in m/s,
+   js[*,ipar]  ; current density of species S in A/m^2;
+   J = total(js,2) in A/m^2,
+   group velocity Vg in in units of the speed of light c
+
+
+
+
 sol.coef.R[findex]
 ;13422.603710862149
 sol.coef.L[findex]
@@ -79,6 +91,7 @@ sol.coef.P[findex]
 sol.coef.S[findex]
 ;-947.69505969759393
 sol.coef.D[findex]
+
 ;14370.298770559744
 sol.coef.RW[findex]
 ;-1.9242118482649648
@@ -163,4 +176,19 @@ VD              DOUBLE           0.0000000
 
 
 
+freqs = sol.r.w / (2.*3.14)
+ellip = sol.r.ellipk
+vgpara = sol.r.vg_para
+vgperp = sol.r.vg_perp
+cn = sol.r.cn
+psi = sol.r.psi
+ex_ey = sol.r.ex_ey
+bpara_b = sol.r.bpara_b
+efl = sol.r.efl
 
+
+plot,freqs,cn
+plot,freqs,psi
+plot,freqs,vgpara 
+plot,freqs,vgperp
+plot,freqs,efl

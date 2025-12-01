@@ -119,8 +119,8 @@ fspec12, tspec12, powerc12, fs = fftspec.fft_spectrum_piecewise(tdat12, wf12, fs
 
 
 
-fspec = fspec[:,0]
-fspec12 = fspec12[:,0]
+#fspec = fspec[:,0]
+#fspec12 = fspec12[:,0]
 
 ephem = end_data_loader.load_ephemeris()
 alt = ephem[0]['Altitude'] 
@@ -314,39 +314,42 @@ tdens, fdensL, sdensL, fdensH, sdensH = end_data_loader.load_slp_sonogram()
 #Overall spectral plot (Fig 1)
 #---------------------------------
 
-"""
 #'nfreq', 'afreq', 'atimesfft', 'afftpow'
-freqs_fin, tcenter_fin, csd_fin,coh_fin,phase_fin,spec_fin1,spec_fin2, fs_fin =  ca.csd_spectrum_piecewise(tdat[tdat > 100], wf34[tdat > 100], wf12[tdat > 100], nfft=2048, noverlap=8, fs_thres=0.02)
+freqs_fin, freqs_coh, tcenter_fin, csd_fin, coh_fin, phase_fin, spec_fin1, spec_fin2, fs_fin =  ca.csd_spectrum_piecewise(tdat[tdat > 100], wf34[tdat > 100], wf12[tdat > 100], nfft=2048, noverlap=8, fs_thres=0.2)
 freqs_fin = freqs_fin[:,0]
+freqs_coh = freqs_coh[:,0]
 phase_fin = phase_fin*(180/3.14)
+
 pow = np.abs(spec_fin1)
 minpow = 5e-10
 for i in range(len(tcenter_fin)):
       goo = np.where(pow[:,i] < minpow)[0]
       phase_fin[goo,i] = np.nan
-"""
+
+
 
 
 
 #special run with cohmin = 0
-timechunk = 0.2
-cohz, phasez, tchunksz, ffz = ca.cross_spectral_density_spectrogram(wf34[tdat > 100],wf12[tdat > 100],tdat[tdat > 100],30000,timechunk,nperseg=2048,plot=False,coh_min=0)
-phasez = phasez*(180/3.14)
+#timechunk = 0.2
+#cohz, phasez, tchunksz, ffz = ca.cross_spectral_density_spectrogram(wf34[tdat > 100],wf12[tdat > 100],tdat[tdat > 100],30000,timechunk,nperseg=2048,plot=False,coh_min=0)
+#phasez = phasez*(180/3.14)
 
 
 
 xr = [100,900]
-yr = [0,10000]
+yr = [4000,8000]
 vr = [-72,-60]
 #minzval = -80
-fig, axs = plt.subplots(2, figsize=(9,9), gridspec_kw={'height_ratios':[2,1]})
-#fig, axs = plt.subplots(3, figsize=(9,9))
+#fig, axs = plt.subplots(2, figsize=(9,9), gridspec_kw={'height_ratios':[2,1]})
+fig, axs = plt.subplots(3, figsize=(9,9))
 #ps.plot_spectrogram(tspec,fspec,np.abs(powerc),vr=vr,yscale='linear',yr=yr,xr=xr,ylabel="power spectrum VLF34\nfreq(Hz)\ndB of (mV/m)^2/Hz",ax=axs[0])
 ps.plot_spectrogram(sono12['atimesfft'],sono12['afreq'],sono12['afftpow'],vr=vr,zscale='linear',yscale='linear',yr=yr,xr=xr,ylabel="power spectrum VLF34\nfreq(Hz)\ndB of (mV/m)^2/Hz",ax=axs[0])#,minzval=minzval)
 axs[0].set_xticklabels([])
-ps.plot_spectrogram(tchunksz,ffz,phasez,vr=[-120,120],zscale='linear',yscale='linear',yr=[3000,9000],xr=xr,ylabel="phase (deg; VLF12,VLF34)\nfreq(Hz)",xlabel='time since launch (sec)',ax=axs[1])
+#ps.plot_spectrogram(tchunksz,ffz,phasez,vr=[-120,120],zscale='linear',yscale='linear',yr=[3000,9000],xr=xr,ylabel="phase (deg; VLF12,VLF34)\nfreq(Hz)",xlabel='time since launch (sec)',ax=axs[1])
 #ps.plot_spectrogram(tchunksz,ffz,cohz,vr=[0.6,1],zscale='linear',yscale='linear',yr=[3000,9000],xr=xr,ylabel="phase (deg; VLF12,VLF34)\nfreq(Hz)",xlabel='time since launch (sec)',ax=axs[2])
-#ps.plot_spectrogram(tcenter_fin,freqs_fin,phase_fin,vr=[-120,120],zscale='linear',yscale='linear',yr=[3000,9000],xr=xr,ylabel="phase (deg; VLF12,VLF34)\nfreq(Hz)",xlabel='time since launch (sec)',ax=axs[1])
+ps.plot_spectrogram(tcenter_fin,freqs_fin,phase_fin,vr=[-120,120],zscale='linear',yscale='linear',yr=yr,xr=xr,ylabel="phase (deg; VLF12,VLF34)\nfreq(Hz)",xlabel='time since launch (sec)',ax=axs[1])
+ps.plot_spectrogram(tcenter_fin,freqs_coh,coh_fin,vr=[0,1],zscale='linear',yscale='linear',yr=yr,xr=xr,ylabel="coh (VLF12,VLF34)\nfreq(Hz)",xlabel='time since launch (sec)',ax=axs[2])
 fig.tight_layout(pad=0)
 
 minvert = 0
@@ -568,8 +571,9 @@ plt.savefig("/Users/abrenema/Desktop/tst1.pdf", dpi=350)
 #---------------------------------
 
 #special run with cohmin = 0
-timechunk = 0.2
-cohz, phasez, tchunksz, ffz = ca.cross_spectral_density_spectrogram(wf34[tdat > 100],wf12[tdat > 100],tdat[tdat > 100],30000,timechunk,nperseg=32768,plot=False,coh_min=0)
+#timechunk = 0.2
+timechunk = 1
+cohz, phasez, tchunksz, ffz = ca.cross_spectral_density_spectrogram(wf34[tdat > 100],wf12[tdat > 100],tdat[tdat > 100],30000,timechunk,nperseg=2048,plot=False,coh_min=0)
 phasez = phasez*(180/3.14)
 
 xr = [600,850]

@@ -44,7 +44,7 @@ import plasma_params_get_flhr_freq as dflh
 #-------------------------------------------------------
 
 #t = 160 #sec
-t = 750 #sec
+t = 840 #sec
 wavelength = 5.7  #m
 fo = 6200  #Hz
 

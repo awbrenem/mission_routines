@@ -26,6 +26,7 @@ from math import remainder
 #-------------------------------------------------------
 
 ch = 'VLF12D'
+#ch = 'V12D'
 #ch = 'VLF32D'
 #ch = 'V4SD'
 #ch = 'VLF41D'
