@@ -1,6 +1,6 @@
 # 2025-05-22 - A.W. Breneman
 #   - Loads GIRAFF E-fields data (includes FIELDS mag and Langmuir probes)
-#   
+#   - NOTE: this routine CALIBRATES any loaded data. If you don't need to calibrate, use gir_load_data.py instead.
 
 
 
@@ -18,13 +18,14 @@ class GIRAFF_Fields_Loader:
     """
     Loadable channels:
     DC: 'V12D','V34D'
+    EDC: 
     skins: 'V1SD','V2SD','V3SD','V4SD'
     VLF: 'VLF12D','VLF34D','VLF13D','VLF32D','VLF24D','VLF41D'    --> downsampled to 50 kHz 
     VLFF: 'VLF12DF','VLF34DF','VLF13DF','VLF32DF','VLF24DF','VLF41DF'  --> full resolution
     HF: 'HF12','HF34'
     analog: 'V12A','V34A','VLF12A','V1SA','V2SA','V3SA','V4SA'
     mag: 'mag',     or  'magX','magY','magZ' if you need individual gain/phase curves
-    Langmuir Probes (analog, digital): 'LPA', 'LP1D' (NOTE: LP2D used for sensor's PCB temp (Paulo email, Jun 2, 2025))
+    ###(use gir_load_data.py for Langmuir probe data) Langmuir Probes (analog, digital): 'LPA', 'LP1D' (NOTE: LP2D used for sensor's PCB temp (Paulo email, Jun 2, 2025))
 
     Example usage:
 
@@ -205,6 +206,43 @@ class GIRAFF_Fields_Loader:
             good = np.squeeze(np.where(t >= 0.))
             return wf[good], t[good]
 
+
+
+        if self.type == "EDC":
+            import xarray as xr
+            
+            folder = "efield_DC"
+
+            if self.pld == "380":
+                fn = "Giraff_380_efield_DC_not_gp_calibrated.netcdf"
+            if self.pld == "381":
+                fn = "Giraff_381_efield_DC_not_gp_calibrated.netcdf"
+
+            # Load the netcdf file
+            ds = xr.open_dataset(path + folder + '/' + fn)
+            
+            # Extract waveform and time data
+            # Adjust variable names based on actual netcdf file structure
+            t = ds['time'].values
+            
+            pol = 1
+            if self.chnspecs["polarity"] == 'Neg':
+                pol = -1
+            
+            # Load appropriate channel data
+            if self.chn == 'V12D':
+                wf = ds['V12D'].values * pol
+            elif self.chn == 'V34D':
+                wf = ds['V34D'].values * pol
+            else:
+                # Default to first data variable if channel not found
+                wf = ds.data_vars[0].values * pol
+            
+            ds.close()
+            
+            # Remove negative times
+            good = np.squeeze(np.where(t >= 0.))
+            return wf[good], t[good]
 
 
         #VLF data downsampled to 50 kHz
@@ -414,6 +452,8 @@ class GIRAFF_Fields_Loader:
             return vals.dmagxnt[good], vals.dmagynt[good], vals.dmagznt[good], vals.times[good]
 
 
+
+        """
         if self.type == 'LP1D':
             from scipy.io import readsav 
 
@@ -429,7 +469,7 @@ class GIRAFF_Fields_Loader:
             #Remove negative times (starts at t=-100 sec). Not doing so messes up my spectrogram plotting routines.
             good = np.squeeze(np.where(vals.tlp >= 0.))
             return vals.dlp_amps[good], vals.tlp[good]
-
+        """
 
 
 
